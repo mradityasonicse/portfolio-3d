@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aditya Soni — MERN Developer &amp; Ethical Hacker</title>
+    <meta name="description"
+        content="Portfolio of Aditya Soni, a passionate MERN developer and aspiring ethical hacker from Rungta International Skill University, Bhilai, Chhattisgarh. On a mission to master cybersecurity and serve the nation.">
+    <meta name="keywords"
+        content="Aditya Soni, MERN Developer, Ethical Hacker, Cybersecurity, Portfolio, Rungta University, Bhilai">
+    <meta name="author" content="Aditya Soni">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Aditya Soni — MERN Developer &amp; Ethical Hacker">
+    <meta property="og:description"
+        content="Aspiring cybersecurity professional and MERN developer on a mission to serve the nation.">
+
+    <!-- Favicon -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+
+    <!-- Fonts: Oswald (display) + Caveat (handwriting) + DM Sans (body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Caveat:wght@400;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
+
+    <!-- Main Script -->
+    <script src="main.js" defer></script>
+</head>
+
+<body>
+
+    <!-- ========== PAGE LOADER ========== -->
+    <div id="page-loader">
+        <div class="loader-brand">
+            <span>A</span><span>D</span><span>I</span><span>T</span><span>Y</span><span>A</span>
+        </div>
+        <div class="loader-bar-wrap">
+            <div class="loader-bar" id="loader-bar"></div>
+        </div>
+        <div class="loader-count" id="loader-count">0%</div>
+    </div>
+
+    <!-- Blob cursor removed as requested -->
+
+    <!-- ========== HEADER ========== -->
+    <header class="header" id="main-header">
+        <div class="header-container">
+            <a href="#" class="logo-link">
+                ADITYA<span class="accent">.</span>DEV
+            </a>
+
+            <nav class="nav-links">
+                <a href="#about" class="nav-item">About</a>
+                <a href="#education" class="nav-item">Education</a>
+                <a href="#projects" class="nav-item">Projects</a>
+                <a href="#goals" class="nav-item">Goals</a>
+                <a href="#contact" class="nav-item">Contact</a>
+            </nav>
+
+            <div class="header-cta">
+                <a href="mailto:mradityasoni.cse@gmail.com"><button class="btn btn-ghost" id="hire-btn">Hire
+                        Me</button></a>
+            </div>
+
+            <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
+                <span class="menu-line line-top"></span>
+                <span class="menu-line line-bottom"></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ========== MOBILE NAV ========== -->
+    <div class="mobile-nav" id="mobile-nav">
+        <a href="#about" class="mobile-nav-item">About</a>
+        <a href="#education" class="mobile-nav-item">Education</a>
+        <a href="#projects" class="mobile-nav-item">Projects</a>
+        <a href="#goals" class="mobile-nav-item">Goals</a>
+        <a href="#contact" class="mobile-nav-item">Contact</a>
+    </div>
+
+    <main>
+
+        <!-- ========== HERO — Split Layout with Photo ========== -->
+        <section class="hero-section hero-split" id="hero">
+            <canvas class="hero-canvas" id="hero-canvas"></canvas>
+
+            <div class="hero-split-inner container">
+                <!-- LEFT: Text content -->
+                <div class="hero-content-wrapper">
+                    <div class="hero-intro-badge" id="hero-badge">
+                        <span class="pulsing-dot"></span>
+                        Open to Internships &amp; Collaborations — Bhilai, CG
+                    </div>
+
+                    <h1 class="hero-headline" id="hero-headline">
+                        <span class="split-line"><span class="split-chars">ADITYA</span></span>
+                        <span class="split-line"><span class="split-chars">SONI<em
+                                    style="color:var(--accent);">.</em></span></span>
+                    </h1>
+                    <div class="signature-title"
+                        style="font-family:var(--font-handwriting);font-size:2.8rem;color:var(--accent);margin-top:-2rem;margin-bottom:2.5rem;transform:rotate(-3deg);display:inline-block;letter-spacing:0.02em;">
+                        mern developer &amp; ethical hacker</div>
+
+                    <div class="hero-meta">
+                        <p class="hero-subtitle" id="hero-subtitle">
+                            MERN Developer &amp; Aspiring Ethical Hacker. Freshly graduated from 12th class, building
+                            towards a career in cybersecurity — to code, to protect, to serve the nation.
+                        </p>
+                        <div class="hero-actions" id="hero-actions">
+                            <a href="#goals"><button class="btn btn-primary" id="explore-btn">My Mission</button></a>
+                            <a href="#contact"><button class="btn btn-outline" id="connect-btn">Let's
+                                    Connect</button></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: Photo -->
+                <div class="hero-photo-right">
+                    <div class="hero-photo-frame" id="hero-photo-card">
+                        <img src="aditya-hero.jpg" alt="Aditya Soni" class="hero-photo-img" id="hero-photo-img">
+                        <div class="hero-photo-badge-available">
+                            <span class="pulsing-dot"></span>&nbsp;Available for Work
+                        </div>
+                        <div class="hero-photo-corner-tag">AS</div>
+                    </div>
+                    <div class="hero-photo-roles" style="margin-top:1.2rem; justify-content:center;">
+                        <span class="hero-role-tag">MERN Dev</span>
+                        <span class="hero-role-tag">Ethical Hacker</span>
+                        <span class="hero-role-tag">CSE 2025</span>
+                    </div>
+                    <div
+                        style="font-family:var(--font-handwriting);font-size:1.5rem;color:var(--accent);transform:rotate(-2deg);text-align:center;margin-top:0.8rem;opacity:0.85;">
+                        coding for the nation 🇮🇳</div>
+                </div>
+            </div>
+
+            <div class="scroll-indicator">
+                <span class="scroll-label">Scroll</span>
+                <div class="scroll-line"></div>
+            </div>
+        </section>
+
+        <!-- ========== MARQUEE ========== -->
+        <div class="marquee-section">
+            <div class="marquee-track" id="marquee-track">
+                <!-- Set 1 -->
+                <div class="marquee-item"><span class="dot"></span>MERN Stack</div>
+                <div class="marquee-item"><span class="dot"></span>Ethical Hacking</div>
+                <div class="marquee-item"><span class="dot"></span>Cybersecurity</div>
+                <div class="marquee-item"><span class="dot"></span>MongoDB</div>
+                <div class="marquee-item"><span class="dot"></span>Express.js</div>
+                <div class="marquee-item"><span class="dot"></span>React.js</div>
+                <div class="marquee-item"><span class="dot"></span>Node.js</div>
+                <div class="marquee-item"><span class="dot"></span>Network Security</div>
+                <div class="marquee-item"><span class="dot"></span>Penetration Testing</div>
+                <!-- Set 2 (mirror) -->
+                <div class="marquee-item"><span class="dot"></span>MERN Stack</div>
+                <div class="marquee-item"><span class="dot"></span>Ethical Hacking</div>
+                <div class="marquee-item"><span class="dot"></span>Cybersecurity</div>
+                <div class="marquee-item"><span class="dot"></span>MongoDB</div>
+                <div class="marquee-item"><span class="dot"></span>Express.js</div>
+                <div class="marquee-item"><span class="dot"></span>React.js</div>
+                <div class="marquee-item"><span class="dot"></span>Node.js</div>
+                <div class="marquee-item"><span class="dot"></span>Network Security</div>
+                <div class="marquee-item"><span class="dot"></span>Penetration Testing</div>
+            </div>
+        </div>
+
+        <!-- ========== ABOUT ========== -->
+        <section class="about-section" id="about">
+            <div class="container">
+                <div class="section-label">01 / About</div>
+                <h2 class="section-title reveal-up">CODING<br>WITH A<br>PURPOSE</h2>
+                <div class="section-subtitle-handwritten"
+                    style="font-family:var(--font-handwriting);font-size:2.2rem;color:var(--accent);margin-top:0.5rem;margin-bottom:2rem;transform:rotate(-1deg);">
+                    aspirations to serve the nation.</div>
+
+                <div class="about-grid">
+                    <div class="about-left">
+                        <p class="about-lead reveal-up">
+                            Hey, I'm Aditya — a <em>freshly graduated</em> 12th class student with a fire to become a
+                            cybersecurity expert and MERN developer.
+                        </p>
+                        <p class="about-text reveal-up">
+                            I just completed my 12th class this year and I'm now pursuing Computer Science Engineering
+                            at <strong style="color:var(--text)">Rungta International Skill University, Bhilai,
+                                Chhattisgarh</strong>. Every line of code I write is a step toward my mission.
+                        </p>
+                        <p class="about-text reveal-up">
+                            My dream is not just to become a developer — it's to be an ethical hacker who protects
+                            systems, secures digital infrastructure, and serves the nation. I am at the very beginning
+                            of this journey, and I am fully committed to it.
+                        </p>
+                        <br>
+                        <a href="mailto:mradityasoni.cse@gmail.com"><button class="btn btn-primary reveal-up"
+                                id="work-together-btn">Get In Touch</button></a>
+                    </div>
+
+                    <div class="about-right">
+                        <!-- Profile Photo Card -->
+                        <div class="profile-card reveal-up" id="profile-card-3d">
+                            <div class="profile-glow"></div>
+                            <div class="profile-card-inner">
+                                <div class="profile-hud-lines"></div>
+                                <img src="aditya-hero.jpg" alt="Aditya Soni Profile" class="profile-img">
+                                <div class="profile-scanlines"></div>
+                                <div class="profile-cyber-overlay"></div>
+                            </div>
+                            <!-- Cyber Badges -->
+                            <div class="cyber-badge badge-top-left">
+                                <span class="badge-dot"></span> SECURE_PORT // 8080
+                            </div>
+                            <div class="cyber-badge badge-bottom-right">
+                                <span class="badge-dot pulsing"></span> STATUS // ACTIVE_HACKER
+                            </div>
+                        </div>
+
+                        <div class="skills-card">
+                            <div class="skills-card-header">
+                                <span class="skills-card-title">Skills &amp; Learning Path</span>
+                                <span class="online-badge">Learning</span>
+                            </div>
+
+                            <div class="skill-group">
+                                <div class="skill-group-name">MERN Stack</div>
+                                <div class="skill-tags">
+                                    <span class="skill-tag">MongoDB</span>
+                                    <span class="skill-tag">Express.js</span>
+                                    <span class="skill-tag">React.js</span>
+                                    <span class="skill-tag">Node.js</span>
+                                    <span class="skill-tag">REST APIs</span>
+                                </div>
+                            </div>
+
+                            <div class="skill-group">
+                                <div class="skill-group-name">Cybersecurity</div>
+                                <div class="skill-tags">
+                                    <span class="skill-tag">Ethical Hacking</span>
+                                    <span class="skill-tag">Penetration Testing</span>
+                                    <span class="skill-tag">Network Security</span>
+                                    <span class="skill-tag">Linux</span>
+                                </div>
+                            </div>
+
+                            <div class="skill-group">
+                                <div class="skill-group-name">Fundamentals</div>
+                                <div class="skill-tags">
+                                    <span class="skill-tag">HTML / CSS</span>
+                                    <span class="skill-tag">JavaScript</span>
+                                    <span class="skill-tag">C / C++</span>
+                                    <span class="skill-tag">Git &amp; GitHub</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI IMAGE: MERN Dev Banner -->
+        <div class="section-divider-image">
+            <div class="section-ai-image">
+                <img src="img-mern.png" alt="MERN Stack Development">
+                <div class="img-label">MERN Stack &nbsp;·&nbsp; Full Stack Development &nbsp;·&nbsp; MongoDB · Express ·
+                    React · Node</div>
+            </div>
+        </div>
+
+        <!-- ========== EDUCATION ========== -->
+        <section class="experience-section" id="education">
+            <div class="container">
+                <div class="section-label">02 / Education</div>
+                <h2 class="section-title reveal-up">THE<br>ACADEMIC<br>PATH</h2>
+                <div class="section-subtitle-handwritten"
+                    style="font-family:var(--font-handwriting);font-size:2.2rem;color:var(--accent);margin-top:0.5rem;margin-bottom:2rem;transform:rotate(-1deg);">
+                    rungta university &amp; beyond.</div>
+
+                <div class="timeline">
+                    <div class="timeline-track">
+                        <div class="timeline-track-fill" id="timeline-fill"></div>
+                    </div>
+
+                    <!-- College -->
+                    <div class="timeline-item">
+                        <div class="timeline-left">
+                            <span class="timeline-period">2026 — Present</span>
+                            <span class="timeline-org">Rungta International Skill University</span>
+                        </div>
+                        <div class="timeline-right">
+                            <h3 class="timeline-role">B.Tech — Computer Science Engineering</h3>
+                            <p class="timeline-desc">
+                                Pursuing CSE at Rungta International Skill University, Bhilai, Chhattisgarh. Focused on
+                                building a strong foundation in software development and cybersecurity. Goal: to
+                                graduate as both a capable MERN developer and a certified ethical hacker.
+                            </p>
+                            <div class="tag-list">
+                                <span class="tag">CSE</span>
+                                <span class="tag">Bhilai, CG</span>
+                                <span class="tag">Ongoing</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 12th -->
+                    <div class="timeline-item">
+                        <div class="timeline-left">
+                            <span class="timeline-period">2026</span>
+                            <span class="timeline-org">12th Class — Board Exams</span>
+                        </div>
+                        <div class="timeline-right">
+                            <h3 class="timeline-role">Higher Secondary — 80%</h3>
+                            <p class="timeline-desc">
+                                Successfully completed Class 12th this year with 80 percentage, laying the groundwork
+                                for a Computer Science engineering journey. Chose to pursue CSE driven by a passion for
+                                coding and cybersecurity.
+                            </p>
+                            <div class="tag-list">
+                                <span class="tag">80%</span>
+                                <span class="tag">Class XII</span>
+                                <span class="tag">2026 Batch</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 10th -->
+                    <div class="timeline-item">
+                        <div class="timeline-left">
+                            <span class="timeline-period">2024</span>
+                            <span class="timeline-org">10th Class — Board Exams</span>
+                        </div>
+                        <div class="timeline-right">
+                            <h3 class="timeline-role">Secondary — 92%</h3>
+                            <p class="timeline-desc">
+                                Scored an outstanding 92 percentage in Class 10th Board Examinations. This strong
+                                academic performance built the confidence and discipline that drives the pursuit of
+                                excellence in every endeavor since.
+                            </p>
+                            <div class="tag-list">
+                                <span class="tag">92%</span>
+                                <span class="tag">Class X</span>
+                                <span class="tag">Distinction</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== PROJECTS (Blank — Coming Soon) ========== -->
+        <section class="projects-section" id="projects">
+            <div class="container">
+                <div class="projects-header">
+                    <div>
+                        <div class="section-label">03 / Projects</div>
+                        <h2 class="section-title">COMING<br>SOON</h2>
+                        <div class="section-subtitle-handwritten"
+                            style="font-family:var(--font-handwriting);font-size:2.2rem;color:var(--accent);margin-top:0.5rem;margin-bottom:2rem;transform:rotate(-1deg);">
+                            building my first real creations...</div>
+                    </div>
+                </div>
+
+                <div class="coming-soon-box">
+                    <div class="coming-soon-icon">🚧</div>
+                    <h3 class="coming-soon-title">Projects in the Making</h3>
+                    <p class="coming-soon-text">
+                        I'm just getting started. I am currently learning and building — my first real-world projects
+                        will live here soon. Check back after I've shipped something worth showing.
+                    </p>
+                    <div class="coming-soon-tags">
+                        <span>MERN App</span>
+                        <span>Security Tool</span>
+                        <span>Open Source</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI IMAGE: Cybersecurity Banner -->
+        <div class="section-divider-image">
+            <div class="section-ai-image">
+                <img src="img-cyber.png" alt="Cybersecurity &amp; Ethical Hacking">
+                <div class="img-label">Cybersecurity &nbsp;·&nbsp; Ethical Hacking &nbsp;·&nbsp; Network Security
+                    &nbsp;·&nbsp; Penetration Testing</div>
+            </div>
+        </div>
+
+        <!-- ========== GOALS / MISSION ========== -->
+        <section class="testimonials-section" id="goals">
+            <div class="container">
+                <div class="section-label">04 / Mission</div>
+                <h2 class="section-title reveal-up">MY PLAN<br>&amp; PURPOSE</h2>
+                <div class="section-subtitle-handwritten"
+                    style="font-family:var(--font-handwriting);font-size:2.2rem;color:var(--accent);margin-top:0.5rem;margin-bottom:2rem;transform:rotate(-1deg);">
+                    cybersecurity &amp; systems engineering.</div>
+
+                <div class="testimonials-grid" style="margin-top:3rem;">
+
+                    <!-- AI Goals Image -->
+                    <div style="grid-column:1/-1; margin-bottom:1rem;">
+                        <div class="section-ai-image" style="margin:0;">
+                            <img src="img-goals.png" alt="Mission: Coding for the Nation" style="height:260px;">
+                            <div class="img-label">🇮🇳 &nbsp;Serving the Nation Through Technology &nbsp;·&nbsp;
+                                Cybersecurity &nbsp;·&nbsp; Digital India</div>
+                        </div>
+                    </div>
+
+                    <!-- Video: Tech / Coding -->
+                    <div style="grid-column:1/-1; margin-bottom:2rem;">
+                        <div class="section-video-wrap">
+                            <span class="section-video-label">🎬 Inspiration</span>
+                            <iframe width="100%" height="300"
+                                src="https://www.youtube.com/embed/nu_pCVPKzTk?autoplay=0&mute=1&rel=0&modestbranding=1"
+                                title="Ethical Hacking Full Course" frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen style="display:block;"></iframe>
+                        </div>
+                    </div>
+
+                    <!-- Goal 1 -->
+                    <blockquote class="testimonial-card">
+                        <p class="testimonial-text">
+                            🛡️ <strong style="color:var(--text)">Master Cybersecurity.</strong> I want to become a
+                            certified ethical hacker — learning penetration testing, network security, and digital
+                            forensics to protect systems and people from cyber threats.
+                        </p>
+                        <footer class="testimonial-footer">
+                            <div>
+                                <cite class="client-name">Goal #1</cite>
+                                <span class="client-role">Cybersecurity Expert</span>
+                            </div>
+                            <span class="verified-badge">Priority</span>
+                        </footer>
+                    </blockquote>
+
+                    <!-- Goal 2 -->
+                    <blockquote class="testimonial-card">
+                        <p class="testimonial-text">
+                            🌐 <strong style="color:var(--text)">Become a MERN Developer.</strong> Build full-stack web
+                            applications that solve real problems — using MongoDB, Express, React, and Node.js to create
+                            fast, scalable, and meaningful digital products.
+                        </p>
+                        <footer class="testimonial-footer">
+                            <div>
+                                <cite class="client-name">Goal #2</cite>
+                                <span class="client-role">Full-Stack MERN Developer</span>
+                            </div>
+                            <span class="verified-badge">In Progress</span>
+                        </footer>
+                    </blockquote>
+
+                    <!-- Goal 3 -->
+                    <blockquote class="testimonial-card">
+                        <p class="testimonial-text">
+                            🇮🇳 <strong style="color:var(--text)">Serve the Nation.</strong> Use my skills in
+                            cybersecurity and software development to contribute to India's digital safety and
+                            infrastructure. Code is my weapon; protection is my purpose.
+                        </p>
+                        <footer class="testimonial-footer">
+                            <div>
+                                <cite class="client-name">Goal #3</cite>
+                                <span class="client-role">Serving India's Digital Future</span>
+                            </div>
+                            <span class="verified-badge">The Why</span>
+                        </footer>
+                    </blockquote>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== CONTACT ========== -->
+        <section class="contact-section" id="contact">
+            <div class="container">
+                <div class="section-label">05 / Contact</div>
+
+                <h2 class="contact-big-text">
+                    LET'S BUILD<br><span>SOMETHING</span><br>TOGETHER.
+                </h2>
+                <div class="section-subtitle-handwritten"
+                    style="font-family:var(--font-handwriting);font-size:2.2rem;color:var(--accent);margin-top:0.5rem;margin-bottom:2rem;transform:rotate(-2deg);">
+                    drop me a message or book a time below!</div>
+
+                <div class="contact-grid">
+                    <div class="contact-left">
+                        <p class="contact-desc">
+                            I'm a fresh CSE student looking for internships, collaborations, and mentorship in MERN
+                            development and cybersecurity. If you're someone who can guide or work with me — I'd love to
+                            hear from you.
+                        </p>
+                        <div class="contact-meta">
+                            <div class="contact-meta-item">
+                                <span class="meta-label">Email</span>
+                                <a href="mailto:mradityasoni.cse@gmail.com"
+                                    class="meta-value">mradityasoni.cse@gmail.com</a>
+                            </div>
+                            <div class="contact-meta-item">
+                                <span class="meta-label">College</span>
+                                <span class="meta-value" style="cursor:default;font-size:0.95rem;">Rungta International
+                                    Skill University</span>
+                            </div>
+                            <div class="contact-meta-item">
+                                <span class="meta-label">Location</span>
+                                <span class="meta-value" style="cursor:default">Bhilai, Chhattisgarh 🇮🇳</span>
+                            </div>
+                            <div class="contact-meta-item">
+                                <span class="meta-label">Status</span>
+                                <span class="meta-value" style="cursor:default;color:var(--accent)">Open to
+                                    Opportunities</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="contact-form-box">
+                        <div class="form-tabs">
+                            <button class="form-tab active" id="tab-btn-message">Send Message</button>
+                            <button class="form-tab" id="tab-btn-booking">Book a Call</button>
+                        </div>
+
+                        <!-- Inquiry Message Form -->
+                        <form class="contact-form active" id="contact-form" action="#" method="POST">
+                            <div class="form-group">
+                                <input type="text" id="name" name="name" class="form-input" placeholder=" " required>
+                                <label for="name" class="form-label">Your Name</label>
+                                <span class="input-line"></span>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" id="email" name="email" class="form-input" placeholder=" " required>
+                                <label for="email" class="form-label">Email Address</label>
+                                <span class="input-line"></span>
+                            </div>
+                            <div class="form-group">
+                                <textarea id="message" name="message" class="form-input" placeholder=" " rows="4"
+                                    required></textarea>
+                                <label for="message" class="form-label">Your message or opportunity</label>
+                                <span class="input-line"></span>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-submit" id="form-submit-btn">
+                                <span>Send Message</span>
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </button>
+                            <div class="form-status" id="form-status"></div>
+                        </form>
+
+                        <!-- Consultation Booking Form (hidden initially) -->
+                        <form class="contact-form" id="booking-form" action="#" method="POST"
+                            style="display: none; opacity: 0; transform: translateY(10px);">
+                            <div class="form-group">
+                                <input type="text" id="booking-name" name="name" class="form-input" placeholder=" "
+                                    required>
+                                <label for="booking-name" class="form-label">Your Name</label>
+                                <span class="input-line"></span>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" id="booking-email" name="email" class="form-input" placeholder=" "
+                                    required>
+                                <label for="booking-email" class="form-label">Email Address</label>
+                                <span class="input-line"></span>
+                            </div>
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <input type="date" id="booking-date" name="booking_date" class="form-input"
+                                        required>
+                                    <label for="booking-date" class="form-label float-always">Preferred Date</label>
+                                    <span class="input-line"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input type="time" id="booking-time" name="booking_time" class="form-input"
+                                        required>
+                                    <label for="booking-time" class="form-label float-always">Preferred Time</label>
+                                    <span class="input-line"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="booking-topic" name="topic" class="form-input" placeholder=" "
+                                    required>
+                                <label for="booking-topic" class="form-label">Consultation Topic or Project
+                                    Scope</label>
+                                <span class="input-line"></span>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-submit" id="booking-submit-btn">
+                                <span>Book Call Consultation</span>
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </button>
+                            <div class="form-status" id="booking-status"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <div class="container footer-container">
+            <span class="footer-copy">© 2026 Aditya Soni. All Rights Reserved.</span>
+            <div class="footer-socials">
+                <a href="https://github.com" target="_blank" class="social-link">GitHub</a>
+                <a href="https://linkedin.com" target="_blank" class="social-link">LinkedIn</a>
+                <a href="/admin" class="social-link" style="color:var(--accent);">Admin DB</a>
+                <a href="mailto:mradityasoni.cse@gmail.com" class="social-link">Email</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>
