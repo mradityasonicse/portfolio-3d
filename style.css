@@ -219,8 +219,8 @@ input, textarea, button { font-family: inherit; }
     transition: transform 0.4s var(--ease-smooth);
 }
 
-.nav-item:hover { color: var(--text); }
-.nav-item:hover::after { transform: scaleX(1); transform-origin: left; }
+.nav-item:hover, .nav-item.active { color: var(--text); }
+.nav-item:hover::after, .nav-item.active::after { transform: scaleX(1); transform-origin: left; }
 
 .btn {
     display: inline-flex; align-items: center; justify-content: center;
@@ -321,7 +321,7 @@ input, textarea, button { font-family: inherit; }
     letter-spacing: -0.04em;
     transition: color 0.3s ease;
 }
-.mobile-nav-item:hover { color: var(--accent); }
+.mobile-nav-item:hover, .mobile-nav-item.active { color: var(--accent); }
 
 /* ============================================================
    6. HERO SECTION
@@ -335,6 +335,8 @@ input, textarea, button { font-family: inherit; }
     justify-content: flex-end;
     padding-bottom: clamp(4rem, 8vw, 8rem);
     overflow: hidden;
+    background-image: radial-gradient(rgba(217, 20, 20, 0.06) 1.5px, transparent 1.5px);
+    background-size: 50px 50px;
 }
 
 .hero-canvas {
@@ -2032,12 +2034,13 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     margin: 0 !important;
     position: relative;
     background: #000;
+    aspect-ratio: 16 / 9;
 }
 
 .section-video-wrap iframe {
     display: block;
     width: 100% !important;
-    height: 340px !important;
+    height: 100% !important;
     border: none !important;
 }
 
@@ -2311,4 +2314,15 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .hero-photo-banner {
     display: none !important;
+}
+
+/* ==========================================================================
+   3D TILT SUPPORT
+   ========================================================================== */
+.card-3d-tilt {
+    transition: border-color 0.2s ease, box-shadow 0.3s var(--ease-smooth) !important;
+    transform-style: preserve-3d;
+}
+.card-3d-tilt:hover {
+    transform: none !important; /* override flat CSS shifts to allow GSAP 3D rotations */
 }

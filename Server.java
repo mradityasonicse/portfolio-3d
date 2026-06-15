@@ -16,8 +16,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Server {
-    private static final int PORT = 3000;
+    private static final int PORT = getPort();
     private static final String DB_URL = "jdbc:sqlite:portfolio.db";
+
+    private static int getPort() {
+        String portEnv = System.getenv("PORT");
+        if (portEnv != null && !portEnv.trim().isEmpty()) {
+            try {
+                return Integer.parseInt(portEnv.trim());
+            } catch (NumberFormatException e) {
+                System.err.println("Invalid PORT env variable: " + portEnv + ", using 3000");
+            }
+        }
+        return 3000;
+    }
 
     public static void main(String[] args) {
         // Initialize SQLite Database
@@ -527,6 +539,22 @@ public class Server {
 
             // Remove leading slash to get relative file path
             String relativePath = pathStr.substring(1);
+
+            // Check if clean URL (no extension) matches an HTML file
+            if (!pathStr.contains(".") && !pathStr.endsWith("/")) {
+                try {
+                    File rootDir = new File(".").getCanonicalFile();
+                    File htmlFile = new File(relativePath + ".html").getCanonicalFile();
+                    if (htmlFile.getPath().toLowerCase().startsWith(rootDir.getPath().toLowerCase())) {
+                        if (htmlFile.exists() && !htmlFile.isDirectory()) {
+                            pathStr = pathStr + ".html";
+                            relativePath = pathStr.substring(1);
+                        }
+                    }
+                } catch (IOException e) {
+                    // Ignore and let standard canonical check handle/fail it
+                }
+            }
 
             // Canonical check to prevent directory traversal
             File file = new File(relativePath).getCanonicalFile();

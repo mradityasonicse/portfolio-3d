@@ -73,6 +73,7 @@ function initAll() {
     initContactForm();
     initBookingForm();
     initCharSplit();
+    initCards3DTilt();
 
     // Wait for GSAP
     waitForGSAP(() => {
@@ -346,19 +347,37 @@ function initGSAPAnimations() {
     // ---- Hero ----
     const heroTl = gsap.timeline({ defaults: { ease: 'power4.out' } });
 
+    let hasHeroAnimations = false;
+
     // Animate chars
-    heroTl.to('.char', {
-        y: '0%',
-        rotate: 0,
-        duration: 1.2,
-        stagger: 0.03,
-        ease: 'power4.out'
-    }, 0.1)
-    .fromTo('#hero-badge', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8 }, 0)
-    .fromTo('#hero-subtitle', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 1 }, 0.5)
-    .fromTo('#hero-actions', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 1 }, 0.65)
-    .fromTo('.header', { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 1 }, 0)
-    .fromTo('.scroll-indicator', { opacity: 0 }, { opacity: 1, duration: 1 }, 1);
+    if (document.querySelector('.char')) {
+        heroTl.to('.char', {
+            y: '0%',
+            rotate: 0,
+            duration: 1.2,
+            stagger: 0.03,
+            ease: 'power4.out'
+        }, 0.1);
+        hasHeroAnimations = true;
+    }
+    if (document.getElementById('hero-badge')) {
+        heroTl.fromTo('#hero-badge', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8 }, 0);
+        hasHeroAnimations = true;
+    }
+    if (document.getElementById('hero-subtitle')) {
+        heroTl.fromTo('#hero-subtitle', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 1 }, 0.5);
+        hasHeroAnimations = true;
+    }
+    if (document.getElementById('hero-actions')) {
+        heroTl.fromTo('#hero-actions', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 1 }, 0.65);
+        hasHeroAnimations = true;
+    }
+    if (document.querySelector('.header') && hasHeroAnimations) {
+        heroTl.fromTo('.header', { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 1 }, 0);
+    }
+    if (document.querySelector('.scroll-indicator')) {
+        heroTl.fromTo('.scroll-indicator', { opacity: 0 }, { opacity: 1, duration: 1 }, 1);
+    }
 
     // ---- Section titles ----
     document.querySelectorAll('.section-title').forEach(el => {
@@ -385,46 +404,57 @@ function initGSAPAnimations() {
     });
 
     // ---- About ----
-    gsap.fromTo('.about-lead', { opacity: 0, y: 40 }, {
-        opacity: 1, y: 0, duration: 1, ease: 'power3.out',
-        scrollTrigger: { trigger: '.about-lead', start: 'top 85%' }
-    });
-    gsap.fromTo('.about-text', { opacity: 0, y: 30 }, {
-        opacity: 1, y: 0, duration: 0.9, stagger: 0.15, ease: 'power3.out',
-        scrollTrigger: { trigger: '.about-left', start: 'top 80%' }
-    });
-    gsap.fromTo('.skills-card', { opacity: 0, y: 50, scale: 0.97 }, {
-        opacity: 1, y: 0, scale: 1, duration: 1.2, ease: 'power4.out',
-        scrollTrigger: { trigger: '.about-right', start: 'top 80%' }
-    });
-    gsap.fromTo('.skill-tag', { opacity: 0, scale: 0.85 }, {
-        opacity: 1, scale: 1, duration: 0.5, stagger: 0.05, ease: 'back.out(2)',
-        scrollTrigger: { trigger: '.skill-tags', start: 'top 85%' }
-    });
+    if (document.querySelector('.about-lead')) {
+        gsap.fromTo('.about-lead', { opacity: 0, y: 40 }, {
+            opacity: 1, y: 0, duration: 1, ease: 'power3.out',
+            scrollTrigger: { trigger: '.about-lead', start: 'top 85%' }
+        });
+    }
+    if (document.querySelector('.about-text')) {
+        gsap.fromTo('.about-text', { opacity: 0, y: 30 }, {
+            opacity: 1, y: 0, duration: 0.9, stagger: 0.15, ease: 'power3.out',
+            scrollTrigger: { trigger: '.about-left', start: 'top 80%' }
+        });
+    }
+    if (document.querySelector('.skills-card')) {
+        gsap.fromTo('.skills-card', { opacity: 0, y: 50, scale: 0.97 }, {
+            opacity: 1, y: 0, scale: 1, duration: 1.2, ease: 'power4.out',
+            scrollTrigger: { trigger: '.about-right', start: 'top 80%' }
+        });
+    }
+    if (document.querySelector('.skill-tags')) {
+        gsap.fromTo('.skill-tag', { opacity: 0, scale: 0.85 }, {
+            opacity: 1, scale: 1, duration: 0.5, stagger: 0.05, ease: 'back.out(2)',
+            scrollTrigger: { trigger: '.skill-tags', start: 'top 85%' }
+        });
+    }
 
     // ---- Project rows ----
-    document.querySelectorAll('.project-row').forEach((row, i) => {
-        gsap.fromTo(row,
-            { opacity: 0, x: -40 },
-            {
-                opacity: 1, x: 0,
-                duration: 0.8, ease: 'power3.out',
-                delay: i * 0.08,
-                scrollTrigger: { trigger: '.project-list', start: 'top 85%' }
-            }
-        );
-    });
+    if (document.querySelector('.project-list') && document.querySelector('.project-row')) {
+        document.querySelectorAll('.project-row').forEach((row, i) => {
+            gsap.fromTo(row,
+                { opacity: 0, x: -40 },
+                {
+                    opacity: 1, x: 0,
+                    duration: 0.8, ease: 'power3.out',
+                    delay: i * 0.08,
+                    scrollTrigger: { trigger: '.project-list', start: 'top 85%' }
+                }
+            );
+        });
+    }
 
     // ---- Timeline fill ----
     const fill = document.getElementById('timeline-fill');
     if (fill) {
         gsap.fromTo(fill, { height: '0%' }, {
-            height: '100%', ease: 'none',
+            height: '100%',
+            duration: 1.5,
+            ease: 'power2.out',
             scrollTrigger: {
                 trigger: '.timeline',
-                start: 'top 20%',
-                end: 'bottom 50%',
-                scrub: true
+                start: 'top 70%',
+                toggleActions: 'play none none none'
             }
         });
     }
@@ -442,42 +472,52 @@ function initGSAPAnimations() {
     });
 
     // ---- Testimonials ----
-    gsap.fromTo('.testimonial-card', { opacity: 0, y: 50 }, {
-        opacity: 1, y: 0, duration: 1, stagger: 0.2, ease: 'power3.out',
-        scrollTrigger: { trigger: '.testimonials-grid', start: 'top 85%' }
-    });
+    if (document.querySelector('.testimonials-grid')) {
+        gsap.fromTo('.testimonial-card', { opacity: 0, y: 50 }, {
+            opacity: 1, y: 0, duration: 1, stagger: 0.2, ease: 'power3.out',
+            scrollTrigger: { trigger: '.testimonials-grid', start: 'top 85%' }
+        });
+    }
 
     // ---- Contact ----
-    gsap.fromTo('.contact-big-text', { opacity: 0, y: 60 }, {
-        opacity: 1, y: 0, duration: 1.2, ease: 'power4.out',
-        scrollTrigger: { trigger: '.contact-big-text', start: 'top 85%' }
-    });
-    gsap.fromTo('.contact-left > *', { opacity: 0, y: 30 }, {
-        opacity: 1, y: 0, duration: 0.8, stagger: 0.12, ease: 'power3.out',
-        scrollTrigger: { trigger: '.contact-grid', start: 'top 80%' }
-    });
-    gsap.fromTo('.contact-form-box', { opacity: 0, y: 50 }, {
-        opacity: 1, y: 0, duration: 1.2, ease: 'power4.out',
-        scrollTrigger: { trigger: '.contact-grid', start: 'top 75%' }
-    });
+    if (document.querySelector('.contact-big-text')) {
+        gsap.fromTo('.contact-big-text', { opacity: 0, y: 60 }, {
+            opacity: 1, y: 0, duration: 1.2, ease: 'power4.out',
+            scrollTrigger: { trigger: '.contact-big-text', start: 'top 85%' }
+        });
+    }
+    if (document.querySelector('.contact-grid')) {
+        gsap.fromTo('.contact-left > *', { opacity: 0, y: 30 }, {
+            opacity: 1, y: 0, duration: 0.8, stagger: 0.12, ease: 'power3.out',
+            scrollTrigger: { trigger: '.contact-grid', start: 'top 80%' }
+        });
+        gsap.fromTo('.contact-form-box', { opacity: 0, y: 50 }, {
+            opacity: 1, y: 0, duration: 1.2, ease: 'power4.out',
+            scrollTrigger: { trigger: '.contact-grid', start: 'top 75%' }
+        });
+    }
 
     // ---- Parallax on hero headline ----
-    gsap.to('#hero-headline', {
-        yPercent: -20,
-        ease: 'none',
-        scrollTrigger: {
-            trigger: '#hero',
-            start: 'top top',
-            end: 'bottom top',
-            scrub: true
-        }
-    });
+    if (document.getElementById('hero-headline') && document.getElementById('hero')) {
+        gsap.to('#hero-headline', {
+            yPercent: -20,
+            ease: 'none',
+            scrollTrigger: {
+                trigger: '#hero',
+                start: 'top top',
+                end: 'bottom top',
+                scrub: true
+            }
+        });
+    }
 
     // ---- Footer socials ----
-    gsap.fromTo('.social-link', { opacity: 0, y: 10 }, {
-        opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: 'power3.out',
-        scrollTrigger: { trigger: '.footer', start: 'top 92%' }
-    });
+    if (document.querySelector('.footer')) {
+        gsap.fromTo('.social-link', { opacity: 0, y: 10 }, {
+            opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: 'power3.out',
+            scrollTrigger: { trigger: '.footer', start: 'top 92%' }
+        });
+    }
 
     // ---- Profile Card 3D Parallax & Magnetic ----
     initProfileCard3D();
@@ -903,6 +943,47 @@ function initProfileCard3D() {
             y: 0,
             duration: 0.7,
             ease: 'power3.out'
+        });
+    });
+}
+
+/* ==========================================================================
+   13. CARD 3D TILT HOVER HANDLER
+   ========================================================================== */
+function initCards3DTilt() {
+    const cards = document.querySelectorAll('.card-3d-tilt');
+    if (cards.length === 0) return;
+
+    cards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left - (rect.width / 2);
+            const y = e.clientY - rect.top - (rect.height / 2);
+
+            // Calculate rotation angles (tilt max 8 deg)
+            const tiltX = (y / (rect.height / 2)) * -8;
+            const tiltY = (x / (rect.width / 2)) * 8;
+
+            gsap.to(card, {
+                rotateX: tiltX,
+                rotateY: tiltY,
+                transformPerspective: 1000,
+                x: x * 0.02, // slight magnetic glide
+                y: y * 0.02,
+                duration: 0.3,
+                ease: 'power2.out'
+            });
+        });
+
+        card.addEventListener('mouseleave', () => {
+            gsap.to(card, {
+                rotateX: 0,
+                rotateY: 0,
+                x: 0,
+                y: 0,
+                duration: 0.5,
+                ease: 'power3.out'
+            });
         });
     });
 }

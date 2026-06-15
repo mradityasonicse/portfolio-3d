@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About — Aditya Soni</title>
+    <meta name="description"
+        content="Learn more about Aditya Soni, a passionate MERN developer and aspiring ethical hacker from Rungta International Skill University.">
+    <meta name="keywords"
+        content="Aditya Soni, About, MERN Developer, Ethical Hacker, Cybersecurity, Rungta University">
+    <meta name="author" content="Aditya Soni">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="About — Aditya Soni">
+    <meta property="og:description"
+        content="Aspiring cybersecurity professional and MERN developer on a mission to serve the nation.">
+
+    <!-- Favicon -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Caveat:wght@400;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
+
+    <!-- Main Script -->
+    <script src="main.js" defer></script>
+</head>
+
+<body>
+
+    <!-- ========== HEADER ========== -->
+    <header class="header scrolled" id="main-header" style="padding: 1.1rem 0;">
+        <div class="header-container">
+            <a href="index.html" class="logo-link">
+                ADITYA<span class="accent">.</span>DEV
+            </a>
+
+            <nav class="nav-links">
+                <a href="about.html" class="nav-item active">About</a>
+                <a href="education.html" class="nav-item">Education</a>
+                <a href="projects.html" class="nav-item">Projects</a>
+                <a href="goals.html" class="nav-item">Goals</a>
+                <a href="contact.html" class="nav-item">Contact</a>
+            </nav>
+
+            <div class="header-cta">
+                <a href="contact.html"><button class="btn btn-ghost" id="hire-btn">Hire Me</button></a>
+            </div>
+
+            <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
+                <span class="menu-line line-top"></span>
+                <span class="menu-line line-bottom"></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ========== MOBILE NAV ========== -->
+    <div class="mobile-nav" id="mobile-nav">
+        <a href="about.html" class="mobile-nav-item active">About</a>
+        <a href="education.html" class="mobile-nav-item">Education</a>
+        <a href="projects.html" class="mobile-nav-item">Projects</a>
+        <a href="goals.html" class="mobile-nav-item">Goals</a>
+        <a href="contact.html" class="mobile-nav-item">Contact</a>
+    </div>
+
+    <main style="padding-top: 5rem;">
+
+        <!-- ========== ABOUT ========== -->
+        <section class="about-section" id="about">
+            <div class="container">
+                <div class="section-label">01 / About</div>
+                <h2 class="section-title reveal-up">CODING<br>WITH A<br>PURPOSE</h2>
+                <div class="section-subtitle-handwritten"
+                    style="font-family:var(--font-handwriting);font-size:2.2rem;color:var(--accent);margin-top:0.5rem;margin-bottom:2rem;transform:rotate(-1deg);">
+                    aspirations to serve the nation.</div>
+
+                <div class="about-grid">
+                    <div class="about-left">
+                        <p class="about-lead reveal-up">
+                            Hey, I'm Aditya — a <em>freshly graduated</em> 12th class student with a fire to become a
+                            cybersecurity expert and MERN developer.
+                        </p>
+                        <p class="about-text reveal-up">
+                            I just completed my 12th class this year and I'm now pursuing Computer Science Engineering
+                            at <strong style="color:var(--text)">Rungta International Skill University, Bhilai,
+                                Chhattisgarh</strong>. Every line of code I write is a step toward my mission.
+                        </p>
+                        <p class="about-text reveal-up">
+                            My dream is not just to become a developer — it's to be an ethical hacker who protects
+                            systems, secures digital infrastructure, and serves the nation. I am at the very beginning
+                            of this journey, and I am fully committed to it.
+                        </p>
+                        <br>
+                        <a href="contact.html"><button class="btn btn-primary reveal-up"
+                                id="work-together-btn">Get In Touch</button></a>
+                    </div>
+
+                    <div class="about-right">
+                        <!-- Profile Photo Card -->
+                        <div class="profile-card reveal-up" id="profile-card-3d">
+                            <div class="profile-glow"></div>
+                            <div class="profile-card-inner">
+                                <div class="profile-hud-lines"></div>
+                                <img src="aditya-hero.jpg" alt="Aditya Soni Profile" class="profile-img">
+                                <div class="profile-scanlines"></div>
+                                <div class="profile-cyber-overlay"></div>
+                            </div>
+                            <!-- Cyber Badges -->
+                            <div class="cyber-badge badge-top-left">
+                                <span class="badge-dot"></span> SECURE_PORT // 8080
+                            </div>
+                            <div class="cyber-badge badge-bottom-right">
+                                <span class="badge-dot pulsing"></span> STATUS // ACTIVE_HACKER
+                            </div>
+                        </div>
+
+                        <div class="skills-card card-3d-tilt">
+                            <div class="skills-card-header">
+                                <span class="skills-card-title">Skills &amp; Learning Path</span>
+                                <span class="online-badge">Learning</span>
+                            </div>
+
+                            <div class="skill-group">
+                                <div class="skill-group-name">MERN Stack</div>
+                                <div class="skill-tags">
+                                    <span class="skill-tag">MongoDB</span>
+                                    <span class="skill-tag">Express.js</span>
+                                    <span class="skill-tag">React.js</span>
+                                    <span class="skill-tag">Node.js</span>
+                                    <span class="skill-tag">REST APIs</span>
+                                </div>
+                            </div>
+
+                            <div class="skill-group">
+                                <div class="skill-group-name">Cybersecurity</div>
+                                <div class="skill-tags">
+                                    <span class="skill-tag">Ethical Hacking</span>
+                                    <span class="skill-tag">Penetration Testing</span>
+                                    <span class="skill-tag">Network Security</span>
+                                    <span class="skill-tag">Linux</span>
+                                </div>
+                            </div>
+
+                            <div class="skill-group">
+                                <div class="skill-group-name">Fundamentals</div>
+                                <div class="skill-tags">
+                                    <span class="skill-tag">HTML / CSS</span>
+                                    <span class="skill-tag">JavaScript</span>
+                                    <span class="skill-tag">C / C++</span>
+                                    <span class="skill-tag">Git &amp; GitHub</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI IMAGE: MERN Dev Banner -->
+        <div class="section-divider-image">
+            <div class="section-ai-image">
+                <img src="img-mern.png" alt="MERN Stack Development">
+                <div class="img-label">MERN Stack &nbsp;·&nbsp; Full Stack Development &nbsp;·&nbsp; MongoDB · Express ·
+                    React · Node</div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <div class="container footer-container">
+            <span class="footer-copy">© 2026 Aditya Soni. All Rights Reserved.</span>
+            <div class="footer-socials">
+                <a href="https://github.com" target="_blank" class="social-link">GitHub</a>
+                <a href="https://linkedin.com" target="_blank" class="social-link">LinkedIn</a>
+                <a href="/admin" class="social-link" style="color:var(--accent);">Admin DB</a>
+                <a href="mailto:mradityasoni.cse@gmail.com" class="social-link">Email</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>
