@@ -37,35 +37,25 @@ public class Server {
 
         try {
             HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
-            
-            // Basic Authenticator for admin and secured API routes
-            BasicAuthenticator authenticator = new BasicAuthenticator("admin") {
-                @Override
-                public boolean checkCredentials(String username, String password) {
-                    return "aditya".equals(username) && "soni123".equals(password);
-                }
-            };
 
             // Map /api/contact handler
             server.createContext("/api/contact", new ContactHandler());
             
             // Map /api/booking-submit handler (public POST)
             server.createContext("/api/booking-submit", new BookingSubmitHandler());
+
+            // Map /api/login handler (POST login credentials and set secure cookie)
+            server.createContext("/api/login", new LoginHandler());
             
             // Map /api/messages handler (GET for list, DELETE for deletion) - PROTECTED
-            HttpContext messagesContext = server.createContext("/api/messages", new MessagesHandler());
-            messagesContext.setAuthenticator(authenticator);
+            server.createContext("/api/messages", new MessagesHandler());
             
             // Map /api/bookings handler (GET for list, DELETE for deletion) - PROTECTED
-            HttpContext bookingsContext = server.createContext("/api/bookings", new BookingsHandler());
-            bookingsContext.setAuthenticator(authenticator);
+            server.createContext("/api/bookings", new BookingsHandler());
 
             // Map /admin and /admin.html context - PROTECTED
-            HttpContext adminContext = server.createContext("/admin", new StaticFileHandler());
-            adminContext.setAuthenticator(authenticator);
-
-            HttpContext adminHtmlContext = server.createContext("/admin.html", new StaticFileHandler());
-            adminHtmlContext.setAuthenticator(authenticator);
+            server.createContext("/admin", new StaticFileHandler());
+            server.createContext("/admin.html", new StaticFileHandler());
             
             // Map default context for static file serving
             server.createContext("/", new StaticFileHandler());
@@ -127,6 +117,65 @@ public class Server {
         }
     }
 
+    private static boolean isAuthenticated(HttpExchange exchange) {
+        String cookieHeader = exchange.getRequestHeaders().getFirst("Cookie");
+        if (cookieHeader == null) {
+            return false;
+        }
+        String[] cookies = cookieHeader.split(";");
+        for (String cookie : cookies) {
+            String[] pair = cookie.trim().split("=", 2);
+            if (pair.length == 2 && "session_id".equals(pair[0].trim())) {
+                return "authorized_aditya_session".equals(pair[1].trim());
+            }
+        }
+        return false;
+    }
+
+    // Handles POST /api/login and sets authentication cookie
+    static class LoginHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            setCorsHeaders(exchange);
+
+            if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(204, -1);
+                return;
+            }
+
+            if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                sendResponse(exchange, 405, "application/json", "{\"status\":\"error\",\"message\":\"Method Not Allowed\"}");
+                return;
+            }
+
+            try {
+                InputStream is = exchange.getRequestBody();
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                byte[] buffer = new byte[1024];
+                int len;
+                while ((len = is.read(buffer)) != -1) {
+                    bos.write(buffer, 0, len);
+                }
+                String body = bos.toString(StandardCharsets.UTF_8);
+                String contentType = exchange.getRequestHeaders().getFirst("Content-Type");
+
+                Map<String, String> data = parseBody(body, contentType);
+                String username = data.getOrDefault("username", "").trim();
+                String password = data.getOrDefault("password", "");
+
+                if ("aditya".equals(username) && "soni123".equals(password)) {
+                    exchange.getResponseHeaders().add("Set-Cookie", "session_id=authorized_aditya_session; Path=/; HttpOnly; SameSite=Lax");
+                    sendResponse(exchange, 200, "application/json", "{\"status\":\"success\",\"message\":\"Access Granted\"}");
+                } else {
+                    sendResponse(exchange, 401, "application/json", "{\"status\":\"error\",\"message\":\"Invalid credentials. Access denied.\"}");
+                }
+            } catch (Exception e) {
+                System.err.println("Login Error: " + e.getMessage());
+                sendResponse(exchange, 500, "application/json", "{\"status\":\"error\",\"message\":\"Internal server error.\"}");
+            }
+        }
+    }
+
     private static void setCorsHeaders(HttpExchange exchange) {
         exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
         exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
@@ -155,6 +204,8 @@ public class Server {
             params.put("booking_date", extractJsonValue(body, "booking_date"));
             params.put("booking_time", extractJsonValue(body, "booking_time"));
             params.put("topic", extractJsonValue(body, "topic"));
+            params.put("username", extractJsonValue(body, "username"));
+            params.put("password", extractJsonValue(body, "password"));
         } else {
             // application/x-www-form-urlencoded parsing
             String[] pairs = body.split("&");
@@ -289,6 +340,11 @@ public class Server {
                 return;
             }
 
+            if (!isAuthenticated(exchange)) {
+                sendResponse(exchange, 401, "application/json", "{\"status\":\"error\",\"message\":\"Unauthorized\"}");
+                return;
+            }
+
             String method = exchange.getRequestMethod();
             if ("GET".equalsIgnoreCase(method)) {
                 // Return all messages from database as JSON
@@ -371,6 +427,11 @@ public class Server {
 
             if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
                 exchange.sendResponseHeaders(204, -1);
+                return;
+            }
+
+            if (!isAuthenticated(exchange)) {
+                sendResponse(exchange, 401, "application/json", "{\"status\":\"error\",\"message\":\"Unauthorized\"}");
                 return;
             }
 
@@ -535,6 +596,15 @@ public class Server {
             // Rewrite /admin or /admin/ to admin.html
             if (pathStr.equals("/admin") || pathStr.equals("/admin/")) {
                 pathStr = "/admin.html";
+            }
+
+            // Authentication verification for admin views
+            if ("/admin.html".equals(pathStr)) {
+                if (!isAuthenticated(exchange)) {
+                    exchange.getResponseHeaders().set("Location", "/login.html");
+                    exchange.sendResponseHeaders(302, -1);
+                    return;
+                }
             }
 
             // Remove leading slash to get relative file path

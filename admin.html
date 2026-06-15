@@ -771,7 +771,7 @@
             const endpoint = type === 'messages' ? '/api/messages' : '/api/bookings';
             logToTerminal(`SELECT * FROM ${type === 'messages' ? 'contacts' : 'bookings'} ORDER BY ...;`, 'info');
 
-            fetch(endpoint)
+            fetch(window.location.origin + endpoint)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Database server returned HTTP ' + response.status);
@@ -998,7 +998,7 @@
             const endpoint = type === 'message' ? `/api/messages?id=${id}` : `/api/bookings?id=${id}`;
             logToTerminal(`DELETE FROM ${type === 'message' ? 'contacts' : 'bookings'} WHERE id = ${id};`, 'info');
 
-            fetch(endpoint, {
+            fetch(window.location.origin + endpoint, {
                 method: 'DELETE'
             })
                 .then(response => {

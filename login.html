@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html class="dark scroll-smooth" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>aditya.dev | Admin Access</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-bg': '#050811',
+                        'brand-surface': '#0c1122',
+                        'brand-surface-high': '#182038',
+                        'brand-primary': '#f43f5e',
+                        'brand-secondary': '#8b5cf6',
+                        'on-brand-text': '#e2e8f0',
+                        'on-brand-muted': '#94a3b8'
+                    },
+                    fontFamily: {
+                        display: ['Oswald', 'sans-serif'],
+                        body: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    
+    <!-- GSAP for Entry Animation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        body {
+            background-color: #050811;
+            color: #e2e8f0;
+            overflow: hidden;
+        }
+
+        .glass-card {
+            background: rgba(12, 17, 34, 0.45);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .gradient-border-glow::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(135deg, #f43f5e, #8b5cf6);
+            border-radius: inherit;
+            z-index: -1;
+            opacity: 0.15;
+            transition: opacity 0.4s ease;
+        }
+        .gradient-border-glow:hover::after {
+            opacity: 0.4;
+        }
+    </style>
+</head>
+<body class="font-body min-h-screen flex items-center justify-center p-6 relative">
+
+    <!-- Glowing Background Auras -->
+    <div class="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-brand-primary/10 rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-brand-secondary/10 rounded-full blur-[120px] pointer-events-none animate-pulse" style="animation-delay: 2s;"></div>
+
+    <!-- Login Card Container -->
+    <div id="login-container" class="w-full max-w-md glass-card p-8 rounded-3xl relative z-10 opacity-0 transform translate-y-8">
+        <!-- Brand Title -->
+        <div class="text-center mb-8">
+            <div class="w-16 h-16 rounded-2xl bg-brand-bg border border-white/10 flex items-center justify-center text-brand-primary text-2xl shadow-lg shadow-brand-primary/10 mx-auto mb-4">
+                <i class="fa-solid fa-key"></i>
+            </div>
+            <h1 class="font-display text-3xl font-bold tracking-wider text-white uppercase">Admin Portal</h1>
+            <p class="text-on-brand-muted text-xs mt-1">Authenticate to access portfolio database nodes</p>
+        </div>
+
+        <!-- Credentials Form -->
+        <form id="login-form" class="space-y-5">
+            <div class="space-y-1">
+                <label class="text-xs font-mono uppercase tracking-wider text-on-brand-muted block ml-1">Admin Username</label>
+                <div class="relative">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-brand-muted text-sm"><i class="fa-solid fa-user"></i></span>
+                    <input id="username" class="w-full bg-neutral-950/80 border border-white/10 focus:border-brand-primary rounded-xl pl-10 pr-4 py-3 text-sm text-white focus:ring-2 focus:ring-brand-primary/20 transition-all outline-none" placeholder="Enter username" type="text" autocomplete="username" required/>
+                </div>
+            </div>
+
+            <div class="space-y-1">
+                <label class="text-xs font-mono uppercase tracking-wider text-on-brand-muted block ml-1">Access Password</label>
+                <div class="relative">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-brand-muted text-sm"><i class="fa-solid fa-lock"></i></span>
+                    <input id="password" class="w-full bg-neutral-950/80 border border-white/10 focus:border-brand-primary rounded-xl pl-10 pr-4 py-3 text-sm text-white focus:ring-2 focus:ring-brand-primary/20 transition-all outline-none" placeholder="Enter password" type="password" autocomplete="current-password" required/>
+                </div>
+            </div>
+
+            <button type="submit" id="submit-btn" class="w-full mt-2 bg-gradient-to-r from-brand-primary to-brand-secondary hover:brightness-110 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99] transition-all shadow-lg shadow-brand-primary/10">
+                <span>Sign In</span>
+                <i class="fa-solid fa-arrow-right-to-bracket text-xs"></i>
+            </button>
+
+            <!-- Error Banner -->
+            <div id="error-status" class="hidden p-4 rounded-xl text-center font-bold text-xs bg-red-500/20 text-red-400 border border-red-500/30 transition-all duration-300"></div>
+        </form>
+
+        <!-- Back to site -->
+        <div class="text-center mt-6">
+            <a href="/" class="text-xs text-on-brand-muted hover:text-white transition-colors"><i class="fa-solid fa-arrow-left mr-1"></i> Back to Portfolio</a>
+        </div>
+    </div>
+
+    <!-- JS Logic -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Animate card entrance
+            gsap.to("#login-container", {
+                opacity: 1,
+                y: 0,
+                duration: 0.6,
+                ease: "power3.out"
+            });
+
+            const form = document.getElementById("login-form");
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                
+                const submitBtn = document.getElementById("submit-btn");
+                const submitSpan = submitBtn.querySelector("span");
+                const errorStatus = document.getElementById("error-status");
+
+                submitBtn.disabled = true;
+                submitSpan.textContent = "Verifying Credentials...";
+                errorStatus.classList.add("hidden");
+
+                const username = document.getElementById("username").value.trim();
+                const password = document.getElementById("password").value;
+
+                try {
+                    const response = await fetch(window.location.origin + "/api/login", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ username, password })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok && data.status === "success") {
+                        submitSpan.textContent = "Access Granted...";
+                        // Redirect to admin dashboard
+                        setTimeout(() => {
+                            window.location.href = "/admin";
+                        }, 800);
+                    } else {
+                        throw new Error(data.message || "Invalid credentials. Access denied.");
+                    }
+                } catch (error) {
+                    errorStatus.textContent = "✗ Authentication Fault: " + error.message;
+                    errorStatus.classList.remove("hidden");
+                    submitBtn.disabled = false;
+                    submitSpan.textContent = "Sign In";
+                }
+            });
+        });
+    </script>
+</body>
+</html>
