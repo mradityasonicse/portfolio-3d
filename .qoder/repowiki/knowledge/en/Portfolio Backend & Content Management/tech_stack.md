@@ -1,3 +1,0 @@
-- **Runtime**: Java 21 (Eclipse Temurin) using `com.sun.net.httpserver` for zero-dependency HTTP serving.
-- **Database**: SQLite via `sqlite-jdbc-3.45.1.0.jar` for embedded, file-based persistence.
-- **Logging**: SLF4J API and Simple implementation (`slf4j-api-1.7.36.jar`, `slf4j-simple-1.7.36.jar`) for console logging.

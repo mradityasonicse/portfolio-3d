@@ -25,7 +25,19 @@ backups/
 .vscode/
 .idea/
 *.swp
+.qoder/
 
 # Environment
 .env
 .env.local
+
+# Java source (old server - replaced by Node.js)
+Server*.java
+Server*.class
+
+# Java libraries
+lib/
+
+# Documentation (auto-generated)
+design.md
+run_server.bat

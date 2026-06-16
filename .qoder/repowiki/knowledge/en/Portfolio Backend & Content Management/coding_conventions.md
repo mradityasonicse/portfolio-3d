@@ -1,5 +1,0 @@
-- All API handlers implement CORS support by calling `setCorsHeaders()` and explicitly handling `OPTIONS` requests with a 204 response.
-- Request bodies are parsed using a custom `parseBody()` method that supports both `application/json` (via regex extraction) and `application/x-www-form-urlencoded` formats.
-- Database interactions consistently use `try-with-resources` blocks for `Connection`, `Statement`, and `ResultSet` to ensure proper resource closure.
-- JSON responses are manually constructed using `StringBuilder` and escaped via a custom `escapeJson()` utility to avoid external JSON library dependencies.
-- Protected endpoints verify authentication by checking for a specific `session_id` cookie value before processing any business logic.

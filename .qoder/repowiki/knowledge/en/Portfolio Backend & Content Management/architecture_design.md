@@ -1,5 +1,0 @@
-- **Core Framework**: Built on `com.sun.net.httpserver` (JDK built-in) with a single `Server.java` entry point handling routing and lifecycle.
-- **Handler Pattern**: Uses inner static classes implementing `HttpHandler` (e.g., `ContactHandler`, `ProjectsCrudHandler`) to encapsulate logic for specific API endpoints like `/api/contact` or `/api/projects-crud`.
-- **Data Persistence**: SQLite (`jdbc:sqlite:portfolio.db`) is used for all dynamic data, including contact messages, bookings, and CMS content (projects, education, experience, settings). The schema is auto-initialized and migrated via `ALTER TABLE` checks in `initializeDatabase()`.
-- **Security Model**: Implements a simple cookie-based session (`session_id=authorized_aditya_session`) checked by `isAuthenticated()` to protect admin routes (`/admin.html`) and CRUD API endpoints.
-- **Static Serving**: A `StaticFileHandler` serves HTML/CSS/JS assets from the root directory, with path traversal protection via canonical file path validation.
