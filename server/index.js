@@ -34,7 +34,15 @@ const adminRoutes = require('./routes/admin');
 const PORT = parseInt(process.env.PORT || '3000', 10);
 
 // Initialize database
-initializeDatabase();
+try {
+  console.log('Initializing database...');
+  initializeDatabase();
+  console.log('✓ Database initialized successfully');
+} catch (error) {
+  console.error('❌ Database initialization failed:', error.message);
+  console.error('Stack:', error.stack);
+  process.exit(1);
+}
 
 const app = express();
 
@@ -127,47 +135,61 @@ app.use((err, req, res, next) => {
 });
 
 // ---- Start Server ----
-const server = app.listen(PORT, '0.0.0.0', () => {
-  console.log('====================================================');
-  console.log('  Premium Portfolio Backend Active (Node.js)');
-  console.log(`  Server running at: http://0.0.0.0:${PORT}`);
-  console.log(`  Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log('  Database: SQLite [portfolio.db]');
-  console.log(`  Admin Panel: /admin`);
-  console.log(`  API Health: /api/health`);
-  console.log('====================================================');
-  console.log('');
-  console.log('  Routes:');
-  console.log('  ✓ /api/auth/*        - Authentication');
-  console.log('  ✓ /api/contact       - Contact form');
-  console.log('  ✓ /api/messages      - Messages CRUD');
-  console.log('  ✓ /api/bookings      - Bookings CRUD');
-  console.log('  ✓ /api/projects*     - Projects CRUD');
-  console.log('  ✓ /api/education*    - Education CRUD');
-  console.log('  ✓ /api/experience*   - Experience CRUD');
-  console.log('  ✓ /api/media         - Media uploads');
-  console.log('  ✓ /api/settings      - Site settings');
-  console.log('  ✓ /api/admin/*       - Admin endpoints');
-  console.log('  ✓ /admin             - Admin SPA');
-  console.log('  ✓ /*                 - Portfolio pages');
-  console.log('====================================================');
-});
-
-// Graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('SIGTERM received, shutting down...');
-  server.close(() => {
-    closeDb();
-    process.exit(0);
+try {
+  const server = app.listen(PORT, '0.0.0.0', () => {
+    console.log('====================================================');
+    console.log('  Premium Portfolio Backend Active (Node.js)');
+    console.log(`  Server running at: http://0.0.0.0:${PORT}`);
+    console.log(`  Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log('  Database: SQLite [portfolio.db]');
+    console.log(`  Admin Panel: /admin`);
+    console.log(`  API Health: /api/health`);
+    console.log('====================================================');
+    console.log('');
+    console.log('  Routes:');
+    console.log('  ✓ /api/auth/*        - Authentication');
+    console.log('  ✓ /api/contact       - Contact form');
+    console.log('  ✓ /api/messages      - Messages CRUD');
+    console.log('  ✓ /api/bookings      - Bookings CRUD');
+    console.log('  ✓ /api/projects*     - Projects CRUD');
+    console.log('  ✓ /api/education*    - Education CRUD');
+    console.log('  ✓ /api/experience*   - Experience CRUD');
+    console.log('  ✓ /api/media         - Media uploads');
+    console.log('  ✓ /api/settings      - Site settings');
+    console.log('  ✓ /api/admin/*       - Admin endpoints');
+    console.log('  ✓ /admin             - Admin SPA');
+    console.log('  ✓ /*                 - Portfolio pages');
+    console.log('====================================================');
   });
-});
 
-process.on('SIGINT', () => {
-  console.log('SIGINT received, shutting down...');
-  server.close(() => {
-    closeDb();
-    process.exit(0);
+  // Handle server errors
+  server.on('error', (err) => {
+    console.error('❌ Server error:', err.message);
+    console.error('Port:', PORT);
+    console.error('Stack:', err.stack);
+    process.exit(1);
   });
-});
+
+  // Graceful shutdown
+  process.on('SIGTERM', () => {
+    console.log('SIGTERM received, shutting down...');
+    server.close(() => {
+      closeDb();
+      process.exit(0);
+    });
+  });
+
+  process.on('SIGINT', () => {
+    console.log('SIGINT received, shutting down...');
+    server.close(() => {
+      closeDb();
+      process.exit(0);
+    });
+  });
+} catch (error) {
+  console.error('❌ Failed to start server:', error.message);
+  console.error('Stack:', error.stack);
+  process.exit(1);
+}
 
 module.exports = app;
