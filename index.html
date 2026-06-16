@@ -1336,7 +1336,7 @@
                     const message = `[Subject: ${subject}]\n\n${messageText}`;
 
                     try {
-                        const response = await fetch(window.location.origin + "/api/contact", {
+                        const response = await fetch("/api/contact", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({ name, email, message })
@@ -1344,7 +1344,7 @@
 
                         const data = await response.json();
 
-                        if (response.ok) {
+                        if (response.ok && data.status === 'success') {
                             formStatus.textContent = "✓ Message sent! I'll get back to you soon.";
                             formStatus.classList.add("bg-green-500/20", "text-green-400");
                             formStatus.classList.remove("hidden");
@@ -1353,6 +1353,7 @@
                             throw new Error(data.message || "Something went wrong. Try again.");
                         }
                     } catch (error) {
+                        console.error('Contact form error:', error);
                         formStatus.textContent = "✗ Error: " + error.message;
                         formStatus.classList.add("bg-red-500/20", "text-red-400");
                         formStatus.classList.remove("hidden");

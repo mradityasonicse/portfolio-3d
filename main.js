@@ -736,6 +736,8 @@ function initContactForm() {
             message: document.getElementById('message').value
         };
 
+        console.log('Sending contact form data:', formData);
+
         // Post request to SQL backend
         fetch('/api/contact', {
             method: 'POST',
