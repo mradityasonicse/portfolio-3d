@@ -129,11 +129,27 @@ app.use((err, req, res, next) => {
 // ---- Start Server ----
 const server = app.listen(PORT, '0.0.0.0', () => {
   console.log('====================================================');
-  console.log(' Premium Portfolio Backend Active (Node.js)');
-  console.log(` Server running at: http://localhost:${PORT}`);
-  console.log(' Database: SQLite [portfolio.db]');
-  console.log(` Admin Panel: http://localhost:${PORT}/admin`);
-  console.log(' Press Ctrl+C to stop.');
+  console.log('  Premium Portfolio Backend Active (Node.js)');
+  console.log(`  Server running at: http://0.0.0.0:${PORT}`);
+  console.log(`  Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log('  Database: SQLite [portfolio.db]');
+  console.log(`  Admin Panel: /admin`);
+  console.log(`  API Health: /api/health`);
+  console.log('====================================================');
+  console.log('');
+  console.log('  Routes:');
+  console.log('  ✓ /api/auth/*        - Authentication');
+  console.log('  ✓ /api/contact       - Contact form');
+  console.log('  ✓ /api/messages      - Messages CRUD');
+  console.log('  ✓ /api/bookings      - Bookings CRUD');
+  console.log('  ✓ /api/projects*     - Projects CRUD');
+  console.log('  ✓ /api/education*    - Education CRUD');
+  console.log('  ✓ /api/experience*   - Experience CRUD');
+  console.log('  ✓ /api/media         - Media uploads');
+  console.log('  ✓ /api/settings      - Site settings');
+  console.log('  ✓ /api/admin/*       - Admin endpoints');
+  console.log('  ✓ /admin             - Admin SPA');
+  console.log('  ✓ /*                 - Portfolio pages');
   console.log('====================================================');
 });
 
