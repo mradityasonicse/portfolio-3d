@@ -80,3 +80,6 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 }));
+
+// Default export for compatibility
+export default useAuthStore;
