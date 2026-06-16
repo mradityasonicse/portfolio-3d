@@ -33,7 +33,7 @@ router.get('/activity', (req, res) => {
   const limit = Math.min(parseInt(req.query.limit) || 20, 100);
   try {
     const logs = db.prepare(
-      'SELECT * FROM activity_logs ORDER BY created_at DESC LIMIT ?'
+      'SELECT * FROM activity_logs ORDER BY timestamp DESC LIMIT ?'
     ).all(limit);
     res.json({ logs });
   } catch (e) {

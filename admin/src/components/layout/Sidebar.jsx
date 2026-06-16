@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Settings, Layers, FolderOpen, GraduationCap,
   Briefcase, MessageSquare, CalendarCheck, Image, Database,
   BarChart3, Shield, HardDriveDownload, Rocket, Key, FileText,
-  LogOut, Bot
+  LogOut, Bot, Palette, Type, Layout, Sparkles
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { toast } from 'sonner';
@@ -18,9 +18,18 @@ const nav = [
     ]
   },
   {
+    label: 'Design System',
+    items: [
+      { to: '/admin/theme', label: 'Theme Manager', icon: Palette },
+      { to: '/admin/typography', label: 'Typography', icon: Type },
+      { to: '/admin/layout', label: 'Layout Controls', icon: Layout },
+      { to: '/admin/animations', label: 'Animations', icon: Sparkles },
+      { to: '/admin/settings', label: 'Site Settings', icon: Settings },
+    ]
+  },
+  {
     label: 'Content',
     items: [
-      { to: '/admin/settings', label: 'Settings & Theme', icon: Settings },
       { to: '/admin/content', label: 'Section Builder', icon: Layers },
       { to: '/admin/pages', label: 'Page Builder', icon: FileText },
       { to: '/admin/media', label: 'Media Library', icon: Image },

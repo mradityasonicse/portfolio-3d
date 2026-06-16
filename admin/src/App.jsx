@@ -4,6 +4,10 @@ import Login from './pages/Login';
 import AppShell from './components/layout/AppShell';
 import Dashboard from './pages/Dashboard';
 import Settings from './pages/Settings';
+import ThemeManager from './pages/ThemeManager';
+import Typography from './pages/Typography';
+import LayoutControls from './pages/LayoutControls';
+import AnimationControls from './pages/AnimationControls';
 import ContentBuilder from './pages/ContentBuilder';
 import Projects from './pages/Projects';
 import Education from './pages/Education';
@@ -27,6 +31,10 @@ export default function App() {
         <Route path="/admin" element={<AppShell />}>
           <Route index element={<Dashboard />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="theme" element={<ThemeManager />} />
+          <Route path="typography" element={<Typography />} />
+          <Route path="layout" element={<LayoutControls />} />
+          <Route path="animations" element={<AnimationControls />} />
           <Route path="content" element={<ContentBuilder />} />
           <Route path="pages" element={<PageBuilder />} />
           <Route path="projects" element={<Projects />} />

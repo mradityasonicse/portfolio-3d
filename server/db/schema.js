@@ -167,11 +167,22 @@ function initializeDatabase() {
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )`);
 
+  // Drop table if it has the old schema (e.g. key_value exists)
+  try {
+    const tableInfo = db.prepare("PRAGMA table_info(api_keys)").all();
+    const hasKeyValue = tableInfo.some(col => col.name === 'key_value');
+    if (hasKeyValue) {
+      db.exec("DROP TABLE api_keys");
+      console.log('DB: Dropped old api_keys table to apply schema updates');
+    }
+  } catch (e) {
+    // Ignore
+  }
+
   db.exec(`CREATE TABLE IF NOT EXISTS api_keys (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
-    service TEXT NOT NULL,
-    key_value TEXT NOT NULL,
+    key TEXT NOT NULL,
     permissions TEXT DEFAULT 'read',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     expires_at TIMESTAMP
@@ -189,8 +200,20 @@ function initializeDatabase() {
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )`);
 
+  // Drop table if it has the old schema (e.g. id is INTEGER)
+  try {
+    const tableInfo = db.prepare("PRAGMA table_info(backups)").all();
+    const idCol = tableInfo.find(col => col.name === 'id');
+    if (idCol && idCol.type === 'INTEGER') {
+      db.exec("DROP TABLE backups");
+      console.log('DB: Dropped old backups table to apply schema updates');
+    }
+  } catch (e) {
+    // Ignore
+  }
+
   db.exec(`CREATE TABLE IF NOT EXISTS backups (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id TEXT PRIMARY KEY,
     filename TEXT NOT NULL,
     path TEXT NOT NULL,
     size INTEGER,
