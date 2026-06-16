@@ -6,7 +6,9 @@ npm-debug.log
 .idea
 .env
 .env.local
-*.md
+README.md
+DEPLOY.md
+design.md
 Dockerfile
 docker-compose.yml
 railway.toml
@@ -14,4 +16,5 @@ lib/
 *.class
 .backups
 uploads/*
-!uploads/.gitkeep
+admin/node_modules
+admin/dist

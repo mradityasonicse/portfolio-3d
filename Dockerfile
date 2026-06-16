@@ -8,12 +8,13 @@ RUN npm run build
 
 # Stage 2: Production Node.js server
 FROM node:20-alpine
+
 WORKDIR /app
 
 # Install build tools for better-sqlite3 native module
 RUN apk add --no-cache python3 make g++
 
-# Copy Node.js deps
+# Copy Node.js deps and install
 COPY package.json ./
 RUN npm install --production
 
@@ -23,11 +24,19 @@ COPY server/ ./server/
 # Copy built admin SPA
 COPY --from=admin-builder /admin/dist ./admin/dist
 
-# Copy static files (existing portfolio site)
-COPY *.html *.css *.js *.png *.jpg *.jpeg *.webp *.ico *.txt ./
+# Copy ALL static files from root directory
+COPY *.html ./
+COPY *.css ./
+COPY *.js ./
+COPY *.png ./
+COPY *.jpg ./
+COPY *.jpeg ./
+COPY *.webp ./
+COPY *.txt ./
 
-# Create uploads and backups dirs
+# Create required directories
 RUN mkdir -p uploads backups
 
 EXPOSE 3000
+
 CMD ["node", "server/index.js"]
