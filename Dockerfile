@@ -1,8 +1,8 @@
 # Stage 1: Build admin React SPA
 FROM node:20-alpine AS admin-builder
 WORKDIR /admin
-COPY admin/package.json admin/package-lock.json* ./
-RUN npm ci
+COPY admin/package.json ./
+RUN npm install
 COPY admin/ .
 RUN npm run build
 
@@ -14,8 +14,8 @@ WORKDIR /app
 RUN apk add --no-cache python3 make g++
 
 # Copy Node.js deps
-COPY package.json package-lock.json* ./
-RUN npm ci --production
+COPY package.json ./
+RUN npm install --production
 
 # Copy server code
 COPY server/ ./server/

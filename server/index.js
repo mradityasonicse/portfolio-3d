@@ -3,6 +3,16 @@ const path = require('path');
 const fs = require('fs');
 const compression = require('compression');
 const cookieParser = require('cookie-parser');
+
+// Load environment variables (development only)
+if (process.env.NODE_ENV !== 'production') {
+  try {
+    require('dotenv').config();
+  } catch (e) {
+    // dotenv not installed, skip
+  }
+}
+
 const { initializeDatabase } = require('./db/schema');
 const { closeDb } = require('./db/connection');
 const corsMiddleware = require('./middleware/cors');
@@ -64,8 +74,11 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // ---- Static Files: Admin SPA ----
 const adminBuildPath = path.join(__dirname, '..', 'admin', 'dist');
 if (fs.existsSync(adminBuildPath)) {
-  app.use('/admin', express.static(adminBuildPath));
-  app.get('/admin/*', (req, res) => {
+  // Serve admin static assets
+  app.use('/admin/assets', express.static(path.join(adminBuildPath, 'assets')));
+  
+  // Serve admin index.html for /admin and /admin/*
+  app.get(['/admin', '/admin/*'], (req, res) => {
     res.sendFile(path.join(adminBuildPath, 'index.html'));
   });
 } else {
