@@ -56,6 +56,10 @@ app.use(rateLimitMiddleware());
 
 // ---- API Routes ----
 app.use('/api/auth', authRoutes);
+app.post('/api/login', (req, res, next) => {
+  req.url = '/legacy-login';
+  next();
+}, authRoutes);
 app.use('/api/login', authRoutes); // Legacy compatibility
 app.use('/api/settings', settingsRoutes);
 app.use('/api/contact', contactRoutes);

@@ -2,6 +2,7 @@
 FROM node:20-alpine AS admin-builder
 WORKDIR /admin
 COPY admin/package.json ./
+COPY admin/package-lock.json ./
 RUN npm install
 COPY admin/ .
 RUN npm run build
@@ -16,6 +17,7 @@ RUN apk add --no-cache python3 make g++
 
 # Copy Node.js deps and install
 COPY package.json ./
+COPY package-lock.json ./
 RUN npm install --production
 
 # Copy server code
