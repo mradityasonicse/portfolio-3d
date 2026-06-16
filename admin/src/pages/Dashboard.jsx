@@ -44,14 +44,17 @@ export default function Dashboard() {
   useEffect(() => {
     async function load() {
       try {
+        console.log('Loading dashboard stats...');
         const [statsRes, actRes] = await Promise.all([
           api.get('/api/admin/stats'),
           api.get('/api/admin/activity?limit=10'),
         ]);
+        console.log('Stats loaded:', statsRes.data);
         setStats(statsRes.data);
         setActivity(actRes.data.logs ?? []);
-      } catch {
-        // stats endpoint may not exist yet — silently fail
+      } catch (error) {
+        console.error('Failed to load dashboard data:', error);
+        console.error('Error details:', error.response?.data || error.message);
       } finally {
         setLoading(false);
       }
