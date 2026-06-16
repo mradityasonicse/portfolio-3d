@@ -1,0 +1,3 @@
+- **Dependency Bootstrap**: `run_server.bat` automatically downloads required JDBC and SLF4J JARs from Maven Central if missing in the `lib/` directory.
+- **Compilation & Run**: The server is compiled via `javac -cp "lib/*" Server.java` and started with `java -cp ".;lib/*" Server` (Windows) or `java -cp ".:lib/*" Server` (Linux/Docker).
+- **Docker Deployment**: A `Dockerfile` based on `eclipse-temurin:21-jdk-alpine` handles compilation and execution, exposing port 3000.

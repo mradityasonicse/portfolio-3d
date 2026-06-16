@@ -93,18 +93,8 @@
                     </div>
                 </div>
 
-                <div class="coming-soon-box card-3d-tilt">
-                    <div class="coming-soon-icon">🚧</div>
-                    <h3 class="coming-soon-title">Projects in the Making</h3>
-                    <p class="coming-soon-text">
-                        I'm just getting started. I am currently learning and building — my first real-world projects
-                        will live here soon. Check back after I've shipped something worth showing.
-                    </p>
-                    <div class="coming-soon-tags">
-                        <span>MERN App</span>
-                        <span>Security Tool</span>
-                        <span>Open Source</span>
-                    </div>
+                <div class="project-list" id="dynamic-projects-list">
+                    <!-- Dynamic Projects Grid loaded via main.js from SQLite -->
                 </div>
             </div>
         </section>
@@ -132,6 +122,11 @@
             </div>
         </div>
     </footer>
+
+    <!-- Interactive hover preview overlay -->
+    <div id="project-preview" class="project-row-preview">
+        <div id="preview-inner" class="preview-inner"></div>
+    </div>
 
 </body>
 

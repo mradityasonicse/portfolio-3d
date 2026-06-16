@@ -1,0 +1,237 @@
+You are a Senior Product Manager, UX Architect, Full-Stack Architect, and Technical Documentation Expert.
+
+Analyze the following requirement:
+
+"I want to add a hidden Developer Panel inside my portfolio website. This panel should allow me to control and customize the entire portfolio without editing code. I should be able to modify colors, fonts, animations, layouts, content, sections, images, projects, and global settings through a professional admin dashboard. The panel should function like a mini Webflow/Framer editor built directly into the portfolio."
+
+Generate the output in the following format:
+
+1. PRODUCT REQUIREMENT DOCUMENT (PRD)
+
+Define in extreme detail:
+
+- Product Overview
+- Vision
+- Objectives
+- Problem Statement
+- Target Users
+- User Personas
+- User Goals
+- Business Goals
+- Core Features
+- Advanced Features
+- Functional Requirements
+- Non-Functional Requirements
+- User Stories
+- Acceptance Criteria
+- Security Requirements
+- Performance Requirements
+- Scalability Requirements
+- Accessibility Requirements
+- Edge Cases
+- Risks
+- Assumptions
+- Dependencies
+- Success Metrics
+- In Scope
+- Out of Scope
+
+Developer Panel Features must include:
+
+- Theme Management
+- Color System
+- Typography Management
+- Animation Controls
+- Layout Controls
+- Hero Section Editor
+- About Section Editor
+- Skills Editor
+- Experience Editor
+- Portfolio Projects Manager
+- Contact Section Editor
+- Social Links Manager
+- SEO Settings
+- Analytics Settings
+- Export/Import Configuration
+- Backup & Restore
+- Undo/Redo
+- Version History
+- Live Preview
+- Mobile/Tablet/Desktop Preview
+- Global Design System Controls
+
+---
+
+2. APPLICATION FLOW
+
+Create complete flow diagrams and explanations for:
+
+- Visitor Flow
+- Developer Flow
+- Authentication Flow
+- Developer Panel Access Flow
+- Content Editing Flow
+- Theme Customization Flow
+- Project Management Flow
+- Save Changes Flow
+- Restore Backup Flow
+- Export Configuration Flow
+- Error Handling Flow
+- Loading States
+- Empty States
+- Success States
+
+Include every screen and navigation path.
+
+---
+
+3. TECH STACK
+
+Recommend the best production-ready stack.
+
+Include:
+
+Frontend
+
+- Framework
+- Styling
+- Animation Library
+- State Management
+
+Backend
+
+- Framework
+- API Design
+
+Database
+
+- Database Design
+- Caching Strategy
+
+Authentication
+
+- Access Control
+- Role Management
+
+Storage
+
+- Image Storage
+- Asset Storage
+
+Infrastructure
+
+- Hosting
+- CDN
+- Monitoring
+- Logging
+
+DevOps
+
+- CI/CD
+- Testing Strategy
+
+Explain why each technology is selected.
+
+---
+
+4. BACKEND SCHEMA
+
+Design the complete backend architecture.
+
+Include:
+
+Tables/Collections:
+
+- Users
+- Roles
+- Permissions
+- Portfolio Settings
+- Theme Settings
+- Typography Settings
+- Animation Settings
+- Layout Settings
+- Sections
+- Projects
+- Skills
+- Experience
+- Social Links
+- Assets
+- SEO Settings
+- Analytics Settings
+- Backups
+- Activity Logs
+- Version History
+
+For each table define:
+
+- Fields
+- Data Types
+- Relationships
+- Indexes
+- Constraints
+
+Also define:
+
+- REST APIs
+- Request Structures
+- Response Structures
+- Authentication Logic
+- Authorization Logic
+- File Upload Architecture
+- Backup Architecture
+- Audit Logs
+- Version Control System
+
+---
+
+5. IMPLEMENTATION PLAN
+
+Create a complete roadmap.
+
+Phase 1:
+Foundation & Architecture
+
+Phase 2:
+Developer Panel UI
+
+Phase 3:
+Theme & Design Controls
+
+Phase 4:
+Content Management System
+
+Phase 5:
+Project Management
+
+Phase 6:
+Version Control & Backup
+
+Phase 7:
+Optimization
+
+Phase 8:
+Production Deployment
+
+For each phase provide:
+
+- Tasks
+- Deliverables
+- Dependencies
+- Complexity
+- Priority
+- Estimated Development Time
+
+Also provide:
+
+- Folder Structure
+- Component Structure
+- State Management Architecture
+- Database Architecture
+- Security Checklist
+- Testing Checklist
+- Deployment Checklist
+- Maintenance Plan
+
+Output must be enterprise-grade, highly detailed, scalable, production-ready, and suitable for direct implementation by a professional development team.
+
+Make this promt properly in file

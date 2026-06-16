@@ -1,9 +1,31 @@
-# Compiled Java class files
+# Compiled Java class files (kept for backward compat)
 *.class
 
 # SQLite database file
 portfolio.db
+portfolio.db-wal
+portfolio.db-shm
 
 # OS generated files
 .DS_Store
 Thumbs.db
+
+# Node.js
+node_modules/
+npm-debug.log*
+
+# Admin build output
+admin/dist/
+
+# Uploads & backups (runtime data)
+uploads/
+backups/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Environment
+.env
+.env.local

@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>aditya.dev | 3D Interactive Portfolio</title>
+    <title>Aditya Soni — Developer & Security Enthusiast</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -14,19 +14,19 @@
             theme: {
                 extend: {
                     colors: {
-                        'brand-bg': '#050811',
-                        'brand-surface': '#0c1122',
-                        'brand-surface-high': '#182038',
-                        'brand-primary': '#f43f5e',
-                        'brand-secondary': '#8b5cf6',
-                        'brand-accent': '#f59e0b',
-                        'on-brand-text': '#e2e8f0',
-                        'on-brand-muted': '#94a3b8'
+                        'brand-bg': 'var(--bg)',
+                        'brand-surface': 'var(--bg2)',
+                        'brand-surface-high': 'var(--bg-surface-high, #182038)',
+                        'brand-primary': 'var(--accent)',
+                        'brand-secondary': 'var(--accent2)',
+                        'brand-accent': 'var(--accent-color, #f59e0b)',
+                        'on-brand-text': 'var(--text, #e2e8f0)',
+                        'on-brand-muted': 'var(--text-muted, #94a3b8)'
                     },
                     fontFamily: {
-                        display: ['Oswald', 'sans-serif'],
+                        display: ['var(--font-display)', 'Oswald', 'sans-serif'],
                         cursive: ['Caveat', 'cursive'],
-                        body: ['Inter', 'sans-serif']
+                        body: ['var(--font-body)', 'Inter', 'sans-serif']
                     }
                 }
             }
@@ -44,6 +44,9 @@
     <!-- GSAP (Animations) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- Main Dynamic Customizer Script -->
+    <script src="main.js" defer></script>
 
     <style>
         body {
@@ -180,6 +183,7 @@
             background: linear-gradient(to bottom, #f43f5e, #8b5cf6);
         }
     </style>
+    <style id="dynamic-theme-rules"></style>
 </head>
 
 <body class="font-body selection:bg-brand-primary selection:text-white">
@@ -234,7 +238,7 @@
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             <!-- Logo Link -->
             <a href="#about"
-                class="font-display text-2xl font-bold tracking-tight text-white flex items-center gap-1 group">
+                class="logo-link font-display text-2xl font-bold tracking-tight text-white flex items-center gap-1 group">
                 ADITYA<span
                     class="text-brand-primary group-hover:scale-125 transition-transform duration-300">.</span>DEV
             </a>
@@ -245,10 +249,9 @@
                 <a href="#about" class="nav-link active py-2 hover:text-white transition-colors">About</a>
                 <a href="#education" class="nav-link py-2 hover:text-white transition-colors">Education</a>
                 <a href="#skills" class="nav-link py-2 hover:text-white transition-colors">Skills</a>
-                <a href="#achievements" class="nav-link py-2 hover:text-white transition-colors">Achievements</a>
+                <a href="#now" class="nav-link py-2 hover:text-white transition-colors">Right Now</a>
                 <a href="#projects" class="nav-link py-2 hover:text-white transition-colors">Projects</a>
-                <a href="#contact" class="nav-link py-2 hover:text-white transition-colors">Contact Me</a>
-                <a href="/admin" onclick="handleAdminClick(event)" class="nav-link py-2 hover:text-white transition-colors">Admin</a>
+                <a href="#contact" class="nav-link py-2 hover:text-white transition-colors">Contact</a>
             </nav>
 
             <!-- Book a Call Header CTA -->
@@ -275,17 +278,15 @@
                 class="hover:text-brand-primary py-2 transition-colors">Education</a>
             <a href="#skills" onclick="toggleMobileNav()"
                 class="hover:text-brand-primary py-2 transition-colors">Skills</a>
-            <a href="#achievements" onclick="toggleMobileNav()"
-                class="hover:text-brand-primary py-2 transition-colors">Achievements</a>
+            <a href="#now" onclick="toggleMobileNav()"
+                class="hover:text-brand-primary py-2 transition-colors">Right Now</a>
             <a href="#projects" onclick="toggleMobileNav()"
                 class="hover:text-brand-primary py-2 transition-colors">Projects</a>
             <a href="#contact" onclick="toggleMobileNav()"
-                class="hover:text-brand-primary py-2 transition-colors">Contact Me</a>
-            <a href="/admin" onclick="toggleMobileNav(); handleAdminClick(event);"
-                class="hover:text-brand-primary py-2 transition-colors">Admin</a>
+                class="hover:text-brand-primary py-2 transition-colors">Contact</a>
             <button onclick="openBookingModal(); toggleMobileNav();"
                 class="mt-2 py-3 bg-brand-primary text-white rounded-xl">
-                Book a Call
+                Let's Talk
             </button>
         </div>
     </header>
@@ -302,40 +303,33 @@
                     <div
                         class="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-semibold tracking-wider text-brand-primary uppercase">
                         <span class="w-2 h-2 rounded-full bg-brand-primary animate-ping"></span>
-                        Available for Collaborations
+                        <span id="dynamic-hero-badge">First-year CSE student · Bhilai, CG</span>
                     </div>
 
-                    <h1 class="font-display text-6xl md:text-8xl leading-none uppercase relative">
-                        HELLO I'M <br />
-                        <span class="gradient-text font-black">ADITYA SONI</span>
-                        <!-- Hand-drawn style decorative underline -->
-                        <span class="absolute -bottom-4 left-0 w-52 md:w-80 h-3 pointer-events-none opacity-80">
-                            <svg viewBox="0 0 300 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M5 15C100 5 200 5 295 12C200 15 100 15 5 15" stroke="#f43f5e" stroke-width="4"
-                                    stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
-                        </span>
+                    <h1 id="dynamic-hero-title" class="font-display text-5xl md:text-7xl lg:text-8xl leading-none uppercase relative">
+                        I BUILD WEB THINGS.<br />
+                        <span class="gradient-text font-black">THEN I TRY TO</span><br />
+                        <span class="gradient-text font-black">BREAK THEM.</span>
                     </h1>
 
-                    <p class="font-cursive text-3xl text-brand-accent tracking-wide mt-2 rotate-[-2deg] origin-left">
-                        aditya.dev // engineering digital fortresses & interfaces
+                    <p id="dynamic-hero-subtitle" class="font-cursive text-2xl md:text-3xl text-brand-accent tracking-wide mt-2 rotate-[-1deg] origin-left">
+                        — Aditya Soni
                     </p>
 
-                    <p class="text-on-brand-muted text-lg max-w-2xl leading-relaxed">
-                        I am a full-stack MERN developer and cybersecurity enthusiast pursuing Computer Science
-                        Engineering at <strong class="text-white font-semibold">Rungta International Skill University,
-                            Bhilai</strong>. I specialize in crafting high-end, responsive digital structures and
-                        hardening online systems against vulnerabilities.
+                    <p id="dynamic-hero-description" class="text-on-brand-muted text-lg max-w-2xl leading-relaxed">
+                        I'm a CS undergrad at <strong class="text-white font-semibold">Rungta University, Bhilai</strong> 
+                        who spends most of his time writing MERN stack apps and then poking holes in them on Kali Linux. 
+                        I just finished 12th, so I'm early in this journey — but I'm all in.
                     </p>
 
                     <div class="flex flex-wrap gap-4 pt-4">
                         <a href="#contact"
                             class="px-8 py-4 bg-brand-primary hover:bg-brand-primary/95 text-white font-bold rounded-xl shadow-lg hover:shadow-brand-primary/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-3">
-                            Let's Talk <i class="fa-solid fa-arrow-trend-up"></i>
+                            Say Hello <i class="fa-solid fa-arrow-right"></i>
                         </a>
-                        <a href="#projects"
+                        <a href="#skills"
                             class="px-8 py-4 border border-white/10 hover:border-white/30 hover:bg-white/5 text-white font-bold rounded-xl hover:scale-105 active:scale-95 transition-all">
-                            Explore Projects
+                            See What I Know
                         </a>
                     </div>
                 </div>
@@ -345,33 +339,18 @@
                     <div class="three-d-perspective relative group w-full max-w-[400px]">
                         <!-- Back glow aura -->
                         <div
-                            class="absolute -inset-4 bg-gradient-to-tr from-brand-primary to-brand-secondary rounded-3xl opacity-20 blur-3xl group-hover:opacity-40 transition-opacity duration-500 pointer-events-none">
+                            class="absolute -inset-4 bg-gradient-to-tr from-brand-primary to-brand-secondary rounded-3xl opacity-15 blur-3xl group-hover:opacity-30 transition-opacity duration-500 pointer-events-none">
                         </div>
 
                         <!-- 3D Card -->
                         <div id="portrait-3d-card"
                             class="three-d-card glass-card p-3 rounded-3xl overflow-hidden aspect-[4/5] relative cursor-pointer">
                             <div class="w-full h-full rounded-2xl overflow-hidden relative">
-                                <img src="aditya-hero.jpg" alt="Aditya Portrait"
+                                <img src="aditya-hero.jpg" alt="Aditya Soni"
                                     class="w-full h-full object-cover select-none pointer-events-none" />
-                                <!-- Scanline grid overlay -->
                                 <div
-                                    class="absolute inset-0 opacity-10 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] [background-size:100%_4px,3px_100%] pointer-events-none">
+                                    class="absolute inset-0 bg-gradient-to-t from-brand-bg via-transparent to-transparent opacity-50 pointer-events-none">
                                 </div>
-                                <div
-                                    class="absolute inset-0 bg-gradient-to-t from-brand-bg via-transparent to-transparent opacity-60 pointer-events-none">
-                                </div>
-                            </div>
-
-                            <!-- Decorative HUD badges inside card -->
-                            <div
-                                class="three-d-inner absolute top-6 left-6 px-3 py-1 rounded-full bg-brand-bg/80 border border-brand-primary/30 text-[10px] font-mono text-brand-primary flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-brand-primary animate-ping"></span>
-                                COMPILER: OK
-                            </div>
-                            <div
-                                class="three-d-inner absolute bottom-6 right-6 px-3 py-1 rounded-full bg-brand-bg/80 border border-brand-secondary/30 text-[10px] font-mono text-brand-secondary">
-                                SYS // STATUS: ACTIVE
                             </div>
                         </div>
                     </div>
@@ -386,13 +365,12 @@
         <section id="skills" class="py-24 px-6 bg-brand-surface/30 border-y border-white/5 relative">
             <div class="max-w-7xl mx-auto space-y-16">
                 <!-- Section Header -->
-                <div class="text-center md:text-left space-y-4">
+                <div class="space-y-4">
                     <span
-                        class="text-brand-primary text-sm font-bold tracking-widest uppercase block">Capabilities</span>
-                    <h2 class="font-display text-4xl md:text-6xl font-bold uppercase">Technical <span
-                            class="gradient-text">Powerhouse</span></h2>
-                    <p class="text-on-brand-muted max-w-xl">My continuous engineering path, combining full-stack
-                        architecture with defense modules.</p>
+                        class="text-brand-primary text-sm font-bold tracking-widest uppercase block">Toolkit</span>
+                    <h2 class="font-display text-4xl md:text-6xl font-bold uppercase">What I <span
+                            class="gradient-text">Work With</span></h2>
+                    <p class="text-on-brand-muted max-w-xl">The languages, tools, and systems I use regularly. Some I'm comfortable in, some I'm still figuring out — and that's the point.</p>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
@@ -407,19 +385,18 @@
                             <div class="space-y-6">
                                 <h3
                                     class="font-display text-3xl font-extrabold uppercase text-white tracking-wide flex items-center gap-3">
-                                    <i class="fa-solid fa-code text-brand-primary"></i> Development & Hacking Arsenal
+                                    <i class="fa-solid fa-code text-brand-primary"></i> My Stack
                                 </h3>
                                 <p class="text-on-brand-muted text-sm leading-relaxed">
-                                    A set of languages, frameworks, and technologies I work with daily to build secure
-                                    web clients and analyze systemic weaknesses.
+                                    Things I use to build web apps and poke at their security. I'm learning new tools all the time.
                                 </p>
 
                                 <div class="space-y-6 pt-4">
                                     <!-- Skill Group 1 -->
                                     <div>
                                         <h4 class="text-xs font-bold uppercase tracking-wider text-brand-primary mb-3">
-                                            MERN Core Architecture</h4>
-                                        <div class="flex flex-wrap gap-2.5">
+                                            Web Dev (MERN)</h4>
+                                        <div id="dynamic-skills-web-dev" class="flex flex-wrap gap-2.5">
                                             <span
                                                 class="px-4 py-2 bg-neutral-950 border border-white/10 hover:border-brand-primary hover:text-white rounded-lg text-xs font-mono text-on-brand-muted transition-all cursor-default">MongoDB</span>
                                             <span
@@ -428,17 +405,14 @@
                                                 class="px-4 py-2 bg-neutral-950 border border-white/10 hover:border-brand-primary hover:text-white rounded-lg text-xs font-mono text-on-brand-muted transition-all cursor-default">React.js</span>
                                             <span
                                                 class="px-4 py-2 bg-neutral-950 border border-white/10 hover:border-brand-primary hover:text-white rounded-lg text-xs font-mono text-on-brand-muted transition-all cursor-default">Node.js</span>
-                                            <span
-                                                class="px-4 py-2 bg-neutral-950 border border-white/10 hover:border-brand-primary hover:text-white rounded-lg text-xs font-mono text-on-brand-muted transition-all cursor-default">REST
-                                                APIs</span>
                                         </div>
                                     </div>
                                     <!-- Skill Group 2 -->
                                     <div>
                                         <h4
                                             class="text-xs font-bold uppercase tracking-wider text-brand-secondary mb-3">
-                                            Cybersecurity Tools & OS</h4>
-                                        <div class="flex flex-wrap gap-2.5">
+                                            Security & Recon</h4>
+                                        <div id="dynamic-skills-security" class="flex flex-wrap gap-2.5">
                                             <span
                                                 class="px-4 py-2 bg-neutral-950 border border-white/10 hover:border-brand-secondary hover:text-white rounded-lg text-xs font-mono text-on-brand-muted transition-all cursor-default">Kali
                                                 Linux</span>
@@ -446,18 +420,13 @@
                                                 class="px-4 py-2 bg-neutral-950 border border-white/10 hover:border-brand-secondary hover:text-white rounded-lg text-xs font-mono text-on-brand-muted transition-all cursor-default">Nmap</span>
                                             <span
                                                 class="px-4 py-2 bg-neutral-950 border border-white/10 hover:border-brand-secondary hover:text-white rounded-lg text-xs font-mono text-on-brand-muted transition-all cursor-default">Wireshark</span>
-                                            <span
-                                                class="px-4 py-2 bg-neutral-950 border border-white/10 hover:border-brand-secondary hover:text-white rounded-lg text-xs font-mono text-on-brand-muted transition-all cursor-default">Metasploit</span>
-                                            <span
-                                                class="px-4 py-2 bg-neutral-950 border border-white/10 hover:border-brand-secondary hover:text-white rounded-lg text-xs font-mono text-on-brand-muted transition-all cursor-default">Pen
-                                                Testing</span>
                                         </div>
                                     </div>
                                     <!-- Skill Group 3 -->
                                     <div>
                                         <h4 class="text-xs font-bold uppercase tracking-wider text-brand-accent mb-3">
-                                            Systems & Versioning</h4>
-                                        <div class="flex flex-wrap gap-2.5">
+                                            Languages & Other</h4>
+                                        <div id="dynamic-skills-languages" class="flex flex-wrap gap-2.5">
                                             <span
                                                 class="px-4 py-2 bg-neutral-950 border border-white/10 hover:border-brand-accent hover:text-white rounded-lg text-xs font-mono text-on-brand-muted transition-all cursor-default">C
                                                 / C++</span>
@@ -466,9 +435,6 @@
                                                 / CSS3</span>
                                             <span
                                                 class="px-4 py-2 bg-neutral-950 border border-white/10 hover:border-brand-accent hover:text-white rounded-lg text-xs font-mono text-on-brand-muted transition-all cursor-default">JavaScript</span>
-                                            <span
-                                                class="px-4 py-2 bg-neutral-950 border border-white/10 hover:border-brand-accent hover:text-white rounded-lg text-xs font-mono text-on-brand-muted transition-all cursor-default">Git
-                                                & GitHub</span>
                                         </div>
                                     </div>
                                 </div>
@@ -478,50 +444,47 @@
 
                     <!-- Right: Strengths Cards -->
                     <div class="lg:col-span-5 flex flex-col justify-between gap-6">
-                        <!-- Strength Card 1 -->
+                        <!-- How I Work Card 1 -->
                         <div class="glass-card p-6 rounded-2xl flex gap-5 items-start">
                             <div
                                 class="w-12 h-12 rounded-xl bg-brand-primary/10 border border-brand-primary/20 flex items-center justify-center text-brand-primary text-xl flex-shrink-0">
-                                <i class="fa-solid fa-shield-halved"></i>
+                                <i class="fa-solid fa-terminal"></i>
                             </div>
                             <div class="space-y-1">
                                 <h4 class="font-display text-lg font-bold text-white uppercase tracking-wide">
-                                    Security-First Mindset</h4>
+                                    I break my own stuff</h4>
                                 <p class="text-on-brand-muted text-sm">
-                                    Every development element is conceptualized with authentication, data integrity, and
-                                    vulnerability mitigation as structural foundations.
+                                    After building something, I open Kali and try to find holes in it. It's the best way to learn what you missed.
                                 </p>
                             </div>
                         </div>
 
-                        <!-- Strength Card 2 -->
+                        <!-- How I Work Card 2 -->
                         <div class="glass-card p-6 rounded-2xl flex gap-5 items-start">
                             <div
                                 class="w-12 h-12 rounded-xl bg-brand-secondary/10 border border-brand-secondary/20 flex items-center justify-center text-brand-secondary text-xl flex-shrink-0">
-                                <i class="fa-solid fa-bolt"></i>
+                                <i class="fa-solid fa-book-open"></i>
                             </div>
                             <div class="space-y-1">
-                                <h4 class="font-display text-lg font-bold text-white uppercase tracking-wide">Agile &
-                                    Continuous Learning</h4>
+                                <h4 class="font-display text-lg font-bold text-white uppercase tracking-wide">
+                                    Always studying something</h4>
                                 <p class="text-on-brand-muted text-sm">
-                                    Continuously digesting modern methodologies, documentation layers, and cyber defense
-                                    protocols to stay ahead of the digital wave.
+                                    Right now it's networking fundamentals and React hooks. Last month it was Nmap scripting. There's always a next thing.
                                 </p>
                             </div>
                         </div>
 
-                        <!-- Strength Card 3 -->
+                        <!-- How I Work Card 3 -->
                         <div class="glass-card p-6 rounded-2xl flex gap-5 items-start">
                             <div
                                 class="w-12 h-12 rounded-xl bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center text-brand-accent text-xl flex-shrink-0">
-                                <i class="fa-solid fa-people-group"></i>
+                                <i class="fa-solid fa-users"></i>
                             </div>
                             <div class="space-y-1">
-                                <h4 class="font-display text-lg font-bold text-white uppercase tracking-wide">Team
-                                    Synergy & Leadership</h4>
+                                <h4 class="font-display text-lg font-bold text-white uppercase tracking-wide">
+                                    Better with a team</h4>
                                 <p class="text-on-brand-muted text-sm">
-                                    Facilitating collective focus within hackathons, guiding workflows, and implementing
-                                    clear structural patterns to achieve timelines.
+                                    Hackathons taught me that good ideas get sharper when more people push on them. I like building with others.
                                 </p>
                             </div>
                         </div>
@@ -539,11 +502,10 @@
                 <!-- Section Header -->
                 <div class="text-center space-y-4">
                     <span
-                        class="text-brand-secondary text-sm font-bold tracking-widest uppercase block">Milestones</span>
-                    <h2 class="font-display text-4xl md:text-6xl font-bold uppercase">Academic <span
-                            class="gradient-text">Roadmap</span></h2>
-                    <p class="text-on-brand-muted max-w-lg mx-auto">My ongoing academic qualifications, building
-                        technical foundations.</p>
+                        class="text-brand-secondary text-sm font-bold tracking-widest uppercase block">Education</span>
+                    <h2 class="font-display text-4xl md:text-6xl font-bold uppercase">Where I <span
+                            class="gradient-text">Studied</span></h2>
+                    <p class="text-on-brand-muted max-w-lg mx-auto">My academic path so far — from school boards to engineering college.</p>
                 </div>
 
                 <!-- Vertical Timeline -->
@@ -556,7 +518,7 @@
                             class="w-full h-0 timeline-progress transition-all duration-300"></div>
                     </div>
 
-                    <div class="space-y-16 relative">
+                    <div id="dynamic-education-list" class="space-y-16 relative">
                         <!-- Timeline Item 1: College (CS Engineering) -->
                         <div
                             class="timeline-element relative flex flex-col md:flex-row md:justify-between items-start md:items-center w-full">
@@ -583,9 +545,7 @@
                                     <h4 class="text-sm text-brand-secondary font-semibold mt-1">Rungta International
                                         Skill University, Bhilai</h4>
                                     <p class="text-on-brand-muted text-sm mt-3 leading-relaxed">
-                                        Focusing on building advanced development skills, algorithms, data structures,
-                                        and computer network security frameworks. Specially focusing on ethical hacking
-                                        mechanisms.
+                                        Just started my first year. Learning data structures, algorithms, and computer networks in class — and teaching myself MERN stack and ethical hacking on the side.
                                     </p>
                                     <div class="mt-4 flex flex-wrap gap-2">
                                         <span
@@ -626,9 +586,8 @@
                                     <h4 class="text-sm text-brand-primary font-semibold mt-1">Board Examinations • CG
                                         Board</h4>
                                     <p class="text-on-brand-muted text-sm mt-3 leading-relaxed">
-                                        Completed Senior Secondary education with a focus on Mathematics, Physics,
-                                        Chemistry, and additional subjects. Secured <strong class="text-white">80%
-                                            overall</strong>.
+                                        Finished 12th with PCM (Physics, Chemistry, Math). Scored <strong class="text-white">80%
+                                            overall</strong> on the CG Board exams.
                                     </p>
                                     <div class="mt-4 flex flex-wrap gap-2">
                                         <span
@@ -672,9 +631,7 @@
                                     <h4 class="text-sm text-brand-secondary font-semibold mt-1">Board Examinations • CG
                                         Board</h4>
                                     <p class="text-on-brand-muted text-sm mt-3 leading-relaxed">
-                                        Completed secondary education. Strengthened structural discipline and academic
-                                        efficiency, achieving an exceptional score of <strong class="text-white">92%
-                                            marks</strong>.
+                                        Scored <strong class="text-white">92%</strong> in 10th board exams. This is where I first got interested in computers and started messing around with HTML.
                                     </p>
                                     <div class="mt-4 flex flex-wrap gap-2">
                                         <span
@@ -698,81 +655,74 @@
         <!-- ==========================================
              6. ACHIEVEMENTS SECTION
              ========================================== -->
-        <section id="achievements" class="py-24 px-6 bg-brand-surface/20 border-t border-white/5 relative">
+        <section id="now" class="py-24 px-6 bg-brand-surface/20 border-t border-white/5 relative">
             <div class="max-w-7xl mx-auto space-y-16">
-                <!-- Section Header -->
-                <div class="text-center space-y-4">
-                    <span class="text-brand-accent text-sm font-bold tracking-widest uppercase block">Milestones</span>
-                    <h2 class="font-display text-4xl md:text-6xl font-bold uppercase">Key <span
-                            class="gradient-text">Achievements</span></h2>
-                    <p class="text-on-brand-muted max-w-lg mx-auto">Selected credentials and hackathon victories
-                        demonstrating execution capabilities.</p>
+                <!-- Section Header (left-aligned to break the centered pattern) -->
+                <div class="space-y-4 max-w-2xl">
+                    <span class="text-brand-accent text-sm font-bold tracking-widest uppercase block">Currently</span>
+                    <h2 class="font-display text-4xl md:text-6xl font-bold uppercase">Right <span
+                            class="gradient-text">Now</span></h2>
+                    <p class="text-on-brand-muted">What I’m focused on this semester. No fake awards — just what I’m actually doing.</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- Achievement 1 -->
+                <div id="dynamic-experience-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Focus 1 -->
                     <div
-                        class="glass-card p-8 rounded-2xl relative flex flex-col justify-between min-h-[260px] group border-l-4 border-l-brand-primary">
+                        class="glass-card p-8 rounded-2xl relative flex flex-col justify-between min-h-[240px] group border-l-4 border-l-brand-primary">
                         <div class="space-y-4">
                             <div class="text-brand-primary text-3xl">
-                                <i class="fa-solid fa-award"></i>
+                                <i class="fa-solid fa-laptop-code"></i>
                             </div>
                             <h3
                                 class="font-display text-xl font-bold text-white uppercase tracking-wide group-hover:text-brand-primary transition-colors">
-                                AWS Certified Developer Associate
+                                Learning MERN Stack
                             </h3>
                             <p class="text-on-brand-muted text-sm leading-relaxed">
-                                Validated cloud architecture knowledge, deployment frameworks, serverless orchestration,
-                                and credential-handling protocols.
+                                Building full-stack apps with MongoDB, Express, React, and Node. Currently working through authentication flows and REST API design.
                             </p>
                         </div>
-                        <div class="mt-6 flex justify-between items-center text-xs font-mono text-on-brand-muted">
-                            <span>Credential ID: AWS-7749B</span>
-                            <span class="text-brand-primary"><i class="fa-solid fa-circle-check"></i> Verified</span>
+                        <div class="mt-6 text-xs font-mono text-on-brand-muted">
+                            <span class="text-brand-primary"><i class="fa-solid fa-circle-half-stroke"></i> In progress</span>
                         </div>
                     </div>
 
-                    <!-- Achievement 2 -->
+                    <!-- Focus 2 -->
                     <div
-                        class="glass-card p-8 rounded-2xl relative flex flex-col justify-between min-h-[260px] group border-l-4 border-l-brand-secondary">
+                        class="glass-card p-8 rounded-2xl relative flex flex-col justify-between min-h-[240px] group border-l-4 border-l-brand-secondary">
                         <div class="space-y-4">
                             <div class="text-brand-secondary text-3xl">
-                                <i class="fa-solid fa-trophy"></i>
+                                <i class="fa-solid fa-shield-halved"></i>
                             </div>
                             <h3
                                 class="font-display text-xl font-bold text-white uppercase tracking-wide group-hover:text-brand-secondary transition-colors">
-                                Global Innovators Hackathon - Winner
+                                Exploring Ethical Hacking
                             </h3>
                             <p class="text-on-brand-muted text-sm leading-relaxed">
-                                Won 1st place out of 500+ competing engineering teams for implementing an innovative,
-                                secure DeFi system interface.
+                                Setting up vulnerable VMs, running Nmap scans, learning Wireshark packet analysis. Working toward understanding how real attacks work so I can defend against them.
                             </p>
                         </div>
-                        <div class="mt-6 flex justify-between items-center text-xs font-mono text-on-brand-muted">
-                            <span>Championship Cup</span>
-                            <span class="text-brand-secondary"><i class="fa-solid fa-ranking-star"></i> 1st Place</span>
+                        <div class="mt-6 text-xs font-mono text-on-brand-muted">
+                            <span class="text-brand-secondary"><i class="fa-solid fa-circle-half-stroke"></i> Studying</span>
                         </div>
                     </div>
 
-                    <!-- Achievement 3 -->
+                    <!-- Focus 3 -->
                     <div
-                        class="glass-card p-8 rounded-2xl relative flex flex-col justify-between min-h-[260px] group border-l-4 border-l-brand-accent">
+                        class="glass-card p-8 rounded-2xl relative flex flex-col justify-between min-h-[240px] group border-l-4 border-l-brand-accent">
                         <div class="space-y-4">
                             <div class="text-brand-accent text-3xl">
-                                <i class="fa-solid fa-microphone-lines"></i>
+                                <i class="fa-solid fa-graduation-cap"></i>
                             </div>
                             <h3
                                 class="font-display text-xl font-bold text-white uppercase tracking-wide group-hover:text-brand-accent transition-colors">
-                                Speaker at TechConf 2023
+                                First Year of CSE
                             </h3>
                             <p class="text-on-brand-muted text-sm leading-relaxed">
-                                Presented a core session on modern API security architectures, encryption keys, and
-                                database server scaling.
+                                Taking my core CS courses — data structures, algorithms, computer networks. Trying to connect what I learn in class with what I build on weekends.
                             </p>
                         </div>
-                        <div class="mt-6 flex justify-between items-center text-xs font-mono text-on-brand-muted">
-                            <span>Speaker Keynote</span>
-                            <span class="text-brand-accent"><i class="fa-solid fa-users"></i> 300+ Attendees</span>
+                        <div class="mt-6 text-xs font-mono text-on-brand-muted">
+                            <span class="text-brand-accent"><i class="fa-solid fa-clock"></i> Ongoing</span>
                         </div>
                     </div>
                 </div>
@@ -787,42 +737,48 @@
             <div class="space-y-16">
                 <!-- Section Header -->
                 <div class="text-center space-y-4">
-                    <span class="text-brand-primary text-sm font-bold tracking-widest uppercase block">Laboratory</span>
-                    <h2 class="font-display text-4xl md:text-6xl font-bold uppercase">Engineering <span
-                            class="gradient-text">Sandbox</span></h2>
-                    <p class="text-on-brand-muted max-w-lg mx-auto">This project archive is structurally integrated and
-                        left blank for future creations.</p>
+                    <span class="text-brand-primary text-sm font-bold tracking-widest uppercase block">Work</span>
+                    <h2 class="font-display text-4xl md:text-6xl font-bold uppercase">Projects</h2>
+                    <p class="text-on-brand-muted max-w-lg mx-auto">I'm in my first year, so I'm still building my first real projects. Here's what I've got so far.</p>
                 </div>
 
-                <!-- Blank 3D Sandbox Area -->
-                <div
-                    class="glass-card rounded-3xl p-12 text-center border-dashed border-2 border-white/10 hover:border-brand-primary/40 transition-colors duration-500 max-w-3xl mx-auto relative overflow-hidden flex flex-col items-center justify-center min-h-[350px]">
-                    <!-- Pulsing blue-violet radial overlay -->
-                    <div
-                        class="absolute -top-24 -left-24 w-60 h-60 bg-brand-secondary/10 rounded-full blur-3xl pointer-events-none animate-pulse">
+                <div id="dynamic-projects-list" class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                    <!-- Project 1: This Portfolio -->
+                    <div class="glass-card rounded-2xl p-8 relative overflow-hidden group hover:border-brand-primary/40 transition-colors duration-300">
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-brand-primary/10 border border-brand-primary/20 rounded-lg flex items-center justify-center text-brand-primary">
+                                    <i class="fa-solid fa-globe"></i>
+                                </div>
+                                <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] font-mono text-brand-primary">Live</span>
+                            </div>
+                            <h3 class="font-display text-xl font-bold text-white uppercase">This Portfolio</h3>
+                            <p class="text-on-brand-muted text-sm leading-relaxed">
+                                The site you're looking at. Built with vanilla HTML/CSS/JS, GSAP animations, Tailwind, and a Java backend with SQLite for the contact form and booking system.
+                            </p>
+                            <div class="flex flex-wrap gap-2 pt-2">
+                                <span class="px-2.5 py-1 bg-white/5 border border-white/5 rounded text-[10px] font-mono text-on-brand-muted">HTML/CSS/JS</span>
+                                <span class="px-2.5 py-1 bg-white/5 border border-white/5 rounded text-[10px] font-mono text-on-brand-muted">GSAP</span>
+                                <span class="px-2.5 py-1 bg-white/5 border border-white/5 rounded text-[10px] font-mono text-on-brand-muted">Java</span>
+                                <span class="px-2.5 py-1 bg-white/5 border border-white/5 rounded text-[10px] font-mono text-on-brand-muted">SQLite</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="space-y-6 relative max-w-md">
-                        <div
-                            class="w-20 h-20 bg-brand-surface border border-white/10 rounded-2xl flex items-center justify-center text-brand-primary text-3xl animate-bounce mx-auto">
-                            <i class="fa-solid fa-cubes"></i>
-                        </div>
-                        <h3 class="font-display text-2xl font-bold text-white uppercase tracking-wider">Future Releases
-                            Pending</h3>
-                        <p class="text-on-brand-muted text-sm leading-relaxed">
-                            I am currently building complex full-stack web applications and testing microservices. The
-                            blueprints, database links, and deployment outputs will be cataloged directly in this zone.
-                        </p>
-                        <div class="pt-4 flex justify-center gap-3">
-                            <span
-                                class="px-3 py-1.5 bg-neutral-950 border border-white/5 rounded-full text-xs font-mono text-brand-primary">MERN
-                                Stack</span>
-                            <span
-                                class="px-3 py-1.5 bg-neutral-950 border border-white/5 rounded-full text-xs font-mono text-brand-secondary">Web
-                                Security</span>
-                            <span
-                                class="px-3 py-1.5 bg-neutral-950 border border-white/5 rounded-full text-xs font-mono text-brand-accent">Shell
-                                Scripts</span>
+                    <!-- Project 2: Coming Soon -->
+                    <div class="glass-card rounded-2xl p-8 border-dashed border-2 border-white/10 hover:border-brand-secondary/30 transition-colors duration-300 flex flex-col items-center justify-center text-center min-h-[250px]">
+                        <div class="space-y-4 max-w-xs">
+                            <div class="w-14 h-14 bg-brand-surface border border-white/10 rounded-2xl flex items-center justify-center text-brand-secondary text-2xl mx-auto">
+                                <i class="fa-solid fa-code-branch"></i>
+                            </div>
+                            <h3 class="font-display text-lg font-bold text-white uppercase tracking-wider">More coming</h3>
+                            <p class="text-on-brand-muted text-sm leading-relaxed">
+                                I'm working on my first MERN stack app and a simple network scanning tool. They'll show up here when they're ready.
+                            </p>
+                            <div class="flex justify-center gap-2 pt-1">
+                                <span class="px-3 py-1.5 bg-neutral-950 border border-white/5 rounded-full text-xs font-mono text-brand-secondary">MERN App</span>
+                                <span class="px-3 py-1.5 bg-neutral-950 border border-white/5 rounded-full text-xs font-mono text-brand-accent">Security Tool</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -837,11 +793,10 @@
             <div class="max-w-7xl mx-auto space-y-16">
                 <!-- Section Header -->
                 <div class="text-center space-y-4">
-                    <span class="text-brand-accent text-sm font-bold tracking-widest uppercase block">Gateway</span>
-                    <h2 class="font-display text-4xl md:text-6xl font-bold uppercase">Let's <span
-                            class="gradient-text">Sync Up</span></h2>
-                    <p class="text-on-brand-muted max-w-lg mx-auto">Establish a connection. Send a direct message or
-                        schedule a live consultation session.</p>
+                    <span class="text-brand-accent text-sm font-bold tracking-widest uppercase block">Contact</span>
+                    <h2 class="font-display text-4xl md:text-6xl font-bold uppercase">Say <span
+                            class="gradient-text">Hello</span></h2>
+                    <p class="text-on-brand-muted max-w-lg mx-auto">Want to collaborate, ask about security, or just chat about web dev? Drop me a message or book a quick call.</p>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
@@ -852,8 +807,7 @@
                                 class="absolute top-0 right-0 w-24 h-24 bg-brand-primary/10 rounded-full blur-3xl pointer-events-none">
                             </div>
 
-                            <h3 class="font-display text-2xl font-bold text-white uppercase tracking-wider mb-6">Send
-                                Direct Message</h3>
+                            <h3 class="font-display text-2xl font-bold text-white uppercase tracking-wider mb-6">Send a Message</h3>
 
                             <!-- DM Form -->
                             <form id="dm-contact-form" class="space-y-5">
@@ -864,7 +818,7 @@
                                             Name</label>
                                         <input id="dm-name"
                                             class="w-full bg-neutral-950 border border-white/10 focus:border-brand-primary rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-brand-primary/20 transition-all outline-none"
-                                            placeholder="John Doe" type="text" required />
+                                            placeholder="Your name" type="text" required />
                                     </div>
                                     <div class="space-y-2">
                                         <label
@@ -872,7 +826,7 @@
                                             Address</label>
                                         <input id="dm-email"
                                             class="w-full bg-neutral-950 border border-white/10 focus:border-brand-primary rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-brand-primary/20 transition-all outline-none"
-                                            placeholder="john@example.com" type="email" required />
+                                            placeholder="you@example.com" type="email" required />
                                     </div>
                                 </div>
                                 <div class="space-y-2">
@@ -892,7 +846,7 @@
                                         Message</label>
                                     <textarea id="dm-message"
                                         class="w-full bg-neutral-950 border border-white/10 focus:border-brand-primary rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-brand-primary/20 transition-all outline-none"
-                                        placeholder="Tell me about your requirements..." rows="5" required></textarea>
+                                        placeholder="What's on your mind?" rows="5" required></textarea>
                                 </div>
 
                                 <button type="submit" id="dm-submit-btn"
@@ -964,11 +918,10 @@
                         <div class="glass-card p-6 rounded-3xl relative">
                             <h4
                                 class="font-display text-lg font-bold text-white uppercase tracking-wider mb-4 flex items-center gap-2">
-                                <i class="fa-solid fa-calendar-days text-brand-primary"></i> Consultation Scheduler
+                                <i class="fa-solid fa-calendar-days text-brand-primary"></i> Book a Quick Call
                             </h4>
                             <p class="text-on-brand-muted text-xs leading-relaxed mb-4">
-                                Reserve a slots session with Aditya. Your meeting details will be verified via database
-                                nodes.
+                                Pick a date and time, and I'll get back to you to confirm.
                             </p>
 
                             <div class="grid grid-cols-2 gap-3 mb-4">
@@ -992,14 +945,14 @@
 
                             <button onclick="openBookingModal()"
                                 class="w-full py-2.5 bg-neutral-900 border border-white/15 hover:border-brand-primary text-xs text-white font-bold rounded-xl flex items-center justify-center gap-2 hover:scale-[1.01] transition-all">
-                                Request Booking Calendar <i class="fa-solid fa-angle-right"></i>
+                                Request Booking <i class="fa-solid fa-angle-right"></i>
                             </button>
                         </div>
 
                         <!-- Direct Social Link Badges Grid -->
                         <div class="grid grid-cols-3 gap-4">
                             <a href="mailto:mradityasoni.cse@gmail.com"
-                                class="glass-card py-4 rounded-2xl flex flex-col items-center justify-center gap-1 group hover:border-brand-primary/50">
+                                class="dynamic-contact-email-mailto glass-card py-4 rounded-2xl flex flex-col items-center justify-center gap-1 group hover:border-brand-primary/50">
                                 <i
                                     class="fa-solid fa-envelope text-brand-primary group-hover:scale-110 transition-transform duration-300"></i>
                                 <span
@@ -1044,10 +997,8 @@
                     class="w-12 h-12 rounded-full bg-brand-primary/10 border border-brand-primary/20 flex items-center justify-center text-brand-primary text-xl mx-auto mb-3">
                     <i class="fa-solid fa-calendar-check"></i>
                 </div>
-                <h3 class="font-display text-2xl font-bold text-white uppercase tracking-wider">Book Consultation
-                    Session</h3>
-                <p class="text-on-brand-muted text-xs mt-1">Schedule a developer call with Aditya. All details will
-                    update on database node.</p>
+                <h3 class="font-display text-2xl font-bold text-white uppercase tracking-wider">Book a Call</h3>
+                <p class="text-on-brand-muted text-xs mt-1">Pick a time and I'll confirm within 24 hours.</p>
             </div>
 
             <form id="booking-form" class="space-y-4">
@@ -1055,13 +1006,13 @@
                     <label class="text-[10px] font-mono uppercase text-on-brand-muted block">Full Name</label>
                     <input id="book-name" type="text"
                         class="w-full bg-neutral-950 border border-white/10 focus:border-brand-primary rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-brand-primary/20 outline-none transition-all"
-                        placeholder="John Doe" required />
+                        placeholder="Your name" required />
                 </div>
                 <div class="space-y-1">
                     <label class="text-[10px] font-mono uppercase text-on-brand-muted block">Email Address</label>
                     <input id="book-email" type="email"
                         class="w-full bg-neutral-950 border border-white/10 focus:border-brand-primary rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-brand-primary/20 outline-none transition-all"
-                        placeholder="john@example.com" required />
+                        placeholder="you@example.com" required />
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div class="space-y-1">
@@ -1085,7 +1036,7 @@
                     <label class="text-[10px] font-mono uppercase text-on-brand-muted block">Discussion Topic</label>
                     <input id="book-topic" type="text"
                         class="w-full bg-neutral-950 border border-white/10 focus:border-brand-primary rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-brand-primary/20 outline-none transition-all"
-                        placeholder="e.g., Security Audit / Full Stack Collaboration" required />
+                        placeholder="e.g., MERN stack help / Security question / General chat" required />
                 </div>
 
                 <button type="submit" id="book-submit-btn"
@@ -1116,7 +1067,7 @@
                     <i class="fa-solid fa-key"></i>
                 </div>
                 <h3 class="font-display text-2xl font-bold text-white uppercase tracking-wider">Admin Portal</h3>
-                <p class="text-on-brand-muted text-xs mt-1">Authenticate to access portfolio database nodes</p>
+                <p class="text-on-brand-muted text-xs mt-1">Enter your admin credentials to access the dashboard.</p>
             </div>
 
             <form id="modal-login-form" class="space-y-4">
@@ -1150,22 +1101,22 @@
          ========================================== -->
     <footer class="bg-brand-bg border-t border-white/5 py-12 px-6">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-            <div class="font-display text-xl font-bold tracking-tight text-white flex items-center gap-1">
+            <div class="logo-link font-display text-xl font-bold tracking-tight text-white flex items-center gap-1">
                 ADITYA<span class="text-brand-primary">.</span>DEV
             </div>
 
-            <p class="text-xs text-on-brand-muted text-center md:text-left">
-                &copy; 2026 Aditya Soni. Built with custom 3D design components & scrolling parameters.
+            <p class="footer-copy text-xs text-on-brand-muted text-center md:text-left">
+                &copy; 2026 Aditya Soni. Hand-built with HTML, CSS, JS, GSAP, and too much coffee.
             </p>
 
             <div class="flex gap-6 text-on-brand-muted text-sm">
-                <a class="hover:text-brand-primary transition-colors" href="https://instagram.com" target="_blank"><i
-                        class="fa-brands fa-instagram"></i></a>
-                <a class="hover:text-brand-primary transition-colors" href="https://github.com" target="_blank"><i
+                <a id="dynamic-social-twitter" class="hover:text-brand-primary transition-colors" href="https://twitter.com" target="_blank"><i
+                        class="fa-brands fa-twitter"></i></a>
+                <a id="dynamic-social-github" class="hover:text-brand-primary transition-colors" href="https://github.com" target="_blank"><i
                         class="fa-brands fa-github"></i></a>
-                <a class="hover:text-brand-primary transition-colors" href="https://linkedin.com" target="_blank"><i
+                <a id="dynamic-social-linkedin" class="hover:text-brand-primary transition-colors" href="https://linkedin.com" target="_blank"><i
                         class="fa-brands fa-linkedin-in"></i></a>
-                <a class="hover:text-brand-primary transition-colors" href="mailto:mradityasoni.cse@gmail.com"><i
+                <a class="dynamic-contact-email-mailto hover:text-brand-primary transition-colors" href="mailto:mradityasoni.cse@gmail.com"><i
                         class="fa-solid fa-envelope"></i></a>
             </div>
         </div>
@@ -1362,57 +1313,6 @@
                 }
             });
 
-            // 3. 3D CARD PORTRAIT MOUSE TILT INTERACTION
-            const portraitCard = document.getElementById("portrait-3d-card");
-            if (portraitCard) {
-                portraitCard.addEventListener("mousemove", (e) => {
-                    const rect = portraitCard.getBoundingClientRect();
-                    // Cursor coordinate offsets relative to card midpoints
-                    const x = e.clientX - rect.left - rect.width / 2;
-                    const y = e.clientY - rect.top - rect.height / 2;
-
-                    // Degree factors
-                    const tiltX = (y / (rect.height / 2)) * -12; // tilt depth factor
-                    const tiltY = (x / (rect.width / 2)) * 12;
-
-                    portraitCard.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale3d(1.02, 1.02, 1.02)`;
-                });
-
-                portraitCard.addEventListener("mouseleave", () => {
-                    portraitCard.style.transform = "rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)";
-                });
-            }
-
-            // 4. TIMELINE CARDS ANIMATION (3D PERSPECTIVE ON SCROLL)
-            document.querySelectorAll(".timeline-element").forEach((element, idx) => {
-                const isEven = idx % 2 === 0;
-                gsap.from(element.querySelector(".glass-card"), {
-                    scrollTrigger: {
-                        trigger: element,
-                        start: "top 80%",
-                        end: "top 50%",
-                        scrub: 1
-                    },
-                    transform: `perspective(800px) rotateY(${isEven ? 25 : -25}deg) translate3d(${isEven ? 50 : -50}px, 0, 0)`,
-                    opacity: 0,
-                    duration: 1.5,
-                    ease: "power2.out"
-                });
-            });
-
-            // 5. SKILLS ARSENAL SCROLL TRIGGER GLOWS
-            gsap.from(".paper-overlay", {
-                scrollTrigger: {
-                    trigger: "#skills",
-                    start: "top 75%",
-                    end: "top 45%",
-                    scrub: 1
-                },
-                scale: 0.95,
-                opacity: 0.8,
-                duration: 1.2,
-                ease: "power1.out"
-            });
 
             // 6. DB FORM SUBMISSIONS: DIRECT MESSAGES (/api/contact)
             const dmForm = document.getElementById("dm-contact-form");
@@ -1425,7 +1325,7 @@
                     const formStatus = document.getElementById("dm-form-status");
 
                     submitBtn.disabled = true;
-                    submitSpan.textContent = "Sending Packet...";
+                    submitSpan.textContent = "Sending...";
                     formStatus.classList.add("hidden");
                     formStatus.classList.remove("bg-green-500/20", "text-green-400", "bg-red-500/20", "text-red-400");
 
@@ -1445,12 +1345,12 @@
                         const data = await response.json();
 
                         if (response.ok) {
-                            formStatus.textContent = "✓ Packet securely stored in SQLite database Node.";
+                            formStatus.textContent = "✓ Message sent! I'll get back to you soon.";
                             formStatus.classList.add("bg-green-500/20", "text-green-400");
                             formStatus.classList.remove("hidden");
                             dmForm.reset();
                         } else {
-                            throw new Error(data.message || "Packet delivery fault.");
+                            throw new Error(data.message || "Something went wrong. Try again.");
                         }
                     } catch (error) {
                         formStatus.textContent = "✗ Error: " + error.message;
@@ -1474,7 +1374,7 @@
                     const formStatus = document.getElementById("book-form-status");
 
                     submitBtn.disabled = true;
-                    submitSpan.textContent = "Syncing Node...";
+                    submitSpan.textContent = "Booking...";
                     formStatus.classList.add("hidden");
                     formStatus.classList.remove("bg-green-500/20", "text-green-400", "bg-red-500/20", "text-red-400");
 
@@ -1494,7 +1394,7 @@
                         const data = await response.json();
 
                         if (response.ok) {
-                            formStatus.textContent = "✓ Call booked. Database parameters synchronised successfully.";
+                            formStatus.textContent = "✓ Call booked! I'll confirm within 24 hours.";
                             formStatus.classList.add("bg-green-500/20", "text-green-400");
                             formStatus.classList.remove("hidden");
                             bookingForm.reset();
@@ -1504,7 +1404,7 @@
                                 formStatus.classList.add("hidden");
                             }, 2000);
                         } else {
-                            throw new Error(data.message || "Scheduler sync fault.");
+                            throw new Error(data.message || "Booking failed. Try again.");
                         }
                     } catch (error) {
                         formStatus.textContent = "✗ Error: " + error.message;

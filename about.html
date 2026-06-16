@@ -91,20 +91,22 @@
 
                 <div class="about-grid">
                     <div class="about-left">
-                        <p class="about-lead reveal-up">
-                            Hey, I'm Aditya — a <em>freshly graduated</em> 12th class student with a fire to become a
-                            cybersecurity expert and MERN developer.
+                        <p class="about-lead reveal-up" id="dynamic-about-lead">
+                            Hey, I'm Aditya — a <em>first-year CS student</em> with a genuine interest in 
+                            cybersecurity and full-stack web development.
                         </p>
-                        <p class="about-text reveal-up">
-                            I just completed my 12th class this year and I'm now pursuing Computer Science Engineering
-                            at <strong style="color:var(--text)">Rungta International Skill University, Bhilai,
-                                Chhattisgarh</strong>. Every line of code I write is a step toward my mission.
-                        </p>
-                        <p class="about-text reveal-up">
-                            My dream is not just to become a developer — it's to be an ethical hacker who protects
-                            systems, secures digital infrastructure, and serves the nation. I am at the very beginning
-                            of this journey, and I am fully committed to it.
-                        </p>
+                        <div id="dynamic-about-body">
+                            <p class="about-text reveal-up">
+                                I just completed my 12th class this year and I'm now pursuing Computer Science Engineering
+                                at <strong style="color:var(--text)">Rungta International Skill University, Bhilai,
+                                    Chhattisgarh</strong>. Every line of code I write is a step toward my mission.
+                            </p>
+                            <p class="about-text reveal-up">
+                                My dream is not just to become a developer — it's to be an ethical hacker who protects
+                                systems, secures digital infrastructure, and serves the nation. I am at the very beginning
+                                of this journey, and I am fully committed to it.
+                            </p>
+                        </div>
                         <br>
                         <a href="contact.html"><button class="btn btn-primary reveal-up"
                                 id="work-together-btn">Get In Touch</button></a>
@@ -120,13 +122,6 @@
                                 <div class="profile-scanlines"></div>
                                 <div class="profile-cyber-overlay"></div>
                             </div>
-                            <!-- Cyber Badges -->
-                            <div class="cyber-badge badge-top-left">
-                                <span class="badge-dot"></span> SECURE_PORT // 8080
-                            </div>
-                            <div class="cyber-badge badge-bottom-right">
-                                <span class="badge-dot pulsing"></span> STATUS // ACTIVE_HACKER
-                            </div>
                         </div>
 
                         <div class="skills-card card-3d-tilt">
@@ -137,7 +132,7 @@
 
                             <div class="skill-group">
                                 <div class="skill-group-name">MERN Stack</div>
-                                <div class="skill-tags">
+                                <div class="skill-tags" id="dynamic-skills-web-dev">
                                     <span class="skill-tag">MongoDB</span>
                                     <span class="skill-tag">Express.js</span>
                                     <span class="skill-tag">React.js</span>
@@ -148,7 +143,7 @@
 
                             <div class="skill-group">
                                 <div class="skill-group-name">Cybersecurity</div>
-                                <div class="skill-tags">
+                                <div class="skill-tags" id="dynamic-skills-security">
                                     <span class="skill-tag">Ethical Hacking</span>
                                     <span class="skill-tag">Penetration Testing</span>
                                     <span class="skill-tag">Network Security</span>
@@ -158,7 +153,7 @@
 
                             <div class="skill-group">
                                 <div class="skill-group-name">Fundamentals</div>
-                                <div class="skill-tags">
+                                <div class="skill-tags" id="dynamic-skills-languages">
                                     <span class="skill-tag">HTML / CSS</span>
                                     <span class="skill-tag">JavaScript</span>
                                     <span class="skill-tag">C / C++</span>

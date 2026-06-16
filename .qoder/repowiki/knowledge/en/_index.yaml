@@ -1,0 +1,53 @@
+# 知识卡导出索引文件
+schema_version: 1
+locale: en-US
+branch: main
+exported_at: "2026-06-16T03:36:24Z"
+modules:
+    "":
+        dir_name: Portfolio Backend & Content Management
+        title: Portfolio Backend & Content Management
+        scope:
+            - .gitignore
+            - Dockerfile
+            - Server.java
+            - main.js
+            - style.css
+            - about.html
+            - admin.html
+            - contact.html
+            - education.html
+            - goals.html
+            - index.html
+            - login.html
+            - projects.html
+            - design.md
+            - portfolio.txt
+            - run_server.bat
+            - Server$1.class
+            - Server$BookingSubmitHandler.class
+            - Server$BookingsHandler.class
+            - Server$ContactHandler.class
+            - Server$EducationCrudHandler.class
+            - Server$ExperienceCrudHandler.class
+            - Server$LoginHandler.class
+            - Server$MessagesHandler.class
+            - Server$ProjectsCrudHandler.class
+            - Server$SettingsHandler.class
+            - Server$StaticFileHandler.class
+            - Server.class
+            - aditya-hero.jpg
+            - img-cyber.png
+            - img-goals.png
+            - img-mern.png
+            - img-mission.png
+            - img-stats.png
+            - lib\slf4j-api-1.7.36.jar
+            - lib\slf4j-simple-1.7.36.jar
+            - lib\sqlite-jdbc-3.45.1.0.jar
+            - portfolio.db
+            - profile.png
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []

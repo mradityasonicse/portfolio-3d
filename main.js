@@ -64,21 +64,75 @@ function initLoader() {
    2. INIT ALL (called after loader)
    ========================================================================== */
 function initAll() {
-    // Blob cursor disabled as requested
-    initMobileNav();
-    initHeroCanvas();
-    initScrollHeader();
-    initProjectPreviews();
-    initFormTabs();
-    initContactForm();
-    initBookingForm();
-    initCharSplit();
-    initCards3DTilt();
+    const isIndexPage = !!document.getElementById('timeline-progress-bar');
 
-    // Wait for GSAP
-    waitForGSAP(() => {
-        initGSAPAnimations();
-    });
+    // Blob cursor disabled as requested
+    if (!isIndexPage) {
+        initMobileNav();
+        initHeroCanvas();
+    }
+    initScrollHeader();
+
+    // Fetch settings and render content dynamic elements first
+    fetch('/api/settings')
+        .then(res => res.json())
+        .then(data => {
+            if (data.settings) {
+                applyDynamicTheme(data.settings);
+                applySectionOrder(data.settings.layout_sections_order);
+                applyDynamicContent(data.settings);
+            }
+            if (data.projects) {
+                renderProjects(data.projects);
+            }
+            if (data.education) {
+                renderEducation(data.education);
+            }
+            if (data.experience) {
+                renderExperience(data.experience);
+            }
+
+            // Re-run dependencies that require populated DOM
+            initProjectPreviews();
+            
+            if (!isIndexPage) {
+                initFormTabs();
+                initContactForm();
+                initBookingForm();
+            }
+            
+            initCharSplit();
+            
+            if (!isIndexPage) {
+                initCards3DTilt();
+            }
+
+            // Wait for GSAP after DOM has been dynamically updated and layouts are clean
+            waitForGSAP(() => {
+                initGSAPAnimations();
+            });
+        })
+        .catch(err => {
+            console.error('Failed to load portfolio settings, falling back to static markup:', err);
+
+            initProjectPreviews();
+            
+            if (!isIndexPage) {
+                initFormTabs();
+                initContactForm();
+                initBookingForm();
+            }
+            
+            initCharSplit();
+            
+            if (!isIndexPage) {
+                initCards3DTilt();
+            }
+
+            waitForGSAP(() => {
+                initGSAPAnimations();
+            });
+        });
 }
 
 function waitForGSAP(cb, attempts = 0) {
@@ -519,6 +573,46 @@ function initGSAPAnimations() {
         });
     }
 
+    // ---- Homepage-specific ScrollTriggers ----
+    const isIndexPage = !!document.getElementById('timeline-progress-bar');
+    if (isIndexPage) {
+        // 3D perspective tilt for timeline elements on scroll
+        document.querySelectorAll(".timeline-element").forEach((element, idx) => {
+            const isEven = idx % 2 === 0;
+            const glassCard = element.querySelector(".glass-card");
+            if (glassCard) {
+                gsap.from(glassCard, {
+                    scrollTrigger: {
+                        trigger: element,
+                        start: "top 80%",
+                        end: "top 50%",
+                        scrub: 1
+                    },
+                    transform: `perspective(800px) rotateY(${isEven ? 25 : -25}deg) translate3d(${isEven ? 50 : -50}px, 0, 0)`,
+                    opacity: 0,
+                    duration: 1.5,
+                    ease: "power2.out"
+                });
+            }
+        });
+
+        // Skills glow scroll triggers
+        if (document.querySelector(".paper-overlay")) {
+            gsap.from(".paper-overlay", {
+                scrollTrigger: {
+                    trigger: "#skills",
+                    start: "top 75%",
+                    end: "top 45%",
+                    scrub: 1
+                },
+                scale: 0.95,
+                opacity: 0.8,
+                duration: 1.2,
+                ease: "power1.out"
+            });
+        }
+    }
+
     // ---- Profile Card 3D Parallax & Magnetic ----
     initProfileCard3D();
 
@@ -900,43 +994,57 @@ function initMagneticLinks() {
    12. PROFILE CARD 3D PARALLAX & MAGNETIC EFFECT
    ========================================================================== */
 function initProfileCard3D() {
-    const card = document.getElementById('profile-card-3d');
-    if (!card) return;
+    const card = document.getElementById('portrait-3d-card');
+    if (card) {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            const tiltX = (y / (rect.height / 2)) * -12;
+            const tiltY = (x / (rect.width / 2)) * 12;
+            card.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale3d(1.02, 1.02, 1.02)`;
+        });
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = "rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)";
+        });
+        return;
+    }
 
-    const inner = card.querySelector('.profile-card-inner');
-    const glow = card.querySelector('.profile-glow');
+    const legacyCard = document.getElementById('profile-card-3d');
+    if (!legacyCard) return;
+    const inner = legacyCard.querySelector('.profile-card-inner');
+    const glow = legacyCard.querySelector('.profile-glow');
+    if (!inner) return;
 
-    card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left - (rect.width / 2); // mouse X relative to center
-        const y = e.clientY - rect.top - (rect.height / 2); // mouse Y relative to center
-
-        // Calculate rotation angles (tilt max 12 deg)
+    legacyCard.addEventListener('mousemove', (e) => {
+        const rect = legacyCard.getBoundingClientRect();
+        const x = e.clientX - rect.left - (rect.width / 2);
+        const y = e.clientY - rect.top - (rect.height / 2);
         const tiltX = (y / (rect.height / 2)) * -12;
         const tiltY = (x / (rect.width / 2)) * 12;
 
-        // Interpolate rotate and translate with GSAP for high-end smoothness
         gsap.to(inner, {
             rotateX: tiltX,
             rotateY: tiltY,
             transformPerspective: 800,
-            x: x * 0.05, // subtle magnetic drift
+            x: x * 0.05,
             y: y * 0.05,
             duration: 0.35,
             ease: 'power2.out'
         });
 
-        gsap.to(glow, {
-            x: x * 0.15,
-            y: y * 0.15,
-            duration: 0.35,
-            ease: 'power2.out'
-        });
+        if (glow) {
+            gsap.to(glow, {
+                x: x * 0.15,
+                y: y * 0.15,
+                duration: 0.35,
+                ease: 'power2.out'
+            });
+        }
     });
 
-    card.addEventListener('mouseleave', () => {
-        // Smoothly return to center
-        gsap.to([inner, glow], {
+    legacyCard.addEventListener('mouseleave', () => {
+        gsap.to([inner, glow].filter(Boolean), {
             rotateX: 0,
             rotateY: 0,
             x: 0,
@@ -987,3 +1095,467 @@ function initCards3DTilt() {
         });
     });
 }
+
+/* ==========================================================================
+   14. DYNAMIC THEME & DATABASE RENDERING HELPERS
+   ========================================================================== */
+function applyDynamicTheme(settings) {
+    let styleTag = document.getElementById('dynamic-theme-rules');
+    if (!styleTag) {
+        styleTag = document.createElement('style');
+        styleTag.id = 'dynamic-theme-rules';
+        document.head.appendChild(styleTag);
+    }
+
+    const displayFont = settings.font_display || 'Oswald';
+    const bodyFont = settings.font_body || 'Inter';
+    const fontUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(displayFont)}:wght@300;400;500;600;700;800&family=${encodeURIComponent(bodyFont)}:wght@300;400;500;600;700;800&display=swap`;
+    
+    let fontLink = document.getElementById('dynamic-google-fonts');
+    if (!fontLink) {
+        fontLink = document.createElement('link');
+        fontLink.id = 'dynamic-google-fonts';
+        fontLink.rel = 'stylesheet';
+        document.head.appendChild(fontLink);
+    }
+    fontLink.href = fontUrl;
+
+    let styleRules = `
+        :root {
+            --bg: ${settings.background_color || '#050811'};
+            --bg2: ${settings.surface_color || '#0c1122'};
+            --bg-card: ${settings.surface_color || '#0c1122'};
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: ${settings.primary_color || '#f43f5e'};
+            --accent: ${settings.primary_color || '#f43f5e'};
+            --accent2: ${settings.secondary_color || '#8b5cf6'};
+            --accent-color: ${settings.accent_color || '#f59e0b'};
+            --accent-glow: ${settings.primary_color || '#f43f5e'}1f;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
+            --font-display: '${displayFont}', sans-serif;
+            --font-body: '${bodyFont}', sans-serif;
+        }
+        body {
+            background-color: var(--bg) !important;
+            color: var(--text) !important;
+            font-family: var(--font-body) !important;
+        }
+        h1, h2, h3, h4, .font-display {
+            font-family: var(--font-display) !important;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+        }
+        .gradient-border-glow::after {
+            background: linear-gradient(135deg, var(--accent), var(--accent2)) !important;
+        }
+        .timeline-progress {
+            background: linear-gradient(to bottom, var(--accent), var(--accent2)) !important;
+        }
+        .nav-link::after {
+            background: linear-gradient(90deg, var(--accent), var(--accent2)) !important;
+        }
+    `;
+    styleTag.innerHTML = styleRules;
+}
+
+function applySectionOrder(orderCsv) {
+    if (!orderCsv) return;
+    const order = orderCsv.split(',');
+    const mainElement = document.querySelector('main');
+    if (!mainElement) return;
+
+    const sections = Array.from(mainElement.children);
+    sections.sort((a, b) => {
+        const idA = a.id;
+        const idB = b.id;
+        if (!idA) return 1;
+        if (!idB) return -1;
+        
+        let indexA = order.indexOf(idA);
+        let indexB = order.indexOf(idB);
+        
+        if (indexA === -1) indexA = 999;
+        if (indexB === -1) indexB = 999;
+        
+        return indexA - indexB;
+    });
+
+    sections.forEach(section => {
+        mainElement.appendChild(section);
+    });
+}
+
+function renderEducation(items) {
+    const container = document.getElementById('dynamic-education-list');
+    if (!container || !items) return;
+
+    const visibleItems = items.filter(item => item.is_visible !== 0);
+    if (visibleItems.length === 0) {
+        container.innerHTML = `<p class="text-on-brand-muted text-center py-8">No education items available.</p>`;
+        return;
+    }
+
+    const isIndexPage = !!document.getElementById('timeline-progress-bar');
+
+    if (isIndexPage) {
+        let html = '';
+        visibleItems.forEach((item, i) => {
+            const isEven = i % 2 === 0;
+            const alignClass = isEven ? 'md:justify-between' : 'md:flex-row-reverse md:justify-between';
+            const textAlignment = isEven ? 'md:text-right md:pr-8' : 'md:text-left md:pl-8';
+            const plClass = isEven ? 'pl-12 md:pl-8' : 'pl-12 md:pl-0 md:pr-8';
+            const timelineSide = isEven ? `
+                <div class="hidden md:block w-[45%] ${textAlignment}">
+                    <span class="text-xs font-mono font-bold text-brand-primary tracking-widest block uppercase">${item.timeline}</span>
+                    <span class="text-sm font-bold text-white uppercase block mt-1">College Education</span>
+                </div>
+            ` : `
+                <div class="hidden md:block w-[45%] ${textAlignment}">
+                    <span class="text-xs font-mono font-bold text-brand-secondary tracking-widest block uppercase">${item.timeline}</span>
+                    <span class="text-sm font-bold text-white uppercase block mt-1">College Education</span>
+                </div>
+            `;
+            
+            const dotBorderColor = isEven ? 'border-brand-primary' : 'border-brand-secondary';
+            const dotBgColor = isEven ? 'bg-brand-primary' : 'bg-brand-secondary';
+
+            html += `
+                <div class="timeline-element relative flex flex-col md:flex-row ${alignClass} items-start md:items-center w-full">
+                    ${timelineSide}
+                    <div class="absolute left-4 md:left-1/2 w-6 h-6 rounded-full bg-brand-surface border-4 ${dotBorderColor} -translate-x-1/2 z-10 flex items-center justify-center">
+                        <span class="w-1.5 h-1.5 rounded-full ${dotBgColor}"></span>
+                    </div>
+                    <div class="w-full md:w-[45%] ${plClass}">
+                        <div class="glass-card p-6 rounded-2xl relative shadow-xl">
+                            <span class="md:hidden text-xs font-mono font-bold text-brand-primary tracking-widest block uppercase mb-1">${item.timeline}</span>
+                            <h3 class="font-display text-xl font-bold text-white uppercase">${item.degree}</h3>
+                            <h4 class="text-sm text-brand-secondary font-semibold mt-1">${item.institution}</h4>
+                            <p class="text-on-brand-muted text-sm mt-3 leading-relaxed">${item.description}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    } else {
+        // Vanilla CSS layout for education.html subpage
+        let html = `
+            <div class="timeline-track">
+                <div class="timeline-track-fill" id="timeline-fill"></div>
+            </div>
+        `;
+        visibleItems.forEach(item => {
+            html += `
+                <div class="timeline-item">
+                    <div class="timeline-left">
+                        <span class="timeline-period">${item.timeline}</span>
+                        <span class="timeline-org">${item.institution}</span>
+                    </div>
+                    <div class="timeline-right">
+                        <h3 class="timeline-role">${item.degree}</h3>
+                        <p class="timeline-desc">${item.description}</p>
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+}
+
+function renderProjects(items) {
+    const container = document.getElementById('dynamic-projects-list');
+    if (!container || !items) return;
+
+    const visibleItems = items.filter(item => item.is_visible !== 0);
+    if (visibleItems.length === 0) {
+        container.innerHTML = `<p class="text-on-brand-muted text-center py-8">No projects available.</p>`;
+        return;
+    }
+
+    const isIndexPage = !container.classList.contains('project-list');
+
+    if (isIndexPage) {
+        let html = '';
+        visibleItems.forEach(item => {
+            const tagsHtml = item.tags ? item.tags.split(',').map(tag => `
+                <span class="px-2.5 py-1 bg-white/5 border border-white/5 rounded text-[10px] font-mono text-on-brand-muted">${tag.trim()}</span>
+            `).join('') : '';
+
+            const linksHtml = `
+                <div class="flex gap-4 mt-4 text-xs font-semibold">
+                    ${item.live_link ? `<a href="${item.live_link}" target="_blank" class="text-brand-primary hover:underline flex items-center gap-1">Live Demo <i class="fa-solid fa-arrow-right text-[10px]"></i></a>` : ''}
+                    ${item.github_link ? `<a href="${item.github_link}" target="_blank" class="text-on-brand-muted hover:text-white flex items-center gap-1">GitHub <i class="fa-brands fa-github"></i></a>` : ''}
+                </div>
+            `;
+
+            html += `
+                <div class="glass-card rounded-2xl p-8 relative overflow-hidden group hover:border-brand-primary/40 transition-colors duration-300">
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-brand-primary/10 border border-brand-primary/20 rounded-lg flex items-center justify-center text-brand-primary">
+                                <i class="fa-solid fa-globe"></i>
+                            </div>
+                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] font-mono text-brand-primary">Project</span>
+                        </div>
+                        <h3 class="font-display text-xl font-bold text-white uppercase">${item.title}</h3>
+                        <p class="text-on-brand-muted text-sm leading-relaxed">${item.description}</p>
+                        <div class="flex flex-wrap gap-2 pt-2">
+                            ${tagsHtml}
+                        </div>
+                        ${linksHtml}
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    } else {
+        // Vanilla CSS project-row list layout for projects.html
+        let html = '';
+        visibleItems.forEach((item, index) => {
+            const idxStr = String(index + 1).padStart(2, '0');
+            const primaryTag = item.tags ? item.tags.split(',')[0].trim() : 'Project';
+            const linkHref = item.live_link || item.github_link || '#';
+            
+            html += `
+                <a href="${linkHref}" target="_blank" class="project-row" data-preview="${item.title}" data-color="var(--bg2)">
+                    <span class="project-index">${idxStr}</span>
+                    <span class="project-row-name">${item.title}</span>
+                    <span class="project-row-tag">${primaryTag}</span>
+                    <div class="project-row-arrow">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </a>
+            `;
+        });
+        container.innerHTML = html;
+    }
+}
+
+function renderExperience(items) {
+    const container = document.getElementById('dynamic-experience-list');
+    if (!container || !items) return;
+
+    const visibleItems = items.filter(item => item.is_visible !== 0);
+    if (visibleItems.length === 0) {
+        container.innerHTML = `<p class="text-on-brand-muted text-center py-8">No current focus items available.</p>`;
+        return;
+    }
+
+    const borderColors = ['border-l-brand-primary', 'border-l-brand-secondary', 'border-l-brand-accent'];
+    const textColors = ['text-brand-primary', 'text-brand-secondary', 'text-brand-accent'];
+    const iconClasses = ['fa-laptop-code', 'fa-shield-halved', 'fa-graduation-cap'];
+
+    let html = '';
+    visibleItems.forEach((item, i) => {
+        const borderColor = borderColors[i % 3];
+        const textColor = textColors[i % 3];
+        const iconClass = iconClasses[i % 3];
+
+        html += `
+            <div class="glass-card p-8 rounded-2xl relative flex flex-col justify-between min-h-[240px] group border-l-4 ${borderColor}">
+                <div class="space-y-4">
+                    <div class="${textColor} text-3xl">
+                        <i class="fa-solid ${iconClass}"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-bold text-white uppercase tracking-wide group-hover:${textColor} transition-colors">
+                        ${item.role}
+                    </h3>
+                    <p class="text-on-brand-muted text-sm leading-relaxed">
+                        ${item.description}
+                    </p>
+                </div>
+                <div class="mt-6 text-xs font-mono text-on-brand-muted">
+                    <span class="${textColor}"><i class="fa-solid fa-clock"></i> ${item.company} // ${item.timeline}</span>
+                </div>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+window.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'LIVE_THEME_UPDATE') {
+        if (event.data.settings) {
+            applyDynamicTheme(event.data.settings);
+            applySectionOrder(event.data.settings.layout_sections_order);
+            applyDynamicContent(event.data.settings);
+        }
+    }
+});
+
+function applyDynamicContent(settings) {
+    const setHtml = (id, html) => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = html;
+    };
+    const setText = (id, text) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+    };
+    const setHref = (id, url) => {
+        const el = document.getElementById(id);
+        if (el && url) el.href = url;
+    };
+
+    // Brand Name, Logo Text & Footer Text
+    if (settings.logo_text) {
+        document.querySelectorAll('.logo-link').forEach(el => {
+            const dotIndex = settings.logo_text.indexOf('.');
+            if (dotIndex !== -1) {
+                const before = settings.logo_text.substring(0, dotIndex);
+                const after = settings.logo_text.substring(dotIndex);
+                el.innerHTML = `${before}<span class="accent">${after}</span>`;
+            } else {
+                el.textContent = settings.logo_text;
+            }
+        });
+    }
+
+    if (settings.footer_text) {
+        document.querySelectorAll('.footer-copy, .footer-text, #dynamic-footer-text').forEach(el => {
+            el.textContent = settings.footer_text;
+        });
+    }
+
+    // Hero Section
+    if (settings.hero_badge) setText('dynamic-hero-badge', settings.hero_badge);
+    if (settings.hero_title) {
+        const formattedTitle = settings.hero_title.replace(/\n/g, '<br />');
+        setHtml('dynamic-hero-title', formattedTitle);
+    }
+    if (settings.hero_subtitle) setText('dynamic-hero-subtitle', settings.hero_subtitle);
+    if (settings.hero_description) setText('dynamic-hero-description', settings.hero_description);
+
+    // About Section
+    if (settings.about_lead) setText('dynamic-about-lead', settings.about_lead);
+    if (settings.about_body) {
+        const el = document.getElementById('dynamic-about-body');
+        if (el) {
+            const paragraphs = settings.about_body.split('\n\n');
+            el.innerHTML = paragraphs.map(p => `<p class="about-text reveal-up">${p.replace(/\n/g, '<br>')}</p>`).join('');
+        }
+    }
+
+    // Goals Section
+    for (let i = 1; i <= 3; i++) {
+        const title = settings[`goal_${i}_title`];
+        const desc = settings[`goal_${i}_desc`];
+        const status = settings[`goal_${i}_status`];
+        
+        if (title) setText(`dynamic-goal-${i}-title`, title);
+        if (desc) {
+            const el = document.getElementById(`dynamic-goal-${i}-desc`);
+            if (el) {
+                let formattedDesc = desc;
+                formattedDesc = formattedDesc.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                el.innerHTML = formattedDesc;
+            }
+        }
+        if (status) setText(`dynamic-goal-${i}-status`, status);
+    }
+
+    // Contact Coordinates
+    if (settings.contact_title) setHtml('dynamic-contact-title', settings.contact_title);
+    if (settings.contact_subtitle) setText('dynamic-contact-subtitle', settings.contact_subtitle);
+    if (settings.contact_email) {
+        setHref('dynamic-contact-email', `mailto:${settings.contact_email}`);
+        setText('dynamic-contact-email-text', settings.contact_email);
+        document.querySelectorAll('.dynamic-contact-email-mailto').forEach(el => {
+            el.href = `mailto:${settings.contact_email}`;
+        });
+    }
+    if (settings.contact_location) setText('dynamic-contact-location', settings.contact_location);
+    if (settings.contact_status) setText('dynamic-contact-status', settings.contact_status);
+
+    setHref('dynamic-social-github', settings.social_github);
+    setHref('dynamic-social-linkedin', settings.social_linkedin);
+    setHref('dynamic-social-twitter', settings.social_twitter);
+
+    const renderSkills = (id, commaString, hoverClass) => {
+        const container = document.getElementById(id);
+        if (!container || !commaString) return;
+        const tags = commaString.split(',');
+        let html = '';
+        tags.forEach(tag => {
+            const trimmed = tag.trim();
+            if (trimmed) {
+                html += `<span class="px-4 py-2 bg-neutral-950 border border-white/10 hover:${hoverClass} hover:text-white rounded-lg text-xs font-mono text-on-brand-muted transition-all cursor-default">${trimmed}</span>`;
+            }
+        });
+        container.innerHTML = html;
+    };
+
+    renderSkills('dynamic-skills-web-dev', settings.skills_web_dev, 'border-brand-primary');
+    renderSkills('dynamic-skills-security', settings.skills_security, 'border-brand-secondary');
+    renderSkills('dynamic-skills-languages', settings.skills_languages, 'border-brand-accent');
+
+    // SEO Settings
+    if (settings.seo_title) {
+        document.title = settings.seo_title;
+        const ogTitle = document.querySelector('meta[property="og:title"]');
+        if (ogTitle) ogTitle.setAttribute('content', settings.seo_title);
+    }
+    if (settings.seo_description) {
+        const metaDesc = document.querySelector('meta[name="description"]');
+        if (metaDesc) metaDesc.setAttribute('content', settings.seo_description);
+        const ogDesc = document.querySelector('meta[property="og:description"]');
+        if (ogDesc) ogDesc.setAttribute('content', settings.seo_description);
+    }
+
+    // Google Analytics Tracking
+    if (settings.analytics_id) {
+        let existingAnalytics = document.getElementById('dynamic-analytics');
+        if (!existingAnalytics) {
+            existingAnalytics = document.createElement('script');
+            existingAnalytics.id = 'dynamic-analytics';
+            existingAnalytics.async = true;
+            existingAnalytics.src = `https://www.googletagmanager.com/gtag/js?id=${settings.analytics_id}`;
+            document.head.appendChild(existingAnalytics);
+            
+            const initScript = document.createElement('script');
+            initScript.id = 'dynamic-analytics-init';
+            initScript.textContent = `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${settings.analytics_id}');
+            `;
+            document.head.appendChild(initScript);
+        }
+    }
+
+    // Custom CSS Styles Injection
+    let customCssTag = document.getElementById('dynamic-custom-css');
+    if (settings.custom_css) {
+        if (!customCssTag) {
+            customCssTag = document.createElement('style');
+            customCssTag.id = 'dynamic-custom-css';
+            document.head.appendChild(customCssTag);
+        }
+        customCssTag.innerHTML = settings.custom_css;
+    } else if (customCssTag) {
+        customCssTag.remove();
+    }
+
+    // Custom JavaScript Code Injection
+    let customJsTag = document.getElementById('dynamic-custom-js');
+    if (settings.custom_javascript) {
+        if (!customJsTag) {
+            customJsTag = document.createElement('script');
+            customJsTag.id = 'dynamic-custom-js';
+            document.body.appendChild(customJsTag);
+        }
+        customJsTag.textContent = settings.custom_javascript;
+    } else if (customJsTag) {
+        customJsTag.remove();
+    }
+}
+
+

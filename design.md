@@ -1,1179 +1,481 @@
-<!DOCTYPE html>
-<html class="dark scroll-smooth" lang="en">
-<head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>aditya.dev | 3D Interactive Portfolio</title>
+# Product Architecture & Implementation Design: Developer Panel
+
+This document outlines the Product Requirement Document (PRD), Application Flow, Tech Stack, Database Schema, and Phase-by-Phase Roadmap for implementing a hidden **Developer Panel** inside the portfolio website. This panel serves as an in-browser, low-code layout and content engine (similar to Webflow/Framer) that enables live editing of colors, typography, layouts, animations, and section text/media without manually changing source files.
+
+---
+
+## 1. PRODUCT REQUIREMENT DOCUMENT (PRD)
+
+### Product Overview
+The Developer Panel is an integrated, administrative dashboard embedded directly within the portfolio. Accessible via a secure, hidden route or key combination, it provides a visual design interface to manage site configuration dynamically. It shifts the portfolio from a hardcoded static site to a dynamic, database-driven web application with a live visual editor.
+
+### Vision
+To empower developers to iterate, customize, audit, and showcase their portfolio configurations in real time, serving as both a personal utility and an impressive interactive demo of full-stack engineering capabilities.
+
+### Objectives
+*   **Zero-Code Updates:** Enable updating portfolio text, images, projects, layout structures, and themes dynamically.
+*   **Immediate Visual Feedback:** Provide a WYSIWYG editing environment with instant rendering across multiple viewport simulations.
+*   **Data Integrity & Versioning:** Protect the portfolio state with robust undo/redo capabilities, schema validation, configuration backups, and restore operations.
+*   **High Performance:** Ensure the public portfolio loading speed is unaffected by administrative libraries or editor assets.
+
+### Problem Statement
+Static portfolios require developers to modify source code, commit changes, and trigger redeployments just to correct a typo, swap an image, or adjust a color. This flow is slow, lacks version tracking, doesn't allow safe previewing of edits, and prevents dynamic customizations during client pitches.
+
+### Target Users & Personas
+*   **Aditya Soni (Owner/Developer):** CS student and developer who needs to rapidly adjust portfolio details, add new security writeups or projects, and test aesthetic variations instantly.
+*   **Prospective Clients/Recruiters:** Tech experts who value high-fidelity, interactive dashboards and want to see proof of advanced CRUD engineering, security safeguards, and design system architecture.
+
+### Business & User Goals
+*   **User Goal:** Decrease portfolio project upload and edit time from 15 minutes (code, build, deploy) to under 30 seconds.
+*   **Business/Showcase Goal:** Demonstrate enterprise-grade application design, state management, and backend safety features to recruiters.
+
+---
+
+### Core & Advanced Features
+
+#### Theme Management & Color System
+*   **Global Preset Manager:** Switch between preset configurations (e.g., Cyberpunk Neon, Classic Dark, Glassmorphism Sleek, Minimal Light).
+*   **Color System:** Edit primary, secondary, accent, surface, and background colors. Supports HEX, HSL, and CSS variable mapping.
+*   **Real-time Synchronization:** Colors immediately compile into CSS custom variables (`--color-brand-primary`, etc.) on the preview DOM.
+
+#### Typography Management
+*   **Font Family Controls:** Choose between curated Google Fonts combinations (Display, Sans-serif, Cursive, Mono).
+*   **Text Sizing & Spacing:** Adjust base sizes, line heights, letter spacings, and font weights across header levels (`h1`, `h2`, `h3`) and body paragraphs.
+
+#### Animation Controls
+*   **Transition Presets:** Modify transition durations, easing functions, and triggers (e.g., scroll trigger, hover, entrance).
+*   **Disable Switches:** Globally toggle heavy WebGL, 3D particles, or complex GSAP transitions to save battery or fit lower-end screens.
+
+#### Layout Controls
+*   **Section Ordering:** Drag-and-drop hierarchy editor to reorder sections (e.g., move *Education* above *Skills*).
+*   **Grid & Flex Configuration:** Adjust paddings, column spans, alignments, and element spacing in grid items.
+
+#### Section Content Editors
+*   **Hero Editor:** Modify main headlines, tags, subheadings, dynamic call-to-actions, and background assets.
+*   **About Editor:** Manage profile picture URLs, bio text blocks, and descriptive badges.
+*   **Skills Editor:** Add/remove tool categories, update progress scores, assign technical icons, and group strengths.
+*   **Experience & Education Editors:** Full CRUD timeline management to add, update, delete, or hide educational milestones and jobs.
+*   **Projects Manager:** Manage project names, screenshots, tags, links, and detailed structural case studies.
+*   **Contact & Social Links Manager:** Configure contact endpoints, booking calendar integrations (Calendly/Custom), and social anchor links.
+
+#### Global Design System & Preview Engine
+*   **Responsive Viewport Simulator:** Live toggles to simulate Desktop ($1280px+$), Tablet ($768px$), and Mobile ($375px$) layouts directly inside the editor canvas.
+*   **Draft & Publish Lifecycle:** Maintain a `draft` state in memory/localStorage. Clicking "Publish" commits configuration changes permanently to the SQLite database.
+*   **Export/Import & Backups:** Download the complete JSON schema representing the portfolio configuration, and restore from a backup file in one click.
+*   **Undo/Redo Stack:** Multi-step history management for editor edits.
+*   **Version History:** Track published timestamps and rollback to previous database snapshots.
+
+---
+
+### Functional Requirements
+*   **FR-1:** The editor panel must load only when an authenticated session cookie or JWT is present.
+*   **FR-2:** Changes made in the editor panel must reflect instantly in an `<iframe>` preview window using messaging pipelines (`postMessage`).
+*   **FR-3:** Images must be uploaded via drag-and-drop, saved directly to disk, and referenced via path columns in SQLite.
+*   **FR-4:** Configuration versions must be stored in a dedicated SQLite table (`portfolio_settings_history`) to facilitate rollbacks.
+*   **FR-5:** The database must serialize structural page layouts into a single, structured JSON document or structured relational rows.
+
+### Non-Functional Requirements
+*   **NFR-1 (Performance):** Visitors must load the public portfolio page in under 1.2s. Editor assets (e.g., visual controls, drag-drop libs) must be lazy-loaded only within the admin route.
+*   **NFR-2 (Security):** The admin endpoint and API edits must be secured by Session tokens. Password values must be hashed (BCrypt), and API parameters must enforce type casting to prevent SQL injection.
+*   **NFR-3 (Availability):** Local backups of portfolio content must be written to disk in a separate folder (`./backups`) weekly.
+*   **NFR-4 (Accessibility):** Generated themes must maintain WCAG AA color contrast guidelines, verified by automated contrast calculation algorithms built into the color picker.
+
+---
+
+### User Stories & Acceptance Criteria
+
+```
+As a: Portfolio Owner
+I want to: Modify the primary brand color from pink to emerald green using a visual color picker
+So that: I can match the theme to a specific company during an interview.
+```
+*   **Acceptance Criteria:**
+    1.  Opening the Theme panel shows a color picker for the Primary color.
+    2.  Dragging the cursor on the color picker instantly updates the preview frame's brand variables.
+    3.  Clicking "Publish" updates the database value and updates the style rules for future visitors.
+
+```
+As a: Portfolio Owner
+I want to: Reorder my "Achievements" block to appear before "Education" via drag-and-drop
+So that: I can highlight my latest hackathon wins.
+```
+*   **Acceptance Criteria:**
+    1.  The layout configuration tab displays a list of active sections.
+    2.  Sections can be re-arranged vertically.
+    3.  The layout preview shifts dynamically to match the new order.
+    4.  Saving persists the index value in the database.
+
+---
+
+### Edge Cases & Risks
+*   **Corrupted JSON Configuration:** If an invalid file import is uploaded, it could brick the client layout. *Mitigation:* Schema validation via JSON Schema Validator (e.g., Ajv or custom parsing checks) before committing uploads.
+*   **WebGL Crash in Iframe:** Frequent layout/dimension changes inside the device simulator could overwhelm Three.js rendering loops. *Mitigation:* Dispose of WebGL context and restart rendering loop during resizing events, or throttle iframe resize event handlers.
+*   **Concurrent Modification:** Editing the database settings in two windows simultaneously. *Mitigation:* Optimistic locking using a `version` or `updated_at` check.
+
+---
+
+## 2. APPLICATION FLOW
+
+### Architectural Flow Map
+
+```mermaid
+graph TD
+    A[Visitor Accesses /] --> B{Is Authenticated?}
+    B -- No --> C[Serve Static Public Portfolio index.html]
+    B -- Yes --> D[Show Admin Shortcut floating bubble]
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        'brand-bg': '#050811',
-                        'brand-surface': '#0c1122',
-                        'brand-surface-high': '#182038',
-                        'brand-primary': '#f43f5e',
-                        'brand-secondary': '#8b5cf6',
-                        'brand-accent': '#f59e0b',
-                        'on-brand-text': '#e2e8f0',
-                        'on-brand-muted': '#94a3b8'
-                    },
-                    fontFamily: {
-                        display: ['Oswald', 'sans-serif'],
-                        cursive: ['Caveat', 'cursive'],
-                        body: ['Inter', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
+    E[Admin Accesses /login] --> F[Enter Username/Password]
+    F --> G{Credentials Match?}
+    G -- No --> H[Error: Access Denied]
+    G -- Yes --> I[Set HTTP-Only Session Cookie]
+    I --> J[Redirect to /admin]
     
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Oswald:wght@500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet"/>
-    
-    <!-- FontAwesome Icons for Socials -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-    
-    <!-- Three.js (3D Graphics) & GSAP (Animations) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    
-    <style>
-        body {
-            background-color: #050811;
-            color: #e2e8f0;
-            overflow-x: hidden;
+    J --> K[Load Developer Panel UI & Live Preview Iframe]
+    K --> L[Fetch Portfolio Configuration from Database]
+    L --> M[Populate Editor Sidebar & Inject config into Preview Iframe]
+```
+
+### Content Editing & Design Synchronization Flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Dev as Developer (Admin Dashboard)
+    participant Panel as Developer Panel Sidebar
+    participant Frame as Preview Iframe (portfolio.html)
+    participant API as Server API (/api/settings)
+    participant DB as SQLite Database
+
+    Dev->>Panel: Selects "About Bio" text and edits
+    Panel->>Panel: Push to Undo/Redo State Stack
+    Panel->>Frame: window.postMessage({ type: 'UPDATE_BIO', data: 'New text' })
+    Frame->>Frame: DOM Updates dynamically (No reload)
+    Dev->>Panel: Click "Publish Changes"
+    Panel->>API: POST /api/settings/save { config_json }
+    API->>API: Verify HTTP Session Cookie
+    API->>API: Validate JSON structure against Schema
+    API->>DB: INSERT into portfolio_settings_history
+    API->>DB: UPDATE portfolio_settings (Active Config)
+    API->>Panel: Return 200 OK (Success Notification)
+    Panel->>Frame: reload() with fresh database content
+```
+
+### Detailed Screen Navigation Paths
+1.  **`/` (Public Portfolio Home):** Show public sections. If the admin cookie exists, render a secure widget in the bottom-right corner reading: `"Open Editor"`.
+2.  **`/login` (Login Interface):** Standard clean form. Successful validation moves the user to `/admin`.
+3.  **`/admin` (The Developer Panel Master Dashboard):**
+    *   **Sidebar Layout:** Tabs containing:
+        *   *Design System:* Brand Colors, Font Selection, Border Radii, Easing options.
+        *   *Layout:* Drag-and-drop listing of sections, padding controls, visible toggles.
+        *   *Content Manager:* Accordion fields mapping to Hero, About, Skills, Education, Experience, Projects.
+        *   *Systems:* Export/Import, SQLite Backup, Rollback Logs, SEO keywords.
+    *   **Editor Panel View:** Embedded viewport simulator showcasing real-time responsive frames:
+        *   Desktop ($100\%$ width inside flexbox container).
+        *   Tablet ($768\text{px}$ mock device overlay).
+        *   Mobile ($375\text{px}$ mock device frame).
+
+---
+
+## 3. TECH STACK
+
+We recommend a clean, production-ready, lightweight stack designed to support fast client loads and rich developer controls without loading bloated frameworks.
+
+| Layer | Component | Selected Technology | Rationale |
+| :--- | :--- | :--- | :--- |
+| **Frontend** | Framework | **React.js (via Vite)** | Excellent component encapsulation, state binding, and ecosystem support for panels and editors. |
+| **Frontend** | Styling | **Tailwind CSS & CSS Variables** | Simplifies live styling customization. Tailwind handles system utility rules; color picker links straight to CSS custom variables in `:root`. |
+| **Frontend** | State | **Zustand** | Light, fast state store that handles editing states, history stacks (undo/redo), and handles syncing with the iframe easily. |
+| **Frontend** | Drag-n-Drop | **@hello-pangea/dnd** | Solid library to rearrange timeline elements and layout sections. |
+| **Backend** | Framework | **Node.js (Express & TypeScript)** | High performance, lightweight routing. TypeScript guarantees model safety and interface structure consistency. |
+| **Database** | Database Engine | **SQLite** | Local file database requiring zero external service overhead. Perfect for keeping configuration states, messages, and portfolio lists. |
+| **Database** | Caching | **Memory Cache (Lru-Cache)** | Cache active portfolio configuration. Clears immediately when an administrator publishes a change. |
+| **Auth** | Security | **Secure Cookie + Session Store** | Standard HttpOnly cookie validation prevent scripts from hijacking credentials. Session matches active values. |
+| **Storage** | Asset Server | **Local File System / AWS S3** | Local disk storage is perfect for smaller portfolio image sizes. Supports fallback configurations for AWS S3. |
+| **DevOps** | Containerization | **Docker** | Encapsulates Server script, static assets, and SQLite DB configuration for quick hosting deployment. |
+
+---
+
+## 4. BACKEND SCHEMA & API DESIGN
+
+### Database Architecture (SQLite Schema)
+
+The database structure handles relational configurations, logging audits, and timeline items cleanly.
+
+```sql
+-- 1. Authentication & Users
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 2. Master Portfolio Configuration Table (Saves Active Customizations)
+CREATE TABLE IF NOT EXISTS portfolio_settings (
+    id INTEGER PRIMARY KEY CHECK (id = 1), -- Hardcoded to 1 to enforce single-row configuration
+    theme_preset TEXT DEFAULT 'dark',
+    primary_color TEXT DEFAULT '#f43f5e',
+    secondary_color TEXT DEFAULT '#8b5cf6',
+    accent_color TEXT DEFAULT '#f59e0b',
+    background_color TEXT DEFAULT '#050811',
+    surface_color TEXT DEFAULT '#0c1122',
+    font_display TEXT DEFAULT 'Oswald',
+    font_body TEXT DEFAULT 'Inter',
+    animations_enabled INTEGER DEFAULT 1, -- Boolean (0 or 1)
+    layout_sections_order TEXT DEFAULT 'about,education,skills,now,projects,contact', -- CSV order of sections
+    seo_title TEXT DEFAULT 'Portfolio',
+    seo_description TEXT DEFAULT 'Developer Portfolio',
+    analytics_id TEXT DEFAULT '',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 3. Content Table: Projects Manager
+CREATE TABLE IF NOT EXISTS projects (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    image_url TEXT,
+    github_link TEXT,
+    live_link TEXT,
+    tags TEXT, -- Comma-separated list
+    sort_order INTEGER DEFAULT 0,
+    is_visible INTEGER DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 4. Content Table: Education timeline
+CREATE TABLE IF NOT EXISTS education (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    degree TEXT NOT NULL,
+    institution TEXT NOT NULL,
+    timeline TEXT NOT NULL,
+    description TEXT,
+    sort_order INTEGER DEFAULT 0,
+    is_visible INTEGER DEFAULT 1
+);
+
+-- 5. Content Table: Experience timeline
+CREATE TABLE IF NOT EXISTS experience (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    role TEXT NOT NULL,
+    company TEXT NOT NULL,
+    timeline TEXT NOT NULL,
+    description TEXT,
+    sort_order INTEGER DEFAULT 0,
+    is_visible INTEGER DEFAULT 1
+);
+
+-- 6. Settings Backup/History for Rollbacks & Audits
+CREATE TABLE IF NOT EXISTS portfolio_settings_history (
+    version_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_by TEXT NOT NULL,
+    settings_snapshot TEXT NOT NULL -- Full JSON copy of active configs
+);
+```
+
+---
+
+### REST API Documentation
+
+#### 1. Authentication
+*   **`POST /api/login`**
+    *   *Payload:* `{"username": "aditya", "password": "..."}`
+    *   *Response:* `200 OK` (sets `Set-Cookie: session_id=...; HttpOnly`) or `401 Unauthorized`.
+
+#### 2. Settings Management
+*   **`GET /api/settings`** (Public)
+    *   *Response:* Returns the active row of `portfolio_settings` plus related `projects`, `education`, `experience` records compiled in a single layout tree object.
+*   **`POST /api/settings/save`** (Protected)
+    *   *Payload:* Updates theme details, CSS variable configurations, or metadata.
+    *   *Body JSON:*
+        ```json
+        {
+          "primary_color": "#10b981",
+          "font_display": "Outfit",
+          "layout_sections_order": "about,skills,projects,contact"
         }
-
-        /* Glassmorphism custom styling */
-        .glass-card {
-            background: rgba(12, 17, 34, 0.45);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        
-        .glass-card:hover {
-            border-color: rgba(244, 63, 94, 0.3);
-            box-shadow: 0 0 30px rgba(244, 63, 94, 0.05);
-            transform: translateY(-2px);
-        }
-
-        .gradient-text {
-            background: linear-gradient(135deg, #f43f5e 0%, #8b5cf6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .gradient-border-glow {
-            position: relative;
-        }
-        .gradient-border-glow::after {
-            content: '';
-            position: absolute;
-            inset: -2px;
-            background: linear-gradient(135deg, #f43f5e, #8b5cf6);
-            border-radius: inherit;
-            z-index: -1;
-            opacity: 0.15;
-            transition: opacity 0.4s ease;
-        }
-        .gradient-border-glow:hover::after {
-            opacity: 0.4;
-        }
-
-        /* 3D Canvas layer container */
-        #bg-canvas-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -10;
-            pointer-events: none;
-        }
-
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #050811;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(139, 92, 246, 0.3);
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(244, 63, 94, 0.6);
-        }
-
-        /* Nav link active styles */
-        .nav-link {
-            position: relative;
-        }
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, #f43f5e, #8b5cf6);
-            transform: scaleX(0);
-            transform-origin: right;
-            transition: transform 0.30s ease;
-        }
-        .nav-link:hover::after, .nav-link.active::after {
-            transform: scaleX(1);
-            transform-origin: left;
-        }
-
-        /* Interactive Portrait 3D depth styles */
-        .three-d-perspective {
-            perspective: 1200px;
-        }
-        .three-d-card {
-            transform-style: preserve-3d;
-            transition: transform 0.1s ease-out;
-        }
-        .three-d-inner {
-            transform: translateZ(40px);
-        }
-
-        /* Crushed paper effect texture overlay */
-        .paper-overlay {
-            position: relative;
-        }
-        .paper-overlay::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.04;
-            pointer-events: none;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-        }
-
-        /* Custom timeline track highlight */
-        .timeline-progress {
-            background: linear-gradient(to bottom, #f43f5e, #8b5cf6);
-        }
-    </style>
-</head>
-<body class="font-body selection:bg-brand-primary selection:text-white">
-
-    <!-- 3D Background Canvas -->
-    <!-- ==========================================
-         1. 3D INTRO SEQUENCE (ZOOM OUT LOADER)
-         ========================================== -->
-    <div id="intro-loader" class="fixed inset-0 w-full h-full bg-brand-bg z-[9999] flex flex-col items-center justify-center overflow-hidden three-d-perspective">
-        <!-- Loader Grid Background -->
-        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#8b5cf6_1px,transparent_1px)] [background-size:24px_24px]"></div>
-        
-        <!-- Rotating and Zooming 3D Container -->
-        <div id="intro-3d-box" class="three-d-card flex flex-col items-center select-none" style="opacity: 0;">
-            <!-- Typographic Box Name (Opening Animation Target) -->
-            <div class="px-8 py-4 border-4 border-brand-primary/80 bg-brand-surface/90 shadow-[0_0_50px_rgba(244,63,94,0.3)] rounded-2xl flex flex-col items-center">
-                <span class="font-display text-3xl sm:text-5xl md:text-8xl tracking-widest text-white font-extrabold uppercase">
-                    ADITYA SONI
-                </span>
-            </div>
-            <!-- Skip intro option -->
-            <button onclick="skipIntro()" class="mt-12 px-6 py-2 border border-white/10 hover:border-brand-primary/50 text-xs text-on-brand-muted hover:text-white rounded-full bg-white/5 transition-all">
-                Skip Intro
-            </button>
-        </div>
-        
-        <!-- Cinematic Scanlines Overlay -->
-        <div class="absolute inset-0 pointer-events-none opacity-20 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] [background-size:100%_4px,3px_100%]"></div>
-    </div>
-
-
-    <!-- ==========================================
-         2. NAVIGATION HEADER
-         ========================================== -->
-    <header id="main-header" class="fixed top-0 w-full z-50 bg-brand-bg/75 backdrop-blur-xl border-b border-white/5 transition-all duration-300 transform -translate-y-full">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <!-- Logo Link -->
-            <a href="#about" class="font-display text-2xl font-bold tracking-tight text-white flex items-center gap-1 group">
-                ADITYA<span class="text-brand-primary group-hover:scale-125 transition-transform duration-300">.</span>DEV
-            </a>
-
-            <!-- Desktop Nav Items -->
-            <nav class="hidden lg:flex items-center gap-8 text-sm font-semibold uppercase tracking-wider text-on-brand-muted">
-                <a href="#about" class="nav-link active py-2 hover:text-white transition-colors">About</a>
-                <a href="#education" class="nav-link py-2 hover:text-white transition-colors">Education</a>
-                <a href="#skills" class="nav-link py-2 hover:text-white transition-colors">Skills</a>
-                <a href="#achievements" class="nav-link py-2 hover:text-white transition-colors">Achievements</a>
-                <a href="#projects" class="nav-link py-2 hover:text-white transition-colors">Projects</a>
-                <a href="#contact" class="nav-link py-2 hover:text-white transition-colors">Contact Me</a>
-            </nav>
-
-            <!-- Book a Call Header CTA -->
-            <div class="hidden md:flex items-center">
-                <button onclick="openBookingModal()" class="gradient-border-glow px-6 py-2.5 rounded-xl bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-bold text-sm shadow-lg hover:shadow-brand-primary/20 hover:scale-105 active:scale-95 transition-all">
-                    Book a Call
-                </button>
-            </div>
-
-            <!-- Mobile Menu Toggle Button -->
-            <button onclick="toggleMobileNav()" class="lg:hidden text-2xl text-white focus:outline-none" aria-label="Toggle Menu">
-                <i id="menu-icon" class="fa-solid fa-bars-staggered"></i>
-            </button>
-        </div>
-        
-        <!-- Mobile Dropdown Nav Menu -->
-        <div id="mobile-nav" class="hidden absolute top-full left-0 w-full bg-brand-bg/95 border-b border-white/10 py-6 px-8 flex flex-col gap-4 text-center font-bold tracking-widest text-lg uppercase glass-card">
-            <a href="#about" onclick="toggleMobileNav()" class="hover:text-brand-primary py-2 transition-colors">About</a>
-            <a href="#education" onclick="toggleMobileNav()" class="hover:text-brand-primary py-2 transition-colors">Education</a>
-            <a href="#skills" onclick="toggleMobileNav()" class="hover:text-brand-primary py-2 transition-colors">Skills</a>
-            <a href="#achievements" onclick="toggleMobileNav()" class="hover:text-brand-primary py-2 transition-colors">Achievements</a>
-            <a href="#projects" onclick="toggleMobileNav()" class="hover:text-brand-primary py-2 transition-colors">Projects</a>
-            <a href="#contact" onclick="toggleMobileNav()" class="hover:text-brand-primary py-2 transition-colors">Contact Me</a>
-            <button onclick="openBookingModal(); toggleMobileNav();" class="mt-2 py-3 bg-brand-primary text-white rounded-xl">
-                Book a Call
-            </button>
-        </div>
-    </header>
-
-    
-    <main class="w-full pt-20">
-        <!-- ==========================================
-             3. HERO SECTION (ABOUT VIEW)
-             ========================================== -->
-        <section id="about" class="min-h-screen flex items-center py-20 px-6 max-w-7xl mx-auto relative">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center w-full">
-                <!-- Left Intro Info -->
-                <div class="lg:col-span-7 space-y-8 text-left">
-                    <div class="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-semibold tracking-wider text-brand-primary uppercase">
-                        <span class="w-2 h-2 rounded-full bg-brand-primary animate-ping"></span>
-                        Available for Collaborations
-                    </div>
-                    
-                    <h1 class="font-display text-5xl sm:text-6xl md:text-8xl leading-none uppercase relative pb-4">
-                        HELLO I'M
-                        <!-- Hand-drawn style decorative underline -->
-                        <span class="absolute bottom-0 left-0 w-48 md:w-64 h-2 pointer-events-none opacity-80">
-                            <svg viewBox="0 0 300 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M5 15C100 5 200 5 295 12C200 15 100 15 5 15" stroke="#f43f5e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </span>
-                    </h1>
-                    
-                    <p class="font-cursive text-3xl text-brand-accent tracking-wide mt-2 rotate-[-2deg] origin-left">
-                        aditya.dev // engineering digital fortresses & interfaces
-                    </p>
-
-                    <p class="text-on-brand-muted text-lg max-w-2xl leading-relaxed">
-                        I am a full-stack MERN developer and cybersecurity enthusiast pursuing Computer Science Engineering at <strong class="text-white font-semibold">Rungta International Skill University, Bhilai</strong>. I specialize in crafting high-end, responsive digital structures and hardening online systems against vulnerabilities.
-                    </p>
-
-                    <div class="flex flex-wrap gap-4 pt-4">
-                        <a href="#contact" class="px-8 py-4 bg-brand-primary hover:bg-brand-primary/95 text-white font-bold rounded-xl shadow-lg hover:shadow-brand-primary/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-3">
-                            Let's Talk <i class="fa-solid fa-arrow-trend-up"></i>
-                        </a>
-                        <a href="#projects" class="px-8 py-4 border border-white/10 hover:border-white/30 hover:bg-white/5 text-white font-bold rounded-xl hover:scale-105 active:scale-95 transition-all">
-                            Explore Projects
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Right Portrait (3D Interactive Frame) -->
-                <div class="lg:col-span-5 flex justify-center items-center py-8">
-                    <div class="three-d-perspective relative group w-full max-w-[400px]">
-                        <!-- Back glow aura -->
-                        <div class="absolute -inset-4 bg-gradient-to-tr from-brand-primary to-brand-secondary rounded-3xl opacity-20 blur-3xl group-hover:opacity-40 transition-opacity duration-500 pointer-events-none"></div>
-                        
-                        <!-- 3D Card -->
-                        <div id="portrait-3d-card" class="three-d-card glass-card p-3 rounded-3xl overflow-hidden aspect-[4/5] relative cursor-pointer">
-                            <div class="w-full h-full rounded-2xl overflow-hidden relative">
-                                <img src="aditya-hero.jpg" alt="Aditya Portrait" class="w-full h-full object-cover select-none pointer-events-none"/>
-                                <!-- Scanline grid overlay -->
-                                <div class="absolute inset-0 opacity-10 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] [background-size:100%_4px,3px_100%] pointer-events-none"></div>
-                                <div class="absolute inset-0 bg-gradient-to-t from-brand-bg via-transparent to-transparent opacity-60 pointer-events-none"></div>
-                            </div>
-
-                            <!-- Decorative HUD badges inside card -->
-                            <div class="three-d-inner absolute top-6 left-6 px-3 py-1 rounded-full bg-brand-bg/80 border border-brand-primary/30 text-[10px] font-mono text-brand-primary flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-brand-primary animate-ping"></span>
-                                COMPILER: OK
-                            </div>
-                            <div class="three-d-inner absolute bottom-6 right-6 px-3 py-1 rounded-full bg-brand-bg/80 border border-brand-secondary/30 text-[10px] font-mono text-brand-secondary">
-                                SYS // STATUS: ACTIVE
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-
-        <!-- ==========================================
-             4. SKILLS & STRENGTHS SECTION
-             ========================================== -->
-        <section id="skills" class="py-24 px-6 bg-brand-surface/30 border-y border-white/5 relative">
-            <div class="max-w-7xl mx-auto space-y-16">
-                <!-- Section Header -->
-                <div class="text-center md:text-left space-y-4">
-                    <span class="text-brand-primary text-sm font-bold tracking-widest uppercase block">Capabilities</span>
-                    <h2 class="font-display text-4xl md:text-6xl font-bold uppercase">Technical <span class="gradient-text">Powerhouse</span></h2>
-                    <p class="text-on-brand-muted max-w-xl">My continuous engineering path, combining full-stack architecture with defense modules.</p>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
-                    <!-- Left: Designing Skills Crushed Paper Card (Divyesh Reference Style) -->
-                    <div class="lg:col-span-7 space-y-8">
-                        <div class="paper-overlay bg-neutral-900 border-2 border-white/10 p-8 rounded-2xl relative shadow-2xl flex flex-col justify-between overflow-hidden min-h-[380px]">
-                            <!-- Paper rip highlight decoration -->
-                            <div class="absolute top-0 right-0 w-36 h-36 bg-brand-primary/10 rounded-full blur-3xl pointer-events-none"></div>
-                            <div class="space-y-6">
-                                <h3 class="font-display text-3xl font-extrabold uppercase text-white tracking-wide flex items-center gap-3">
-                                    <i class="fa-solid fa-code text-brand-primary"></i> Development & Hacking Arsenal
-                                </h3>
-                                <p class="text-on-brand-muted text-sm leading-relaxed">
-                                    A set of languages, frameworks, and technologies I work with daily to build secure web clients and analyze systemic weaknesses.
-                                </p>
-
-                                <div class="space-y-6 pt-4">
-                                    <!-- Skill Group 1 -->
-                                    <div>
-                                        <h4 class="text-xs font-bold uppercase tracking-wider text-brand-primary mb-3">MERN Core Architecture</h4>
-                                        <div class="flex flex-wrap gap-2.5">
-                                            <span class="px-4 py-2 bg-neutral-950 border border-white/10 hover:border-brand-primary hover:text-white rounded-lg text-xs font-mono text-on-brand-muted transition-all cursor-default">MongoDB</span>
-                                            <span class="px-4 py-2 bg-neutral-950 border border-white/10 hover:border-brand-primary hover:text-white rounded-lg text-xs font-mono text-on-brand-muted transition-all cursor-default">Express.js</span>
-                                            <span class="px-4 py-2 bg-neutral-950 border border-white/10 hover:border-brand-primary hover:text-white rounded-lg text-xs font-mono text-on-brand-muted transition-all cursor-default">React.js</span>
-                                            <span class="px-4 py-2 bg-neutral-950 border border-white/10 hover:border-brand-primary hover:text-white rounded-lg text-xs font-mono text-on-brand-muted transition-all cursor-default">Node.js</span>
-                                            <span class="px-4 py-2 bg-neutral-950 border border-white/10 hover:border-brand-primary hover:text-white rounded-lg text-xs font-mono text-on-brand-muted transition-all cursor-default">REST APIs</span>
-                                        </div>
-                                    </div>
-                                    <!-- Skill Group 2 -->
-                                    <div>
-                                        <h4 class="text-xs font-bold uppercase tracking-wider text-brand-secondary mb-3">Cybersecurity Tools & OS</h4>
-                                        <div class="flex flex-wrap gap-2.5">
-                                            <span class="px-4 py-2 bg-neutral-950 border border-white/10 hover:border-brand-secondary hover:text-white rounded-lg text-xs font-mono text-on-brand-muted transition-all cursor-default">Kali Linux</span>
-                                            <span class="px-4 py-2 bg-neutral-950 border border-white/10 hover:border-brand-secondary hover:text-white rounded-lg text-xs font-mono text-on-brand-muted transition-all cursor-default">Nmap</span>
-                                            <span class="px-4 py-2 bg-neutral-950 border border-white/10 hover:border-brand-secondary hover:text-white rounded-lg text-xs font-mono text-on-brand-muted transition-all cursor-default">Wireshark</span>
-                                            <span class="px-4 py-2 bg-neutral-950 border border-white/10 hover:border-brand-secondary hover:text-white rounded-lg text-xs font-mono text-on-brand-muted transition-all cursor-default">Metasploit</span>
-                                            <span class="px-4 py-2 bg-neutral-950 border border-white/10 hover:border-brand-secondary hover:text-white rounded-lg text-xs font-mono text-on-brand-muted transition-all cursor-default">Pen Testing</span>
-                                        </div>
-                                    </div>
-                                    <!-- Skill Group 3 -->
-                                    <div>
-                                        <h4 class="text-xs font-bold uppercase tracking-wider text-brand-accent mb-3">Systems & Versioning</h4>
-                                        <div class="flex flex-wrap gap-2.5">
-                                            <span class="px-4 py-2 bg-neutral-950 border border-white/10 hover:border-brand-accent hover:text-white rounded-lg text-xs font-mono text-on-brand-muted transition-all cursor-default">C / C++</span>
-                                            <span class="px-4 py-2 bg-neutral-950 border border-white/10 hover:border-brand-accent hover:text-white rounded-lg text-xs font-mono text-on-brand-muted transition-all cursor-default">HTML5 / CSS3</span>
-                                            <span class="px-4 py-2 bg-neutral-950 border border-white/10 hover:border-brand-accent hover:text-white rounded-lg text-xs font-mono text-on-brand-muted transition-all cursor-default">JavaScript</span>
-                                            <span class="px-4 py-2 bg-neutral-950 border border-white/10 hover:border-brand-accent hover:text-white rounded-lg text-xs font-mono text-on-brand-muted transition-all cursor-default">Git & GitHub</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Right: Strengths Cards -->
-                    <div class="lg:col-span-5 flex flex-col justify-between gap-6">
-                        <!-- Strength Card 1 -->
-                        <div class="glass-card p-6 rounded-2xl flex gap-5 items-start">
-                            <div class="w-12 h-12 rounded-xl bg-brand-primary/10 border border-brand-primary/20 flex items-center justify-center text-brand-primary text-xl flex-shrink-0">
-                                <i class="fa-solid fa-shield-halved"></i>
-                            </div>
-                            <div class="space-y-1">
-                                <h4 class="font-display text-lg font-bold text-white uppercase tracking-wide">Security-First Mindset</h4>
-                                <p class="text-on-brand-muted text-sm">
-                                    Every development element is conceptualized with authentication, data integrity, and vulnerability mitigation as structural foundations.
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Strength Card 2 -->
-                        <div class="glass-card p-6 rounded-2xl flex gap-5 items-start">
-                            <div class="w-12 h-12 rounded-xl bg-brand-secondary/10 border border-brand-secondary/20 flex items-center justify-center text-brand-secondary text-xl flex-shrink-0">
-                                <i class="fa-solid fa-bolt"></i>
-                            </div>
-                            <div class="space-y-1">
-                                <h4 class="font-display text-lg font-bold text-white uppercase tracking-wide">Agile & Continuous Learning</h4>
-                                <p class="text-on-brand-muted text-sm">
-                                    Continuously digesting modern methodologies, documentation layers, and cyber defense protocols to stay ahead of the digital wave.
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Strength Card 3 -->
-                        <div class="glass-card p-6 rounded-2xl flex gap-5 items-start">
-                            <div class="w-12 h-12 rounded-xl bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center text-brand-accent text-xl flex-shrink-0">
-                                <i class="fa-solid fa-people-group"></i>
-                            </div>
-                            <div class="space-y-1">
-                                <h4 class="font-display text-lg font-bold text-white uppercase tracking-wide">Team Synergy & Leadership</h4>
-                                <p class="text-on-brand-muted text-sm">
-                                    Facilitating collective focus within hackathons, guiding workflows, and implementing clear structural patterns to achieve timelines.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-
-        <!-- ==========================================
-             5. EDUCATION SECTION (ACADEMIC TIMELINE)
-             ========================================== -->
-        <section id="education" class="py-24 px-6 max-w-7xl mx-auto relative">
-            <div class="space-y-16">
-                <!-- Section Header -->
-                <div class="text-center space-y-4">
-                    <span class="text-brand-secondary text-sm font-bold tracking-widest uppercase block">Milestones</span>
-                    <h2 class="font-display text-4xl md:text-6xl font-bold uppercase">Academic <span class="gradient-text">Roadmap</span></h2>
-                    <p class="text-on-brand-muted max-w-lg mx-auto">My ongoing academic qualifications, building technical foundations.</p>
-                </div>
-
-                <!-- Vertical Timeline -->
-                <div class="relative max-w-4xl mx-auto mt-12">
-                    <!-- Vertical line in center (desktop) / left (mobile) -->
-                    <div class="absolute left-4 md:left-1/2 top-0 bottom-0 w-1 bg-white/10 -translate-x-1/2 overflow-hidden rounded-full">
-                        <!-- Scroll activated fill -->
-                        <div id="timeline-progress-bar" class="w-full h-0 timeline-progress transition-all duration-300"></div>
-                    </div>
-
-                    <div class="space-y-16 relative">
-                        <!-- Timeline Item 1: College (CS Engineering) -->
-                        <div class="timeline-element relative flex flex-col md:flex-row md:justify-between items-start md:items-center w-full">
-                            <!-- Left block (Desktop target, empty on mobile) -->
-                            <div class="hidden md:block w-[45%] text-right pr-8">
-                                <span class="text-xs font-mono font-bold text-brand-primary tracking-widest block uppercase">2026 - Present</span>
-                                <span class="text-sm font-bold text-white uppercase block mt-1">College Education</span>
-                            </div>
-                            <!-- Point Indicator -->
-                            <div class="absolute left-4 md:left-1/2 w-6 h-6 rounded-full bg-brand-surface border-4 border-brand-primary -translate-x-1/2 z-10 flex items-center justify-center">
-                                <span class="w-1.5 h-1.5 rounded-full bg-brand-primary"></span>
-                            </div>
-                            <!-- Content Box -->
-                            <div class="w-full md:w-[45%] pl-12 md:pl-8">
-                                <div class="glass-card p-6 rounded-2xl relative shadow-xl">
-                                    <span class="md:hidden text-xs font-mono font-bold text-brand-primary tracking-widest block uppercase mb-1">2026 - Present</span>
-                                    <h3 class="font-display text-xl font-bold text-white uppercase">B.Tech - Computer Science Engineering</h3>
-                                    <h4 class="text-sm text-brand-secondary font-semibold mt-1">Rungta International Skill University, Bhilai</h4>
-                                    <p class="text-on-brand-muted text-sm mt-3 leading-relaxed">
-                                        Focusing on building advanced development skills, algorithms, data structures, and computer network security frameworks. Specially focusing on ethical hacking mechanisms.
-                                    </p>
-                                    <div class="mt-4 flex flex-wrap gap-2">
-                                        <span class="px-2.5 py-1 bg-white/5 border border-white/5 rounded text-[10px] font-mono text-on-brand-muted">CSE</span>
-                                        <span class="px-2.5 py-1 bg-white/5 border border-white/5 rounded text-[10px] font-mono text-on-brand-muted">Bhilai, CG</span>
-                                        <span class="px-2.5 py-1 bg-white/5 border border-white/5 rounded text-[10px] font-mono text-on-brand-muted">Undergrad</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Timeline Item 2: 12th Class (Senior Secondary) -->
-                        <div class="timeline-element relative flex flex-col md:flex-row-reverse md:justify-between items-start md:items-center w-full">
-                            <!-- Left block (Desktop target, empty on mobile) -->
-                            <div class="hidden md:block w-[45%] text-left pl-8">
-                                <span class="text-xs font-mono font-bold text-brand-secondary tracking-widest block uppercase">2026 Batch</span>
-                                <span class="text-sm font-bold text-white uppercase block mt-1">Senior Secondary</span>
-                            </div>
-                            <!-- Point Indicator -->
-                            <div class="absolute left-4 md:left-1/2 w-6 h-6 rounded-full bg-brand-surface border-4 border-brand-secondary -translate-x-1/2 z-10 flex items-center justify-center">
-                                <span class="w-1.5 h-1.5 rounded-full bg-brand-secondary"></span>
-                            </div>
-                            <!-- Content Box -->
-                            <div class="w-full md:w-[45%] pl-12 md:pl-0 md:pr-8">
-                                <div class="glass-card p-6 rounded-2xl relative shadow-xl">
-                                    <span class="md:hidden text-xs font-mono font-bold text-brand-secondary tracking-widest block uppercase mb-1">2026 Batch</span>
-                                    <h3 class="font-display text-xl font-bold text-white uppercase">Higher Secondary (Class XII)</h3>
-                                    <h4 class="text-sm text-brand-primary font-semibold mt-1">Board Examinations • CBSE</h4>
-                                    <p class="text-on-brand-muted text-sm mt-3 leading-relaxed">
-                                        Completed Senior Secondary education with a focus on Mathematics, Physics, Chemistry, and Computer Science. Secured <strong class="text-white">80% marks</strong>.
-                                    </p>
-                                    <div class="mt-4 flex flex-wrap gap-2">
-                                        <span class="px-2.5 py-1 bg-white/5 border border-white/5 rounded text-[10px] font-mono text-on-brand-muted">80% Score</span>
-                                        <span class="px-2.5 py-1 bg-white/5 border border-white/5 rounded text-[10px] font-mono text-on-brand-muted">PCM + CS</span>
-                                        <span class="px-2.5 py-1 bg-white/5 border border-white/5 rounded text-[10px] font-mono text-on-brand-muted">CBSE Board</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Timeline Item 3: 10th Class (Secondary) -->
-                        <div class="timeline-element relative flex flex-col md:flex-row md:justify-between items-start md:items-center w-full">
-                            <!-- Left block (Desktop target, empty on mobile) -->
-                            <div class="hidden md:block w-[45%] text-right pr-8">
-                                <span class="text-xs font-mono font-bold text-brand-accent tracking-widest block uppercase">2024 Batch</span>
-                                <span class="text-sm font-bold text-white uppercase block mt-1">Secondary Schooling</span>
-                            </div>
-                            <!-- Point Indicator -->
-                            <div class="absolute left-4 md:left-1/2 w-6 h-6 rounded-full bg-brand-surface border-4 border-brand-accent -translate-x-1/2 z-10 flex items-center justify-center">
-                                <span class="w-1.5 h-1.5 rounded-full bg-brand-accent"></span>
-                            </div>
-                            <!-- Content Box -->
-                            <div class="w-full md:w-[45%] pl-12 md:pl-8">
-                                <div class="glass-card p-6 rounded-2xl relative shadow-xl">
-                                    <span class="md:hidden text-xs font-mono font-bold text-brand-accent tracking-widest block uppercase mb-1">2024 Batch</span>
-                                    <h3 class="font-display text-xl font-bold text-white uppercase">Secondary School (Class X)</h3>
-                                    <h4 class="text-sm text-brand-secondary font-semibold mt-1">Board Examinations • CBSE</h4>
-                                    <p class="text-on-brand-muted text-sm mt-3 leading-relaxed">
-                                        Completed secondary education. Strengthened structural discipline and academic efficiency, achieving an exceptional score of <strong class="text-white">92% marks</strong>.
-                                    </p>
-                                    <div class="mt-4 flex flex-wrap gap-2">
-                                        <span class="px-2.5 py-1 bg-white/5 border border-white/5 rounded text-[10px] font-mono text-on-brand-muted">92% Score</span>
-                                        <span class="px-2.5 py-1 bg-white/5 border border-white/5 rounded text-[10px] font-mono text-on-brand-muted">Distinction</span>
-                                        <span class="px-2.5 py-1 bg-white/5 border border-white/5 rounded text-[10px] font-mono text-on-brand-muted">CBSE Board</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-
-        <!-- ==========================================
-             6. ACHIEVEMENTS SECTION
-             ========================================== -->
-        <section id="achievements" class="py-24 px-6 bg-brand-surface/20 border-t border-white/5 relative">
-            <div class="max-w-7xl mx-auto space-y-16">
-                <!-- Section Header -->
-                <div class="text-center space-y-4">
-                    <span class="text-brand-accent text-sm font-bold tracking-widest uppercase block">Milestones</span>
-                    <h2 class="font-display text-4xl md:text-6xl font-bold uppercase">Key <span class="gradient-text">Achievements</span></h2>
-                    <p class="text-on-brand-muted max-w-lg mx-auto">Selected credentials and hackathon victories demonstrating execution capabilities.</p>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- Achievement 1 -->
-                    <div class="glass-card p-8 rounded-2xl relative flex flex-col justify-between min-h-[260px] group border-l-4 border-l-brand-primary">
-                        <div class="space-y-4">
-                            <div class="text-brand-primary text-3xl">
-                                <i class="fa-solid fa-award"></i>
-                            </div>
-                            <h3 class="font-display text-xl font-bold text-white uppercase tracking-wide group-hover:text-brand-primary transition-colors">
-                                AWS Certified Developer Associate
-                            </h3>
-                            <p class="text-on-brand-muted text-sm leading-relaxed">
-                                Validated cloud architecture knowledge, deployment frameworks, serverless orchestration, and credential-handling protocols.
-                            </p>
-                        </div>
-                        <div class="mt-6 flex justify-between items-center text-xs font-mono text-on-brand-muted">
-                            <span>Credential ID: AWS-7749B</span>
-                            <span class="text-brand-primary"><i class="fa-solid fa-circle-check"></i> Verified</span>
-                        </div>
-                    </div>
-
-                    <!-- Achievement 2 -->
-                    <div class="glass-card p-8 rounded-2xl relative flex flex-col justify-between min-h-[260px] group border-l-4 border-l-brand-secondary">
-                        <div class="space-y-4">
-                            <div class="text-brand-secondary text-3xl">
-                                <i class="fa-solid fa-trophy"></i>
-                            </div>
-                            <h3 class="font-display text-xl font-bold text-white uppercase tracking-wide group-hover:text-brand-secondary transition-colors">
-                                Global Innovators Hackathon - Winner
-                            </h3>
-                            <p class="text-on-brand-muted text-sm leading-relaxed">
-                                Won 1st place out of 500+ competing engineering teams for implementing an innovative, secure DeFi system interface.
-                            </p>
-                        </div>
-                        <div class="mt-6 flex justify-between items-center text-xs font-mono text-on-brand-muted">
-                            <span>Championship Cup</span>
-                            <span class="text-brand-secondary"><i class="fa-solid fa-ranking-star"></i> 1st Place</span>
-                        </div>
-                    </div>
-
-                    <!-- Achievement 3 -->
-                    <div class="glass-card p-8 rounded-2xl relative flex flex-col justify-between min-h-[260px] group border-l-4 border-l-brand-accent">
-                        <div class="space-y-4">
-                            <div class="text-brand-accent text-3xl">
-                                <i class="fa-solid fa-microphone-lines"></i>
-                            </div>
-                            <h3 class="font-display text-xl font-bold text-white uppercase tracking-wide group-hover:text-brand-accent transition-colors">
-                                Speaker at TechConf 2023
-                            </h3>
-                            <p class="text-on-brand-muted text-sm leading-relaxed">
-                                Presented a core session on modern API security architectures, encryption keys, and database server scaling.
-                            </p>
-                        </div>
-                        <div class="mt-6 flex justify-between items-center text-xs font-mono text-on-brand-muted">
-                            <span>Speaker Keynote</span>
-                            <span class="text-brand-accent"><i class="fa-solid fa-users"></i> 300+ Attendees</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-
-        <!-- ==========================================
-             7. PROJECTS SECTION (BLANK FOR FUTURE)
-             ========================================== -->
-        <section id="projects" class="py-24 px-6 max-w-7xl mx-auto relative">
-            <div class="space-y-16">
-                <!-- Section Header -->
-                <div class="text-center space-y-4">
-                    <span class="text-brand-primary text-sm font-bold tracking-widest uppercase block">Laboratory</span>
-                    <h2 class="font-display text-4xl md:text-6xl font-bold uppercase">Engineering <span class="gradient-text">Sandbox</span></h2>
-                    <p class="text-on-brand-muted max-w-lg mx-auto">This project archive is structurally integrated and left blank for future creations.</p>
-                </div>
-
-                <!-- Blank 3D Sandbox Area -->
-                <div class="glass-card rounded-3xl p-12 text-center border-dashed border-2 border-white/10 hover:border-brand-primary/40 transition-colors duration-500 max-w-3xl mx-auto relative overflow-hidden flex flex-col items-center justify-center min-h-[350px]">
-                    <!-- Pulsing blue-violet radial overlay -->
-                    <div class="absolute -top-24 -left-24 w-60 h-60 bg-brand-secondary/10 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
-                    
-                    <div class="space-y-6 relative max-w-md">
-                        <div class="w-20 h-20 bg-brand-surface border border-white/10 rounded-2xl flex items-center justify-center text-brand-primary text-3xl animate-bounce mx-auto">
-                            <i class="fa-solid fa-cubes"></i>
-                        </div>
-                        <h3 class="font-display text-2xl font-bold text-white uppercase tracking-wider">Future Releases Pending</h3>
-                        <p class="text-on-brand-muted text-sm leading-relaxed">
-                            I am currently building complex full-stack web applications and testing microservices. The blueprints, database links, and deployment outputs will be cataloged directly in this zone.
-                        </p>
-                        <div class="pt-4 flex justify-center gap-3">
-                            <span class="px-3 py-1.5 bg-neutral-950 border border-white/5 rounded-full text-xs font-mono text-brand-primary">MERN Stack</span>
-                            <span class="px-3 py-1.5 bg-neutral-950 border border-white/5 rounded-full text-xs font-mono text-brand-secondary">Web Security</span>
-                            <span class="px-3 py-1.5 bg-neutral-950 border border-white/5 rounded-full text-xs font-mono text-brand-accent">Shell Scripts</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-
-        <!-- ==========================================
-             8. CONTACT ME SECTION
-             ========================================== -->
-        <section id="contact" class="py-24 px-6 bg-brand-surface/30 border-t border-white/5 relative">
-            <div class="max-w-7xl mx-auto space-y-16">
-                <!-- Section Header -->
-                <div class="text-center space-y-4">
-                    <span class="text-brand-accent text-sm font-bold tracking-widest uppercase block">Gateway</span>
-                    <h2 class="font-display text-4xl md:text-6xl font-bold uppercase">Let's <span class="gradient-text">Sync Up</span></h2>
-                    <p class="text-on-brand-muted max-w-lg mx-auto">Establish a connection. Send a direct message or schedule a live consultation session.</p>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
-                    <!-- Left: Direct Message Form -->
-                    <div class="lg:col-span-6 space-y-8">
-                        <div class="glass-card p-8 rounded-3xl relative">
-                            <div class="absolute top-0 right-0 w-24 h-24 bg-brand-primary/10 rounded-full blur-3xl pointer-events-none"></div>
-                            
-                            <h3 class="font-display text-2xl font-bold text-white uppercase tracking-wider mb-6">Send Direct Message</h3>
-                            
-                            <!-- DM Form -->
-                            <form id="dm-contact-form" class="space-y-5">
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                                    <div class="space-y-2">
-                                        <label class="text-xs font-mono uppercase tracking-wider text-on-brand-muted block ml-1">Full Name</label>
-                                        <input id="dm-name" class="w-full bg-neutral-950 border border-white/10 focus:border-brand-primary rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-brand-primary/20 transition-all outline-none" placeholder="John Doe" type="text" required/>
-                                    </div>
-                                    <div class="space-y-2">
-                                        <label class="text-xs font-mono uppercase tracking-wider text-on-brand-muted block ml-1">Email Address</label>
-                                        <input id="dm-email" class="w-full bg-neutral-950 border border-white/10 focus:border-brand-primary rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-brand-primary/20 transition-all outline-none" placeholder="john@example.com" type="email" required/>
-                                    </div>
-                                </div>
-                                <div class="space-y-2">
-                                    <label class="text-xs font-mono uppercase tracking-wider text-on-brand-muted block ml-1">Subject</label>
-                                    <select id="dm-subject" class="w-full bg-neutral-950 border border-white/10 focus:border-brand-primary rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-brand-primary/20 transition-all outline-none appearance-none cursor-pointer">
-                                        <option>General Inquiry</option>
-                                        <option>Project Collaboration</option>
-                                        <option>Security Consultation</option>
-                                        <option>Just Saying Hi</option>
-                                    </select>
-                                </div>
-                                <div class="space-y-2">
-                                    <label class="text-xs font-mono uppercase tracking-wider text-on-brand-muted block ml-1">Your Message</label>
-                                    <textarea id="dm-message" class="w-full bg-neutral-950 border border-white/10 focus:border-brand-primary rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-brand-primary/20 transition-all outline-none" placeholder="Tell me about your requirements..." rows="5" required></textarea>
-                                </div>
-                                
-                                <button type="submit" id="dm-submit-btn" class="w-full bg-gradient-to-r from-brand-primary to-brand-secondary hover:brightness-110 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99] transition-all shadow-lg">
-                                    <span>Send Message</span>
-                                    <i class="fa-solid fa-paper-plane text-xs"></i>
-                                </button>
-                                
-                                <div id="dm-form-status" class="hidden p-4 rounded-xl text-center font-bold text-xs transition-all duration-300"></div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- Right: Booking Calendar Interface & Social Connections -->
-                    <div class="lg:col-span-6 flex flex-col justify-between gap-8">
-                        <!-- Instagram Section Frame -->
-                        <div class="glass-card p-6 rounded-3xl relative overflow-hidden flex flex-col justify-between min-h-[200px]">
-                            <div class="absolute -bottom-12 -right-12 w-36 h-36 bg-gradient-to-tr from-pink-500 to-amber-500 opacity-20 rounded-full blur-2xl"></div>
-                            
-                            <div class="flex items-center justify-between border-b border-white/5 pb-4 mb-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-pink-500 via-red-500 to-yellow-500 p-[2px] flex items-center justify-center">
-                                        <div class="w-full h-full bg-brand-surface rounded-full flex items-center justify-center text-white text-sm">
-                                            <i class="fa-brands fa-instagram"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-display font-bold text-white text-sm">aditya_soni</h4>
-                                        <p class="text-[10px] text-on-brand-muted">Creative Doodles & Security Feed</p>
-                                    </div>
-                                </div>
-                                <a href="https://instagram.com" target="_blank" class="px-4 py-1.5 bg-neutral-900 border border-white/10 hover:border-brand-primary rounded-full text-xs text-white hover:bg-brand-primary hover:text-white transition-all font-semibold">
-                                    Follow
-                                </a>
-                            </div>
-
-                            <div class="grid grid-cols-4 gap-2 mb-2 select-none">
-                                <div class="aspect-square bg-neutral-950 rounded-lg overflow-hidden border border-white/5 relative group">
-                                    <img src="img-mern.png" alt="MERN Stack post" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"/>
-                                </div>
-                                <div class="aspect-square bg-neutral-950 rounded-lg overflow-hidden border border-white/5 relative group">
-                                    <img src="img-cyber.png" alt="Hacking post" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"/>
-                                </div>
-                                <div class="aspect-square bg-neutral-950 rounded-lg overflow-hidden border border-white/5 relative group">
-                                    <img src="img-goals.png" alt="Mission post" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"/>
-                                </div>
-                                <div class="aspect-square bg-neutral-950 rounded-lg overflow-hidden border border-white/5 relative group flex items-center justify-center hover:bg-neutral-900 transition-colors">
-                                    <i class="fa-solid fa-plus text-xs text-on-brand-muted"></i>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Scheduler Calendar Preview Form -->
-                        <div class="glass-card p-6 rounded-3xl relative">
-                            <h4 class="font-display text-lg font-bold text-white uppercase tracking-wider mb-4 flex items-center gap-2">
-                                <i class="fa-solid fa-calendar-days text-brand-primary"></i> Consultation Scheduler
-                            </h4>
-                            <p class="text-on-brand-muted text-xs leading-relaxed mb-4">
-                                Reserve a slots session with Aditya. Your meeting details will be verified via database nodes.
-                            </p>
-                            
-                            <div class="grid grid-cols-2 gap-3 mb-4">
-                                <div class="space-y-1">
-                                    <label class="text-[9px] font-mono uppercase text-on-brand-muted block">Date</label>
-                                    <input id="sched-date" type="date" class="w-full bg-neutral-950 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white outline-none"/>
-                                </div>
-                                <div class="space-y-1">
-                                    <label class="text-[9px] font-mono uppercase text-on-brand-muted block">Time Slot</label>
-                                    <select id="sched-time" class="w-full bg-neutral-950 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white outline-none">
-                                        <option>10:00 AM - 10:30 AM</option>
-                                        <option>11:30 AM - 12:00 PM</option>
-                                        <option>03:00 PM - 03:30 PM</option>
-                                        <option>04:30 PM - 05:00 PM</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <button onclick="openBookingModal()" class="w-full py-2.5 bg-neutral-900 border border-white/15 hover:border-brand-primary text-xs text-white font-bold rounded-xl flex items-center justify-center gap-2 hover:scale-[1.01] transition-all">
-                                Request Booking Calendar <i class="fa-solid fa-angle-right"></i>
-                            </button>
-                        </div>
-
-                        <!-- Direct Social Link Badges Grid -->
-                        <div class="grid grid-cols-3 gap-4">
-                            <a href="mailto:mradityasoni.cse@gmail.com" class="glass-card py-4 rounded-2xl flex flex-col items-center justify-center gap-1 group hover:border-brand-primary/50">
-                                <i class="fa-solid fa-envelope text-brand-primary group-hover:scale-110 transition-transform duration-300"></i>
-                                <span class="text-[10px] font-mono uppercase tracking-wider text-on-brand-muted mt-1">Gmail</span>
-                            </a>
-                            <a href="https://github.com" target="_blank" class="glass-card py-4 rounded-2xl flex flex-col items-center justify-center gap-1 group hover:border-brand-secondary/50">
-                                <i class="fa-brands fa-github text-brand-secondary group-hover:scale-110 transition-transform duration-300"></i>
-                                <span class="text-[10px] font-mono uppercase tracking-wider text-on-brand-muted mt-1">GitHub</span>
-                            </a>
-                            <a href="https://linkedin.com" target="_blank" class="glass-card py-4 rounded-2xl flex flex-col items-center justify-center gap-1 group hover:border-brand-accent/50">
-                                <i class="fa-brands fa-linkedin-in text-brand-accent group-hover:scale-110 transition-transform duration-300"></i>
-                                <span class="text-[10px] font-mono uppercase tracking-wider text-on-brand-muted mt-1">LinkedIn</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-
-    <!-- ==========================================
-         9. MODAL: BOOKING / SCHEDULER WIDGET
-         ========================================== -->
-    <div id="booking-modal" class="fixed inset-0 w-full h-full bg-brand-bg/90 backdrop-blur-md z-[99999] hidden flex items-center justify-center p-6">
-        <div class="glass-card w-full max-w-lg p-8 rounded-3xl relative max-h-[90vh] overflow-y-auto">
-            <button onclick="closeBookingModal()" class="absolute top-6 right-6 text-on-brand-muted hover:text-white text-xl">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-
-            <div class="text-center mb-6">
-                <div class="w-12 h-12 rounded-full bg-brand-primary/10 border border-brand-primary/20 flex items-center justify-center text-brand-primary text-xl mx-auto mb-3">
-                    <i class="fa-solid fa-calendar-check"></i>
-                </div>
-                <h3 class="font-display text-2xl font-bold text-white uppercase tracking-wider">Book Consultation Session</h3>
-                <p class="text-on-brand-muted text-xs mt-1">Schedule a developer call with Aditya. All details will update on database node.</p>
-            </div>
-
-            <form id="booking-form" class="space-y-4">
-                <div class="space-y-1">
-                    <label class="text-[10px] font-mono uppercase text-on-brand-muted block">Full Name</label>
-                    <input id="book-name" type="text" class="w-full bg-neutral-950 border border-white/10 focus:border-brand-primary rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-brand-primary/20 outline-none transition-all" placeholder="John Doe" required/>
-                </div>
-                <div class="space-y-1">
-                    <label class="text-[10px] font-mono uppercase text-on-brand-muted block">Email Address</label>
-                    <input id="book-email" type="email" class="w-full bg-neutral-950 border border-white/10 focus:border-brand-primary rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-brand-primary/20 outline-none transition-all" placeholder="john@example.com" required/>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-mono uppercase text-on-brand-muted block">Date Choice</label>
-                        <input id="book-date" type="date" class="w-full bg-neutral-950 border border-white/10 focus:border-brand-primary rounded-xl px-4 py-3 text-sm text-white outline-none transition-all" required/>
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-mono uppercase text-on-brand-muted block">Time Slot</label>
-                        <select id="book-time" class="w-full bg-neutral-950 border border-white/10 focus:border-brand-primary rounded-xl px-4 py-3 text-sm text-white outline-none transition-all cursor-pointer">
-                            <option>10:00 AM - 10:30 AM</option>
-                            <option>11:30 AM - 12:00 PM</option>
-                            <option>03:00 PM - 03:30 PM</option>
-                            <option>04:30 PM - 05:00 PM</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="space-y-1">
-                    <label class="text-[10px] font-mono uppercase text-on-brand-muted block">Discussion Topic</label>
-                    <input id="book-topic" type="text" class="w-full bg-neutral-950 border border-white/10 focus:border-brand-primary rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-brand-primary/20 outline-none transition-all" placeholder="e.g., Security Audit / Full Stack Collaboration" required/>
-                </div>
-
-                <button type="submit" id="book-submit-btn" class="w-full mt-4 bg-brand-primary hover:brightness-110 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99] transition-all">
-                    <span>Submit Reservation</span>
-                    <i class="fa-solid fa-check"></i>
-                </button>
-                <div id="book-form-status" class="hidden p-4 rounded-xl text-center font-bold text-xs transition-all duration-300"></div>
-            </form>
-        </div>
-    </div>
-
-
-    <!-- ==========================================
-         10. FOOTER
-         ========================================== -->
-    <footer class="bg-brand-bg border-t border-white/5 py-12 px-6">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-            <div class="font-display text-xl font-bold tracking-tight text-white flex items-center gap-1">
-                ADITYA<span class="text-brand-primary">.</span>DEV
-            </div>
-            
-            <p class="text-xs text-on-brand-muted text-center md:text-left">
-                &copy; 2026 Aditya Soni. Built with custom 3D design components & scrolling parameters.
-            </p>
-
-            <div class="flex gap-6 text-on-brand-muted text-sm">
-                <a class="hover:text-brand-primary transition-colors" href="https://instagram.com" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-                <a class="hover:text-brand-primary transition-colors" href="https://github.com" target="_blank"><i class="fa-brands fa-github"></i></a>
-                <a class="hover:text-brand-primary transition-colors" href="https://linkedin.com" target="_blank"><i class="fa-brands fa-linkedin-in"></i></a>
-                <a class="hover:text-brand-primary transition-colors" href="mailto:mradityasoni.cse@gmail.com"><i class="fa-solid fa-envelope"></i></a>
-            </div>
-        </div>
-    </footer>
-
-
-    <!-- ==========================================
-         11. PORTFOLIO ENGINE (THREE.JS + GSAP)
-         ========================================== -->
-    <script>
-        // Skip intro handler
-        function skipIntro() {
-            gsap.to("#intro-loader", {
-                opacity: 0,
-                duration: 1.2,
-                ease: "power3.inOut",
-                onComplete: () => {
-                    document.getElementById("intro-loader").style.display = "none";
-                    document.body.style.overflow = "auto";
-                    revealSiteHeader();
-                }
-            });
-        }
-
-        // Fades header into view after intro loads
-        function revealSiteHeader() {
-            gsap.to("#main-header", {
-                y: 0,
-                duration: 0.8,
-                ease: "power2.out"
-            });
-        }
-
-        // Toggle Mobile Nav menu list
-        function toggleMobileNav() {
-            const mobileMenu = document.getElementById("mobile-nav");
-            const menuIcon = document.getElementById("menu-icon");
-            if (mobileMenu.classList.contains("hidden")) {
-                mobileMenu.classList.remove("hidden");
-                menuIcon.classList.remove("fa-bars-staggered");
-                menuIcon.classList.add("fa-xmark");
-            } else {
-                mobileMenu.classList.add("hidden");
-                menuIcon.classList.remove("fa-xmark");
-                menuIcon.classList.add("fa-bars-staggered");
-            }
-        }
-
-        // Booking Modal states
-        function openBookingModal() {
-            // Preset dates from page input if selected
-            const presetDate = document.getElementById("sched-date").value;
-            const presetTime = document.getElementById("sched-time").value;
-            if (presetDate) {
-                document.getElementById("book-date").value = presetDate;
-            }
-            if (presetTime) {
-                document.getElementById("book-time").value = presetTime;
-            }
-            
-            const modal = document.getElementById("booking-modal");
-            modal.classList.remove("hidden");
-            modal.style.display = "flex";
-            gsap.fromTo(modal.querySelector(".glass-card"), 
-                { scale: 0.8, opacity: 0 }, 
-                { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(1.5)" }
-            );
-        }
-
-        function closeBookingModal() {
-            const modal = document.getElementById("booking-modal");
-            gsap.to(modal.querySelector(".glass-card"), {
-                scale: 0.8,
-                opacity: 0,
-                duration: 0.3,
-                ease: "power2.in",
-                onComplete: () => {
-                    modal.classList.add("hidden");
-                    modal.style.display = "none";
-                }
-            });
-        }
-
-        // Setup GSAP trigger interactions on DOM load
-        document.addEventListener("DOMContentLoaded", () => {
-            document.body.style.overflow = "hidden"; // block scrolling until loader completes
-            
-            // Register GSAP ScrollTrigger plugin
-            gsap.registerPlugin(ScrollTrigger);
-
-            // 1. INTRO ZOOM-OUT ANIMATION (RESPONSIVE SCALE ANIMATION)
-            const introTimeline = gsap.timeline({
-                onComplete: () => {
-                    // Fade out loader overlay
-                    gsap.to("#intro-loader", {
-                        opacity: 0,
-                        duration: 1.2,
-                        ease: "power4.inOut",
-                        onComplete: () => {
-                            document.getElementById("intro-loader").style.display = "none";
-                            document.body.style.overflow = "auto";
-                            revealSiteHeader();
-                        }
-                    });
-                }
-            });
-
-            // Zoom-out scale-down name animation
-            introTimeline.fromTo("#intro-3d-box", 
-                { scale: 4, opacity: 0, rotationX: 25, rotationY: -20 },
-                { scale: 1, opacity: 1, rotationX: 0, rotationY: 0, duration: 2.8, ease: "power4.out" }
-            );
-
-            // 2. NAV BAR LINK ACTIVE TRACKER (ONE PAGE SCROLL STYLE)
-            const navLinks = document.querySelectorAll(".nav-link");
-            const sections = document.querySelectorAll("section");
-
-            window.addEventListener("scroll", () => {
-                let currentSection = "about";
-                const scrollPos = window.scrollY + 150;
-                
-                sections.forEach(section => {
-                    if (scrollPos >= section.offsetTop && scrollPos < section.offsetTop + section.clientHeight) {
-                        currentSection = section.getAttribute("id");
-                    }
-                });
-
-                navLinks.forEach(link => {
-                    link.classList.remove("active", "text-white");
-                    link.classList.add("text-on-brand-muted");
-                    if (link.getAttribute("href").substring(1) === currentSection) {
-                        link.classList.add("active", "text-white");
-                        link.classList.remove("text-on-brand-muted");
-                    }
-                });
-
-                // Update education timeline line scroll filler progress
-                const educationSection = document.getElementById("education");
-                if (educationSection) {
-                    const rect = educationSection.getBoundingClientRect();
-                    const sectionHeight = educationSection.clientHeight;
-                    // Calculate percentage scroll inside section
-                    const scrollInSec = window.innerHeight - rect.top;
-                    const pct = Math.max(0, Math.min(100, (scrollInSec / sectionHeight) * 100));
-                    document.getElementById("timeline-progress-bar").style.height = `${pct}%`;
-                }
-            });
-
-            // 3. 3D CARD PORTRAIT MOUSE TILT INTERACTION
-            const portraitCard = document.getElementById("portrait-3d-card");
-            if (portraitCard) {
-                portraitCard.addEventListener("mousemove", (e) => {
-                    const rect = portraitCard.getBoundingClientRect();
-                    // Cursor coordinate offsets relative to card midpoints
-                    const x = e.clientX - rect.left - rect.width / 2;
-                    const y = e.clientY - rect.top - rect.height / 2;
-                    
-                    // Degree factors
-                    const tiltX = (y / (rect.height / 2)) * -12; // tilt depth factor
-                    const tiltY = (x / (rect.width / 2)) * 12;
-
-                    portraitCard.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale3d(1.02, 1.02, 1.02)`;
-                });
-
-                portraitCard.addEventListener("mouseleave", () => {
-                    portraitCard.style.transform = "rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)";
-                });
-            }
-
-            // 4. TIMELINE CARDS ANIMATION (3D PERSPECTIVE ON SCROLL)
-            document.querySelectorAll(".timeline-element").forEach((element, idx) => {
-                const isEven = idx % 2 === 0;
-                gsap.from(element.querySelector(".glass-card"), {
-                    scrollTrigger: {
-                        trigger: element,
-                        start: "top 80%",
-                        end: "top 50%",
-                        scrub: 1
-                    },
-                    transform: `perspective(800px) rotateY(${isEven ? 25 : -25}deg) translate3d(${isEven ? 50 : -50}px, 0, 0)`,
-                    opacity: 0,
-                    duration: 1.5,
-                    ease: "power2.out"
-                });
-            });
-
-            // 5. SKILLS ARSENAL SCROLL TRIGGER GLOWS
-            gsap.from(".paper-overlay", {
-                scrollTrigger: {
-                    trigger: "#skills",
-                    start: "top 75%",
-                    end: "top 45%",
-                    scrub: 1
-                },
-                scale: 0.95,
-                opacity: 0.8,
-                duration: 1.2,
-                ease: "power1.out"
-            });
-
-            // 6. DB FORM SUBMISSIONS: DIRECT MESSAGES (/api/contact)
-            const dmForm = document.getElementById("dm-contact-form");
-            if (dmForm) {
-                dmForm.addEventListener("submit", async (e) => {
-                    e.preventDefault();
-                    
-                    const submitBtn = document.getElementById("dm-submit-btn");
-                    const submitSpan = submitBtn.querySelector("span");
-                    const formStatus = document.getElementById("dm-form-status");
-
-                    submitBtn.disabled = true;
-                    submitSpan.textContent = "Sending Packet...";
-                    formStatus.classList.add("hidden");
-                    formStatus.classList.remove("bg-green-500/20", "text-green-400", "bg-red-500/20", "text-red-400");
-
-                    const name = document.getElementById("dm-name").value.trim();
-                    const email = document.getElementById("dm-email").value.trim();
-                    const subject = document.getElementById("dm-subject").value;
-                    const messageText = document.getElementById("dm-message").value.trim();
-                    const message = `[Subject: ${subject}]\n\n${messageText}`;
-
-                    try {
-                        const response = await fetch(window.location.origin + "/api/contact", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ name, email, message })
-                        });
-
-                        const data = await response.json();
-                        
-                        if (response.ok) {
-                            formStatus.textContent = "✓ Packet securely stored in SQLite database Node.";
-                            formStatus.classList.add("bg-green-500/20", "text-green-400");
-                            formStatus.classList.remove("hidden");
-                            dmForm.reset();
-                        } else {
-                            throw new Error(data.message || "Packet delivery fault.");
-                        }
-                    } catch (error) {
-                        formStatus.textContent = "✗ Error: " + error.message;
-                        formStatus.classList.add("bg-red-500/20", "text-red-400");
-                        formStatus.classList.remove("hidden");
-                    } finally {
-                        submitBtn.disabled = false;
-                        submitSpan.textContent = "Send Message";
-                    }
-                });
-            }
-
-            // 7. DB FORM SUBMISSIONS: BOOK CONSULTATION CALL (/api/booking-submit)
-            const bookingForm = document.getElementById("booking-form");
-            if (bookingForm) {
-                bookingForm.addEventListener("submit", async (e) => {
-                    e.preventDefault();
-                    
-                    const submitBtn = document.getElementById("book-submit-btn");
-                    const submitSpan = submitBtn.querySelector("span");
-                    const formStatus = document.getElementById("book-form-status");
-
-                    submitBtn.disabled = true;
-                    submitSpan.textContent = "Syncing Node...";
-                    formStatus.classList.add("hidden");
-                    formStatus.classList.remove("bg-green-500/20", "text-green-400", "bg-red-500/20", "text-red-400");
-
-                    const name = document.getElementById("book-name").value.trim();
-                    const email = document.getElementById("book-email").value.trim();
-                    const booking_date = document.getElementById("book-date").value;
-                    const booking_time = document.getElementById("book-time").value;
-                    const topic = document.getElementById("book-topic").value.trim();
-
-                    try {
-                        const response = await fetch(window.location.origin + "/api/booking-submit", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ name, email, booking_date, booking_time, topic })
-                        });
-
-                        const data = await response.json();
-                        
-                        if (response.ok) {
-                            formStatus.textContent = "✓ Call booked. Database parameters synchronised successfully.";
-                            formStatus.classList.add("bg-green-500/20", "text-green-400");
-                            formStatus.classList.remove("hidden");
-                            bookingForm.reset();
-                            // Close modal after brief delay
-                            setTimeout(() => {
-                                closeBookingModal();
-                                formStatus.classList.add("hidden");
-                            }, 2000);
-                        } else {
-                            throw new Error(data.message || "Scheduler sync fault.");
-                        }
-                    } catch (error) {
-                        formStatus.textContent = "✗ Error: " + error.message;
-                        formStatus.classList.add("bg-red-500/20", "text-red-400");
-                        formStatus.classList.remove("hidden");
-                    } finally {
-                        submitBtn.disabled = false;
-                        submitSpan.textContent = "Submit Reservation";
-                    }
-                });
-            }
-        });
-
-        // Three.js particles background removed.
-    </script>
-</body>
-</html>
+        ```
+    *   *Response:* `200 OK` + `{"status": "success", "message": "Settings updated"}`
+
+#### 3. Projects CRUD API
+*   **`POST /api/projects`** (Protected)
+    *   *Payload:* `{"title": "App", "description": "Details", "tags": "React,Node", ...}`
+    *   *Response:* `201 Created`
+*   **`PUT /api/projects/:id`** (Protected)
+    *   *Response:* `200 OK`
+*   **`DELETE /api/projects/:id`** (Protected)
+    *   *Response:* `200 OK`
+
+#### 4. Backup & Version Rollback API
+*   **`GET /api/system/backup`** (Protected)
+    *   *Response:* Serves direct download link of SQLite db or compiled JSON dump.
+*   **`POST /api/system/rollback`** (Protected)
+    *   *Payload:* `{"version_id": 42}`
+    *   *Response:* Reverts `portfolio_settings` to selected snapshot state.
+
+---
+
+### File Upload Architecture
+For saving image updates (e.g. avatars, project cards) without using heavy frameworks:
+1.  Admin selects image via file explorer.
+2.  Frontend uploads via `multipart/form-data` to `/api/media/upload`.
+3.  The server validates image extension (PNG, JPG, WebP only) and sizes (< 3MB).
+4.  Saves to `./uploads/[uuid]-[filename]`.
+5.  API returns the local server URL (`/uploads/abc-profile.png`) to be referenced directly inside the SQL database columns.
+
+---
+
+## 5. IMPLEMENTATION ROADMAP & CHECKLISTS
+
+### Phase-by-Phase Timeline
+
+```mermaid
+gantt
+    title Portfolio Developer Panel Implementation Schedule
+    dateFormat  YYYY-MM-DD
+    section Phase 1
+    Setup backend & Database migrations :2026-06-16, 3d
+    section Phase 2
+    Vite React Admin Panel UI layout  :2026-06-19, 4d
+    section Phase 3
+    Theme Controls & CSS Sync system    :2026-06-23, 3d
+    section Phase 4
+    CRUD Content Form Orchestration  :2026-06-26, 4d
+    section Phase 5
+    File Uploads & Project Manager    :2026-06-30, 3d
+    section Phase 6
+    Undo/Redo History & Backup        :2026-07-03, 3d
+    section Phase 7
+    Load optimizations & Iframe tweaks:2026-07-06, 2d
+    section Phase 8
+    Deployment validation             :2026-07-08, 2d
+```
+
+---
+
+### Detailed Implementation Phases
+
+#### Phase 1: Foundation & Architecture
+*   **Objective:** Set up project structure, convert backend routes to Express (TypeScript), and prepare SQLite migrations.
+*   **Tasks:**
+    1.  Initialize Node.js Server container.
+    2.  Write migrations code inside `./server/db/migrations.ts` to spin up necessary tables.
+    3.  Create Express route framework with clean request handlers.
+*   **Deliverables:** SQL migration scripts, database model validations, Express server skeleton code.
+*   **Estimated Time:** 3 days
+*   **Complexity:** Medium | **Priority:** High
+
+#### Phase 2: Developer Panel UI Layout
+*   **Objective:** Design and build the editor dashboard layout, embedding the responsive viewframe selector.
+*   **Tasks:**
+    1.  Create an `/admin` route served from React frontend.
+    2.  Implement left-hand navigation sidebar (Dashboard, Customization, Sections, Storage).
+    3.  Embed client portfolio view within an standard HTML `<iframe>`.
+*   **Deliverables:** Visual administrative sidebar structure, iframe preview shell, responsive viewport scale buttons.
+*   **Estimated Time:** 4 days
+*   **Complexity:** High | **Priority:** High
+
+#### Phase 3: Theme Controls & CSS Variable Integration
+*   **Objective:** Connect visual color wheels and font family controls to live custom CSS variables inside the preview page.
+*   **Tasks:**
+    1.  Integrate Tailwind-friendly color pickers in the dashboard.
+    2.  Implement `postMessage` protocol to update values inside the preview iframe dynamic stylesheet instantly on keypress.
+*   **Deliverables:** Theme editor controllers, real-time styling updates without iframe reload.
+*   **Estimated Time:** 3 days
+*   **Complexity:** Medium | **Priority:** High
+
+#### Phase 4: Content Management System Forms
+*   **Objective:** Enable timeline adjustments, section toggling, and layout modifications.
+*   **Tasks:**
+    1.  Create text input boxes and markdown rich-text fields for About Bio, Hero Title, and Booking Calendars.
+    2.  Implement drag-and-drop hierarchy listing to sort timelines.
+*   **Deliverables:** Visual content editors with state binding.
+*   **Estimated Time:** 4 days
+*   **Complexity:** High | **Priority:** High
+
+#### Phase 5: Projects Manager & Asset Storage
+*   **Objective:** Build out projects archive grid control system and image upload pipelines.
+*   **Tasks:**
+    1.  Implement CRUD modal for Projects archive.
+    2.  Establish upload endpoint with backend mime-filtering.
+*   **Deliverables:** Project manager interface, secure local file storage, asset upload UI.
+*   **Estimated Time:** 3 days
+*   **Complexity:** Medium | **Priority:** High
+
+#### Phase 6: Undo/Redo & Snapshot Backups
+*   **Objective:** Implement configuration history management and data backups.
+*   **Tasks:**
+    1.  Add state stack trackers in Zustand to record actions.
+    2.  Implement import/export JSON configuration buttons.
+*   **Deliverables:** Version history database logs, JSON layout files import/export.
+*   **Estimated Time:** 3 days
+*   **Complexity:** High | **Priority:** Medium
+
+#### Phase 7: Optimization & Iframe Refinement
+*   **Objective:** Improve visual rendering times and reduce editor load overhead.
+*   **Tasks:**
+    1.  Set up client-side layout caching.
+    2.  Lazy-load heavy admin dashboards from the public entry file.
+*   **Deliverables:** Performance optimization reports, clean loading states.
+*   **Estimated Time:** 2 days
+*   **Complexity:** Low | **Priority:** Medium
+
+#### Phase 8: Production Deployment
+*   **Objective:** Deploy code within a container, secure access controls, and perform manual penetration tests.
+*   **Tasks:**
+    1.  Build Dockerfile.
+    2.  Run vulnerability checks against SQL inputs.
+*   **Deliverables:** Deployed containerized portfolio app, final system audit.
+*   **Estimated Time:** 2 days
+*   **Complexity:** Medium | **Priority:** High
+
+---
+
+### System Architecture & Directories
+
+```
+/portfolio-app
+│
+├── /server                 # Node.js + Express Backend
+│   ├── /db                 # Database connections & SQLite schemas
+│   ├── /routes             # API endpoints (Auth, Projects, Media, Settings)
+│   ├── /middleware         # Token verification, secure logs, error handlers
+│   ├── /uploads            # Location for uploaded media files
+│   └── server.ts           # Main Express server entrypoint
+│
+├── /src                    # React Frontend (Vite)
+│   ├── /components         # UI Component catalog (Cards, Modals)
+│   │   └── /admin          # Developer Panel components (ColorPicker, SectionSort)
+│   ├── /store              # State management (Zustand configuration stores)
+│   ├── /styles             # index.css & global styling configs
+│   ├── App.tsx             # Entry routing
+│   └── main.tsx            # DOM initialization
+│
+├── Dockerfile              # Deployment configuration file
+├── package.json            # Client and Server dependencies lists
+└── tailwind.config.js      # Styling utility classes setups
+```
+
+---
+
+### Comprehensive Checklist Matrix
+
+#### Security Checklist
+- [ ] Set `HttpOnly`, `Secure`, and `SameSite=Lax` headers on authorization cookies.
+- [ ] Implement query parameter parsing validations to verify delete/update request values are clean integers (blocks SQL injection).
+- [ ] Check file header magic bytes on uploaded assets instead of relying solely on the file extension string.
+- [ ] Limit API endpoint requests using a rate-limiting middleware (e.g., `express-rate-limit`) to prevent brute-force attacks on the dashboard.
+
+#### Verification & Testing Checklist
+- [ ] Validate iframe connection controls across Safari, Firefox, and Chrome.
+- [ ] Audit DB state preservation when simulating database disconnections.
+- [ ] Test CSS variable updates under contrasting theme choices (ensures text readability is preserved).
+- [ ] Confirm layout rendering hierarchy when loading empty project datasets.
+
+#### Deployment Checklist
+- [ ] Store active session secrets outside the codebase using environment variables.
+- [ ] Ensure SQLite file path writes to a persistent container volume mount (prevents data loss during Docker updates).
+- [ ] Set up daily database replication backups.
+- [ ] Verify that admin script assets are not included in public script chunks.

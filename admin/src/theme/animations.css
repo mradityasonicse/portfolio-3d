@@ -1,0 +1,80 @@
+/* ==========================================================================
+   Admin Panel — Micro-interactions & Entry Animations
+   ========================================================================== */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.4); }
+  50%       { box-shadow: 0 0 0 8px rgba(244, 63, 94, 0); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.animate-in { animation: fadeIn 0.4s var(--ease-out) both; }
+.animate-slide-left { animation: slideInLeft 0.4s var(--ease-out) both; }
+.animate-slide-right { animation: slideInRight 0.4s var(--ease-out) both; }
+.animate-scale { animation: scaleIn 0.3s var(--ease-spring) both; }
+
+.modal-overlay { animation: fadeIn 0.2s ease both; }
+.modal { animation: scaleIn 0.3s var(--ease-spring) both; }
+
+/* Page transition */
+.page-content { animation: fadeIn 0.35s var(--ease-out) both; }
+
+/* Skeleton loading */
+.skeleton {
+  background: linear-gradient(90deg, 
+    rgba(255,255,255,0.04) 0%, 
+    rgba(255,255,255,0.08) 50%, 
+    rgba(255,255,255,0.04) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* Pulsing online dot */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.status-dot.online {
+  background: var(--success);
+  animation: pulse-glow 2s infinite;
+}
+
+.status-dot.offline { background: var(--text-dim); }
+.status-dot.warning { background: var(--warning); }
+
+/* Glow effects on hover */
+.glow-hover:hover { box-shadow: 0 0 20px rgba(244, 63, 94, 0.2); }
+.glow-purple:hover { box-shadow: 0 0 20px rgba(139, 92, 246, 0.2); }
+
+/* Number counter animation */
+.count-up { display: inline-block; transition: transform 0.3s var(--ease-spring); }

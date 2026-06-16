@@ -674,8 +674,9 @@
                 <div class="view-tabs">
                     <button class="view-tab active" id="tab-btn-msg-view"
                         onclick="switchView('messages')">Messages</button>
-                    <button class="view-tab tab-bookings" id="tab-btn-book-view" onclick="switchView('bookings')">Booked
-                        Calls</button>
+                    <button class="view-tab tab-bookings" id="tab-btn-book-view" onclick="switchView('bookings')">Booked Calls</button>
+                    <button class="view-tab" id="tab-btn-design-view" onclick="switchView('design')">Visual Customizer</button>
+                    <button class="view-tab" id="tab-btn-content-view" onclick="switchView('content')">Content Manager</button>
                 </div>
 
                 <div class="search-container">
@@ -713,30 +714,455 @@
                     <!-- Dynamically populated -->
                 </div>
 
+                <!-- Visual Customizer View -->
+                <div id="design-view-container" style="display: none; margin-top: 1.5rem;">
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 2rem;">
+                        <div style="display: flex; flex-flow: row wrap; gap: 2rem; align-items: start;">
+                            <!-- Controls Column -->
+                            <div class="glass-card" style="flex: 1; min-width: 320px; max-height: 720px; overflow-y: auto; padding: 2rem; border: 2px solid var(--text); box-shadow: 4px 4px 0px var(--text); display: flex; flex-direction: column; gap: 1.2rem;">
+                                <h3 style="font-family: var(--font-display); text-transform: uppercase; border-bottom: 1px solid rgba(17,17,17,0.15); padding-bottom: 0.8rem; margin-bottom: 0.5rem; font-size: 1.2rem; color: var(--accent);">Visual Settings</h3>
+                                
+                                <div class="control-group">
+                                    <label style="display:block; font-size:0.75rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.4rem;">Theme Preset</label>
+                                    <select id="setting-theme-preset" onchange="applyPreset(this.value)" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.6rem; color:var(--text); font-family:var(--font-mono); outline:none; cursor:pointer;">
+                                        <option value="dark">Brutalist Dark (Default)</option>
+                                        <option value="light">Brutalist Light</option>
+                                        <option value="emerald">Emerald Cyber</option>
+                                        <option value="sunset">Sunset Gold</option>
+                                    </select>
+                                </div>
+
+                                <div class="control-group">
+                                    <label style="display:block; font-size:0.75rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.4rem;">Primary Accent Color</label>
+                                    <div style="display:flex; gap:0.5rem;">
+                                        <input type="color" id="setting-primary-color" oninput="updateLivePreview()" style="width:40px; height:38px; border:2px solid var(--text); cursor:pointer; background:none; padding:0;">
+                                        <input type="text" id="setting-primary-color-text" oninput="updateColorFromText('primary', this.value)" style="flex:1; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); font-family:var(--font-mono);">
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <label style="display:block; font-size:0.75rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.4rem;">Secondary Color</label>
+                                    <div style="display:flex; gap:0.5rem;">
+                                        <input type="color" id="setting-secondary-color" oninput="updateLivePreview()" style="width:40px; height:38px; border:2px solid var(--text); cursor:pointer; background:none; padding:0;">
+                                        <input type="text" id="setting-secondary-color-text" oninput="updateColorFromText('secondary', this.value)" style="flex:1; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); font-family:var(--font-mono);">
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <label style="display:block; font-size:0.75rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.4rem;">Accent Color</label>
+                                    <div style="display:flex; gap:0.5rem;">
+                                        <input type="color" id="setting-accent-color" oninput="updateLivePreview()" style="width:40px; height:38px; border:2px solid var(--text); cursor:pointer; background:none; padding:0;">
+                                        <input type="text" id="setting-accent-color-text" oninput="updateColorFromText('accent', this.value)" style="flex:1; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); font-family:var(--font-mono);">
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <label style="display:block; font-size:0.75rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.4rem;">Background Color</label>
+                                    <div style="display:flex; gap:0.5rem;">
+                                        <input type="color" id="setting-bg-color" oninput="updateLivePreview()" style="width:40px; height:38px; border:2px solid var(--text); cursor:pointer; background:none; padding:0;">
+                                        <input type="text" id="setting-bg-color-text" oninput="updateColorFromText('bg', this.value)" style="flex:1; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); font-family:var(--font-mono);">
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <label style="display:block; font-size:0.75rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.4rem;">Surface Card Color</label>
+                                    <div style="display:flex; gap:0.5rem;">
+                                        <input type="color" id="setting-surface-color" oninput="updateLivePreview()" style="width:40px; height:38px; border:2px solid var(--text); cursor:pointer; background:none; padding:0;">
+                                        <input type="text" id="setting-surface-color-text" oninput="updateColorFromText('surface', this.value)" style="flex:1; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); font-family:var(--font-mono);">
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <label style="display:block; font-size:0.75rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.4rem;">Display Font</label>
+                                    <select id="setting-font-display" onchange="updateLivePreview()" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.6rem; color:var(--text); font-family:var(--font-mono); outline:none; cursor:pointer;">
+                                        <option value="Oswald">Oswald</option>
+                                        <option value="Syne">Syne</option>
+                                        <option value="Outfit">Outfit</option>
+                                        <option value="Montserrat">Montserrat</option>
+                                        <option value="Playfair Display">Playfair Display</option>
+                                    </select>
+                                </div>
+
+                                <div class="control-group">
+                                    <label style="display:block; font-size:0.75rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.4rem;">Body Font</label>
+                                    <select id="setting-font-body" onchange="updateLivePreview()" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.6rem; color:var(--text); font-family:var(--font-mono); outline:none; cursor:pointer;">
+                                        <option value="Inter">Inter</option>
+                                        <option value="DM Sans">DM Sans</option>
+                                        <option value="Space Grotesk">Space Grotesk</option>
+                                        <option value="Roboto">Roboto</option>
+                                    </select>
+                                </div>
+
+                                <div class="control-group" style="display:flex; align-items:center; gap:0.5rem; padding:0.2rem 0;">
+                                    <input type="checkbox" id="setting-animations" onchange="updateLivePreview()" style="width:18px; height:18px; border:2px solid var(--text); accent-color:var(--accent); cursor:pointer;">
+                                    <label for="setting-animations" style="font-size:0.8rem; text-transform:uppercase; font-family:var(--font-mono); cursor:pointer; user-select:none;">Enable Page Animations</label>
+                                </div>
+
+                                <div class="control-group">
+                                    <label style="display:block; font-size:0.75rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.4rem;">Homepage Section Sequence</label>
+                                    <input type="text" id="setting-layout-order" oninput="updateLivePreview()" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.6rem; color:var(--text); font-family:var(--font-mono); outline:none;" placeholder="about,education,skills,now,projects,contact">
+                                    <span style="font-size:0.65rem; color:var(--text-dim); display:block; margin-top:0.25rem;">CSV format of IDs: about, education, skills, now, projects, contact</span>
+                                </div>
+
+                                <!-- Branding Editor -->
+                                <div style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1rem;">
+                                    <h4 style="font-family: var(--font-display); text-transform: uppercase; font-size: 0.9rem; margin-bottom: 0.8rem; color: var(--accent);">Branding & Footer</h4>
+                                    
+                                    <div class="control-group" style="margin-bottom:0.8rem;">
+                                        <label style="display:block; font-size:0.7rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">Brand Name</label>
+                                        <input type="text" id="setting-brand-name" oninput="updateLivePreview()" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); font-family:var(--font-mono); outline:none;">
+                                    </div>
+                                    
+                                    <div class="control-group" style="margin-bottom:0.8rem;">
+                                        <label style="display:block; font-size:0.7rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">Logo Text</label>
+                                        <input type="text" id="setting-logo-text" oninput="updateLivePreview()" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); font-family:var(--font-mono); outline:none;">
+                                    </div>
+                                    
+                                    <div class="control-group" style="margin-bottom:0.8rem;">
+                                        <label style="display:block; font-size:0.7rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">Footer Copyright Text</label>
+                                        <input type="text" id="setting-footer-text" oninput="updateLivePreview()" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); font-family:var(--font-mono); outline:none;">
+                                    </div>
+                                </div>
+
+                                <!-- SEO & Tracking Editor -->
+                                <div style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1rem;">
+                                    <h4 style="font-family: var(--font-display); text-transform: uppercase; font-size: 0.9rem; margin-bottom: 0.8rem; color: var(--accent);">SEO & Analytics</h4>
+                                    
+                                    <div class="control-group" style="margin-bottom:0.8rem;">
+                                        <label style="display:block; font-size:0.7rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">SEO Title</label>
+                                        <input type="text" id="setting-seo-title" oninput="updateLivePreview()" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); font-family:var(--font-mono); outline:none;">
+                                    </div>
+                                    
+                                    <div class="control-group" style="margin-bottom:0.8rem;">
+                                        <label style="display:block; font-size:0.7rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">SEO Description</label>
+                                        <textarea id="setting-seo-description" oninput="updateLivePreview()" rows="3" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); outline:none; resize:vertical;"></textarea>
+                                    </div>
+                                    
+                                    <div class="control-group" style="margin-bottom:0.8rem;">
+                                        <label style="display:block; font-size:0.7rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">Google Analytics ID</label>
+                                        <input type="text" id="setting-analytics-id" oninput="updateLivePreview()" placeholder="UA-XXXXX-Y or G-XXXXXX" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); font-family:var(--font-mono); outline:none;">
+                                    </div>
+                                </div>
+
+                                <!-- Hero Section Content -->
+                                <div style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1rem;">
+                                    <h4 style="font-family: var(--font-display); text-transform: uppercase; font-size: 0.9rem; margin-bottom: 0.8rem; color: var(--accent);">Hero Section Content</h4>
+                                    
+                                    <div class="control-group" style="margin-bottom:0.8rem;">
+                                        <label style="display:block; font-size:0.7rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">Hero Badge Info</label>
+                                        <input type="text" id="setting-hero-badge" oninput="updateLivePreview()" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); font-family:var(--font-mono); outline:none;">
+                                    </div>
+                                    
+                                    <div class="control-group" style="margin-bottom:0.8rem;">
+                                        <label style="display:block; font-size:0.7rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">Hero Title Text</label>
+                                        <textarea id="setting-hero-title" oninput="updateLivePreview()" rows="3" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); font-family:var(--font-mono); outline:none; resize:vertical;"></textarea>
+                                    </div>
+                                    
+                                    <div class="control-group" style="margin-bottom:0.8rem;">
+                                        <label style="display:block; font-size:0.7rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">Hero Subtitle</label>
+                                        <input type="text" id="setting-hero-subtitle" oninput="updateLivePreview()" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); font-family:var(--font-mono); outline:none;">
+                                    </div>
+                                    
+                                    <div class="control-group" style="margin-bottom:0.8rem;">
+                                        <label style="display:block; font-size:0.7rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">Hero Description</label>
+                                        <textarea id="setting-hero-description" oninput="updateLivePreview()" rows="4" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); outline:none; resize:vertical;"></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- About Bio Editor -->
+                                <div style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1rem;">
+                                    <h4 style="font-family: var(--font-display); text-transform: uppercase; font-size: 0.9rem; margin-bottom: 0.8rem; color: var(--accent);">About Biography</h4>
+                                    
+                                    <div class="control-group" style="margin-bottom:0.8rem;">
+                                        <label style="display:block; font-size:0.7rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">About Lead Biography</label>
+                                        <input type="text" id="setting-about-lead" oninput="updateLivePreview()" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); outline:none;">
+                                    </div>
+                                    
+                                    <div class="control-group" style="margin-bottom:0.8rem;">
+                                        <label style="display:block; font-size:0.7rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">About Full Body Biography</label>
+                                        <textarea id="setting-about-body" oninput="updateLivePreview()" rows="5" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); outline:none; resize:vertical;"></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- Goals Editor -->
+                                <div style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1rem;">
+                                    <h4 style="font-family: var(--font-display); text-transform: uppercase; font-size: 0.9rem; margin-bottom: 0.8rem; color: var(--accent);">Mission Goals</h4>
+                                    
+                                    <!-- Goal 1 -->
+                                    <div style="margin-bottom: 1rem; padding: 0.5rem; border: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.1);">
+                                        <label style="font-size:0.75rem; font-family:var(--font-mono); color:var(--accent); font-weight:bold; display:block; margin-bottom:0.3rem;">Goal #1</label>
+                                        <div class="control-group" style="margin-bottom:0.5rem;">
+                                            <input type="text" id="setting-goal-1-title" oninput="updateLivePreview()" placeholder="Title (e.g. Goal #1)" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.4rem; color:var(--text); font-family:var(--font-mono); outline:none; font-size:0.8rem;">
+                                        </div>
+                                        <div class="control-group" style="margin-bottom:0.5rem;">
+                                            <textarea id="setting-goal-1-desc" oninput="updateLivePreview()" placeholder="Goal Description" rows="2" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.4rem; color:var(--text); outline:none; font-size:0.8rem; resize:vertical;"></textarea>
+                                        </div>
+                                        <div class="control-group">
+                                            <input type="text" id="setting-goal-1-status" oninput="updateLivePreview()" placeholder="Status Badge (e.g. Priority)" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.4rem; color:var(--text); font-family:var(--font-mono); outline:none; font-size:0.8rem;">
+                                        </div>
+                                    </div>
+
+                                    <!-- Goal 2 -->
+                                    <div style="margin-bottom: 1rem; padding: 0.5rem; border: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.1);">
+                                        <label style="font-size:0.75rem; font-family:var(--font-mono); color:var(--accent); font-weight:bold; display:block; margin-bottom:0.3rem;">Goal #2</label>
+                                        <div class="control-group" style="margin-bottom:0.5rem;">
+                                            <input type="text" id="setting-goal-2-title" oninput="updateLivePreview()" placeholder="Title (e.g. Goal #2)" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.4rem; color:var(--text); font-family:var(--font-mono); outline:none; font-size:0.8rem;">
+                                        </div>
+                                        <div class="control-group" style="margin-bottom:0.5rem;">
+                                            <textarea id="setting-goal-2-desc" oninput="updateLivePreview()" placeholder="Goal Description" rows="2" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.4rem; color:var(--text); outline:none; font-size:0.8rem; resize:vertical;"></textarea>
+                                        </div>
+                                        <div class="control-group">
+                                            <input type="text" id="setting-goal-2-status" oninput="updateLivePreview()" placeholder="Status Badge (e.g. In Progress)" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.4rem; color:var(--text); font-family:var(--font-mono); outline:none; font-size:0.8rem;">
+                                        </div>
+                                    </div>
+
+                                    <!-- Goal 3 -->
+                                    <div style="padding: 0.5rem; border: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.1);">
+                                        <label style="font-size:0.75rem; font-family:var(--font-mono); color:var(--accent); font-weight:bold; display:block; margin-bottom:0.3rem;">Goal #3</label>
+                                        <div class="control-group" style="margin-bottom:0.5rem;">
+                                            <input type="text" id="setting-goal-3-title" oninput="updateLivePreview()" placeholder="Title (e.g. Goal #3)" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.4rem; color:var(--text); font-family:var(--font-mono); outline:none; font-size:0.8rem;">
+                                        </div>
+                                        <div class="control-group" style="margin-bottom:0.5rem;">
+                                            <textarea id="setting-goal-3-desc" oninput="updateLivePreview()" placeholder="Goal Description" rows="2" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.4rem; color:var(--text); outline:none; font-size:0.8rem; resize:vertical;"></textarea>
+                                        </div>
+                                        <div class="control-group">
+                                            <input type="text" id="setting-goal-3-status" oninput="updateLivePreview()" placeholder="Status Badge (e.g. The Why)" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.4rem; color:var(--text); font-family:var(--font-mono); outline:none; font-size:0.8rem;">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Skills Copy Editor -->
+                                <div style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1rem;">
+                                    <h4 style="font-family: var(--font-display); text-transform: uppercase; font-size: 0.9rem; margin-bottom: 0.8rem; color: var(--accent);">Skills Copy</h4>
+                                    
+                                    <div class="control-group" style="margin-bottom:0.8rem;">
+                                        <label style="display:block; font-size:0.7rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">Web Dev skills (CSV)</label>
+                                        <input type="text" id="setting-skills-web-dev" oninput="updateLivePreview()" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); font-family:var(--font-mono); outline:none;">
+                                    </div>
+                                    
+                                    <div class="control-group" style="margin-bottom:0.8rem;">
+                                        <label style="display:block; font-size:0.7rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">Security skills (CSV)</label>
+                                        <input type="text" id="setting-skills-security" oninput="updateLivePreview()" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); font-family:var(--font-mono); outline:none;">
+                                    </div>
+                                    
+                                    <div class="control-group" style="margin-bottom:0.8rem;">
+                                        <label style="display:block; font-size:0.7rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">Languages skills (CSV)</label>
+                                        <input type="text" id="setting-skills-languages" oninput="updateLivePreview()" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); font-family:var(--font-mono); outline:none;">
+                                    </div>
+                                </div>
+
+                                <!-- Contact & Social Links Editor -->
+                                <div style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1rem;">
+                                    <h4 style="font-family: var(--font-display); text-transform: uppercase; font-size: 0.9rem; margin-bottom: 0.8rem; color: var(--accent);">Contact Coordinates</h4>
+                                    
+                                    <div class="control-group" style="margin-bottom:0.8rem;">
+                                        <label style="display:block; font-size:0.7rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">Contact Title Headline</label>
+                                        <input type="text" id="setting-contact-title" oninput="updateLivePreview()" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); outline:none;">
+                                    </div>
+                                    
+                                    <div class="control-group" style="margin-bottom:0.8rem;">
+                                        <label style="display:block; font-size:0.7rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">Contact Subtitle Copy</label>
+                                        <textarea id="setting-contact-subtitle" oninput="updateLivePreview()" rows="3" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); outline:none; resize:vertical;"></textarea>
+                                    </div>
+
+                                    <div class="control-group" style="margin-bottom:0.8rem;">
+                                        <label style="display:block; font-size:0.7rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">Contact Email</label>
+                                        <input type="email" id="setting-contact-email" oninput="updateLivePreview()" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); font-family:var(--font-mono); outline:none;">
+                                    </div>
+
+                                    <div class="control-group" style="margin-bottom:0.8rem;">
+                                        <label style="display:block; font-size:0.7rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">Contact Location</label>
+                                        <input type="text" id="setting-contact-location" oninput="updateLivePreview()" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); font-family:var(--font-mono); outline:none;">
+                                    </div>
+
+                                    <div class="control-group" style="margin-bottom:0.8rem;">
+                                        <label style="display:block; font-size:0.7rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">Opportunities Status</label>
+                                        <input type="text" id="setting-contact-status" oninput="updateLivePreview()" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); font-family:var(--font-mono); outline:none;">
+                                    </div>
+                                    
+                                    <div class="control-group" style="margin-bottom:0.8rem;">
+                                        <label style="display:block; font-size:0.7rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">GitHub Profile Link</label>
+                                        <input type="text" id="setting-social-github" oninput="updateLivePreview()" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); font-family:var(--font-mono); outline:none;">
+                                    </div>
+                                    
+                                    <div class="control-group" style="margin-bottom:0.8rem;">
+                                        <label style="display:block; font-size:0.7rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">LinkedIn Profile Link</label>
+                                        <input type="text" id="setting-social-linkedin" oninput="updateLivePreview()" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); font-family:var(--font-mono); outline:none;">
+                                    </div>
+                                    
+                                    <div class="control-group" style="margin-bottom:0.8rem;">
+                                        <label style="display:block; font-size:0.7rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">Twitter Profile Link</label>
+                                        <input type="text" id="setting-social-twitter" oninput="updateLivePreview()" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); font-family:var(--font-mono); outline:none;">
+                                    </div>
+                                </div>
+
+                                <!-- Custom Scripts Editor -->
+                                <div style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1rem;">
+                                    <h4 style="font-family: var(--font-display); text-transform: uppercase; font-size: 0.9rem; margin-bottom: 0.8rem; color: var(--accent);">Custom Code Injection</h4>
+                                    
+                                    <div class="control-group" style="margin-bottom:0.8rem;">
+                                        <label style="display:block; font-size:0.7rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">Custom CSS (Styles)</label>
+                                        <textarea id="setting-custom-css" oninput="updateLivePreview()" placeholder="/* Custom style rules here */" rows="4" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); font-family:var(--font-mono); outline:none; resize:vertical; font-size:0.8rem;"></textarea>
+                                    </div>
+                                    
+                                    <div class="control-group">
+                                        <label style="display:block; font-size:0.7rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">Custom JavaScript (Code)</label>
+                                        <textarea id="setting-custom-javascript" oninput="updateLivePreview()" placeholder="// Custom scripts here - executes on page load" rows="4" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.5rem; color:var(--text); font-family:var(--font-mono); outline:none; resize:vertical; font-size:0.8rem;"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                                <div style="display:flex; gap:0.8rem; margin-top:0.8rem; padding-top:1rem; border-top:1px solid rgba(255,255,255,0.08);">
+                                    <button class="btn btn-outline" onclick="resetVisualForm()" style="flex:1; padding:0.6rem;">Reset</button>
+                                    <button class="btn btn-primary" onclick="publishVisualSettings()" style="flex:1; padding:0.6rem; background:var(--accent); color:#fff; border-color:var(--text);">Publish</button>
+                                </div>
+                            </div>
+
+                            <!-- Preview Column -->
+                            <div style="flex: 2; min-width: 320px; display:flex; flex-direction:column; gap:1rem;">
+                                <div class="glass-card" style="padding:0.75rem 1.5rem; display:flex; justify-content:space-between; align-items:center; border:2px solid var(--text); box-shadow:4px 4px 0px var(--text); flex-wrap:wrap; gap:1rem;">
+                                    <span style="font-family:var(--font-display); font-size:0.85rem; text-transform:uppercase; font-weight:bold;">Live View Previewer</span>
+                                    <div style="display:flex; gap:0.4rem;">
+                                        <button class="btn btn-outline" id="btn-view-desktop" onclick="setDeviceView('desktop')" style="padding:0.35rem 0.8rem; font-size:0.65rem; box-shadow:2px 2px 0px var(--text);">Desktop</button>
+                                        <button class="btn btn-outline" id="btn-view-tablet" onclick="setDeviceView('tablet')" style="padding:0.35rem 0.8rem; font-size:0.65rem; box-shadow:2px 2px 0px var(--text);">Tablet</button>
+                                        <button class="btn btn-outline" id="btn-view-mobile" onclick="setDeviceView('mobile')" style="padding:0.35rem 0.8rem; font-size:0.65rem; box-shadow:2px 2px 0px var(--text);">Mobile</button>
+                                    </div>
+                                </div>
+                                
+                                <div id="iframe-device-wrapper" style="width:100%; height:620px; border:2px solid var(--text); box-shadow:6px 6px 0px var(--text); background:#222; transition:width 0.4s ease, height 0.4s ease; margin:0 auto; overflow:hidden;">
+                                    <iframe id="preview-iframe" src="/" style="width:100%; height:100%; border:none; background:#050811;"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Manager View -->
+                <div id="content-view-container" style="display: none; margin-top: 1.5rem;">
+                    <div style="display:grid; grid-template-columns: 1fr; gap:2rem; align-items:start;">
+                        <div style="display:flex; flex-flow:row wrap; gap:2rem; align-items:start;">
+                            <!-- Sub navigation menu -->
+                            <div class="glass-card" style="flex:1; min-width:240px; padding:1.5rem; border:2px solid var(--text); box-shadow:4px 4px 0px var(--text); display:flex; flex-direction:column; gap:0.5rem;">
+                                <h4 style="font-family:var(--font-display); font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); padding:0.4rem 0.6rem; border-bottom:1px solid rgba(17,17,17,0.1); margin-bottom:0.4rem; font-weight:bold;">Content Tables</h4>
+                                <button class="btn btn-ghost" id="btn-subtab-projects" onclick="switchSubTab('projects')" style="text-align:left; justify-content:flex-start; width:100%; border:none;">Projects Archive</button>
+                                <button class="btn btn-ghost" id="btn-subtab-education" onclick="switchSubTab('education')" style="text-align:left; justify-content:flex-start; width:100%; border:none;">Education Timeline</button>
+                                <button class="btn btn-ghost" id="btn-subtab-experience" onclick="switchSubTab('experience')" style="text-align:left; justify-content:flex-start; width:100%; border:none;">Right Now Focus</button>
+                                
+                                <h4 style="font-family:var(--font-display); font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); padding:0.4rem 0.6rem; border-bottom:1px solid rgba(17,17,17,0.1); margin:1.2rem 0 0.4rem 0; font-weight:bold;">Backups</h4>
+                                <button class="btn btn-ghost" onclick="exportBackupJson()" style="text-align:left; justify-content:flex-start; width:100%; border:none; color:var(--accent);">Download JSON Backup</button>
+                                <div style="padding:0.4rem 0.6rem; margin-top:0.3rem;">
+                                    <label style="display:block; font-size:0.68rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.4rem;">Import JSON Backup</label>
+                                    <input type="file" id="backup-file-input" onchange="importBackupJson(event)" style="width:100%; font-size:0.65rem; color:var(--text-muted); cursor:pointer;">
+                                </div>
+                            </div>
+
+                            <!-- Main content edit frame -->
+                            <div class="glass-card" style="flex:3; min-width:320px; padding:2rem; border:2px solid var(--text); box-shadow:5px 5px 0px var(--text); min-height:480px;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(17,17,17,0.15); padding-bottom:1.2rem; margin-bottom:2rem; flex-wrap:wrap; gap:1rem;">
+                                    <div>
+                                        <h3 id="content-tab-title" style="font-family:var(--font-display); font-size:1.6rem; text-transform:uppercase; line-height:1;">Projects Manager</h3>
+                                        <p id="content-tab-desc" style="font-size:0.8rem; color:var(--text-muted); margin-top:0.3rem;">Create, edit, or remove project cards showcased on the homepage.</p>
+                                    </div>
+                                    <button class="btn btn-primary" onclick="openCrudModal()" style="margin-left:auto; padding:0.5rem 1.2rem; font-size:0.75rem; background:var(--accent); border-color:var(--text); color:#fff;">+ Add New Item</button>
+                                </div>
+
+                                <!-- Content items list grid -->
+                                <div id="content-items-list" style="display:flex; flex-direction:column; gap:1.2rem;">
+                                    <!-- Populate dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========== CUSTOM CRUD DIALOG MODAL ========== -->
+                <div class="confirm-modal-overlay" id="crud-modal">
+                    <div class="confirm-modal-box" id="crud-modal-box" style="max-width: 600px; text-align: left; padding: 2rem;">
+                        <h3 class="confirm-modal-title" id="crud-modal-title" style="margin-bottom:0px;">Add New Project</h3>
+                        <form id="crud-modal-form" onsubmit="submitCrudForm(event)" class="space-y-4" style="margin-top: 1.5rem; display:flex; flex-direction:column; gap:1rem;">
+                            <input type="hidden" id="crud-id">
+                            
+                            <div id="crud-field-title-wrapper" class="crud-field">
+                                <label id="crud-label-title" style="display:block; font-size:0.75rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">Project Title</label>
+                                <input type="text" id="crud-title" required style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.6rem; color:var(--text); outline:none;">
+                            </div>
+
+                            <div id="crud-field-subtitle-wrapper" class="crud-field">
+                                <label id="crud-label-subtitle" style="display:block; font-size:0.75rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">Sub-Title / Institution / Company</label>
+                                <input type="text" id="crud-subtitle" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.6rem; color:var(--text); outline:none;">
+                            </div>
+
+                            <div id="crud-field-timeline-wrapper" class="crud-field" style="display:none;">
+                                <label style="display:block; font-size:0.75rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">Timeline Period</label>
+                                <input type="text" id="crud-timeline" placeholder="e.g. 2026 Batch, or 2026 - Present" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.6rem; color:var(--text); outline:none;">
+                            </div>
+
+                            <div id="crud-field-tags-wrapper" class="crud-field">
+                                <label style="display:block; font-size:0.75rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">Tags (comma-separated)</label>
+                                <input type="text" id="crud-tags" placeholder="e.g. React, Node, SQLite" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.6rem; color:var(--text); outline:none;">
+                            </div>
+
+                            <div id="crud-field-links-wrapper" class="crud-field" style="display:flex; gap:1rem;">
+                                <div style="flex:1;">
+                                    <label style="display:block; font-size:0.75rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">GitHub Link</label>
+                                    <input type="text" id="crud-github" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.6rem; color:var(--text); outline:none;">
+                                </div>
+                                <div style="flex:1;">
+                                    <label style="display:block; font-size:0.75rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">Live Link</label>
+                                    <input type="text" id="crud-live" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.6rem; color:var(--text); outline:none;">
+                                </div>
+                            </div>
+
+                            <div class="crud-field">
+                                <label style="display:block; font-size:0.75rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">Description Details</label>
+                                <textarea id="crud-description" rows="4" required style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.6rem; color:var(--text); outline:none; resize:vertical;"></textarea>
+                            </div>
+
+                            <div style="display:flex; gap:1rem; align-items:center;">
+                                <div style="flex:1;">
+                                    <label style="display:block; font-size:0.75rem; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted); margin-bottom:0.3rem;">Sort Index Order</label>
+                                    <input type="number" id="crud-order" value="0" style="width:100%; background:var(--bg); border:2px solid var(--text); padding:0.6rem; color:var(--text); outline:none;">
+                                </div>
+                                <div style="flex:1; display:flex; align-items:center; gap:0.5rem; padding-top:1.2rem;">
+                                    <input type="checkbox" id="crud-visible" checked style="width:18px; height:18px; border:2px solid var(--text); cursor:pointer;">
+                                    <label for="crud-visible" style="font-size:0.75rem; text-transform:uppercase; font-family:var(--font-mono); cursor:pointer; user-select:none;">Visible on site</label>
+                                </div>
+                            </div>
+
+                            <div class="confirm-modal-actions" style="margin-top: 1.5rem; justify-content: flex-end; display:flex; gap:1rem;">
+                                <button type="button" class="btn btn-outline" onclick="closeCrudModal()">Cancel</button>
+                                <button type="submit" class="btn btn-primary" style="background:var(--accent); border-color:var(--text); color:#fff;">Save Details</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
             </div>
 
         </div>
     </main>
-
     <script>
         let allMessages = [];
         let allBookings = [];
-        let currentView = 'messages'; // 'messages' or 'bookings'
+        let activeSettings = {};
+        let activeProjects = [];
+        let activeEducation = [];
+        let activeExperience = [];
+        let currentView = 'messages';
+        let contentSubTab = 'projects';
 
-        let deleteType = 'message'; // 'message' or 'booking'
+        let deleteType = 'message';
         let itemToDeleteId = -1;
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Update console timestamp
             const now = new Date();
             document.getElementById('terminal-time').textContent = now.toTimeString().split(' ')[0];
 
-            // Setup custom confirm modal click listeners
             document.getElementById('confirm-cancel-btn').addEventListener('click', closeConfirmModal);
             document.getElementById('confirm-ok-btn').addEventListener('click', executeConfirmDelete);
 
-            // Load all database stats on load
             refreshData();
+            setDeviceView('desktop');
         });
 
         function logToTerminal(text, type = '') {
@@ -745,8 +1171,8 @@
 
             const line = document.createElement('div');
             line.className = 'terminal-line';
-            if (type === 'success') line.classList.add('terminal-success');
-            if (type === 'info') line.classList.add('terminal-info');
+            if (type === 'success') line.className = 'terminal-line terminal-success';
+            if (type === 'info') line.className = 'terminal-line terminal-info';
             if (type === 'error') line.style.color = '#ff6b6b';
 
             const prompt = document.createElement('span');
@@ -756,26 +1182,22 @@
             line.appendChild(prompt);
             line.appendChild(document.createTextNode(text));
             logBox.appendChild(line);
-
-            // Scroll to bottom
             logBox.scrollTop = logBox.scrollHeight;
         }
 
         function refreshData() {
-            // Fetch stats and both tables
             fetchTableData('messages');
             fetchTableData('bookings');
+            fetchSettingsData();
         }
 
         function fetchTableData(type) {
             const endpoint = type === 'messages' ? '/api/messages' : '/api/bookings';
-            logToTerminal(`SELECT * FROM ${type === 'messages' ? 'contacts' : 'bookings'} ORDER BY ...;`, 'info');
+            logToTerminal(`SELECT * FROM ${type === 'messages' ? 'contacts' : 'bookings'} ORDER BY created_at DESC;`, 'info');
 
             fetch(window.location.origin + endpoint)
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Database server returned HTTP ' + response.status);
-                    }
+                    if (!response.ok) throw new Error('HTTP ' + response.status);
                     return response.json();
                 })
                 .then(data => {
@@ -789,7 +1211,6 @@
 
                     logToTerminal(`SQL Query succeeded: loaded ${data.length} ${type} record(s).`, 'success');
 
-                    // Trigger rendering for the active tab
                     if (currentView === type) {
                         renderActiveView();
                     }
@@ -797,10 +1218,38 @@
                 .catch(error => {
                     console.error(`Fetch ${type} error:`, error);
                     logToTerminal(`Database fetch failed for ${type}: ${error.message}`, 'error');
-
                     if (currentView === type) {
                         showErrorState(error.message);
                     }
+                });
+        }
+
+        function fetchSettingsData() {
+            logToTerminal("SELECT * FROM portfolio_settings, projects, education, experience;", "info");
+            fetch(window.location.origin + '/api/settings')
+                .then(response => {
+                    if (!response.ok) throw new Error('HTTP ' + response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    activeSettings = data.settings || {};
+                    activeProjects = data.projects || [];
+                    activeEducation = data.education || [];
+                    activeExperience = data.experience || [];
+                    
+                    logToTerminal("SQL Query succeeded: settings and timeline schemas loaded.", "success");
+                    
+                    populateVisualSettingsInputs();
+                    
+                    if (currentView === 'design') {
+                        updateIframePreview();
+                    } else if (currentView === 'content') {
+                        renderContentList();
+                    }
+                })
+                .catch(error => {
+                    console.error("Fetch settings error:", error);
+                    logToTerminal("Database fetch settings failed: " + error.message, "error");
                 });
         }
 
@@ -808,19 +1257,19 @@
             if (currentView === view) return;
             currentView = view;
 
-            // Set tab buttons active
-            const msgTab = document.getElementById('tab-btn-msg-view');
-            const bookTab = document.getElementById('tab-btn-book-view');
+            document.querySelectorAll('.view-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            let tabId = 'tab-btn-msg-view';
+            if (view === 'messages') tabId = 'tab-btn-msg-view';
+            else if (view === 'bookings') tabId = 'tab-btn-book-view';
+            else if (view === 'design') tabId = 'tab-btn-design-view';
+            else if (view === 'content') tabId = 'tab-btn-content-view';
+            
+            const btn = document.getElementById(tabId);
+            if (btn) btn.classList.add('active');
 
-            if (view === 'messages') {
-                msgTab.classList.add('active');
-                bookTab.classList.remove('active');
-            } else {
-                msgTab.classList.remove('active');
-                bookTab.classList.add('active');
-            }
-
-            // Clear search field on switch
             document.getElementById('search-input').value = '';
 
             renderActiveView();
@@ -830,70 +1279,77 @@
             const loading = document.getElementById('loading-state');
             const empty = document.getElementById('empty-state');
             const grid = document.getElementById('data-grid');
+            const designWrapper = document.getElementById('design-view-container');
+            const contentWrapper = document.getElementById('content-view-container');
+            const operationsBar = document.querySelector('.operations-bar');
 
             loading.style.display = 'none';
             empty.style.display = 'none';
             grid.style.display = 'none';
+            designWrapper.style.display = 'none';
+            contentWrapper.style.display = 'none';
+            
+            if (currentView === 'messages' || currentView === 'bookings') {
+                operationsBar.style.display = 'flex';
+                const activeList = currentView === 'messages' ? allMessages : allBookings;
+                document.getElementById('filter-status').textContent = `Showing all ${currentView}`;
 
-            const activeList = currentView === 'messages' ? allMessages : allBookings;
-            document.getElementById('filter-status').textContent = `Showing all ${currentView}`;
-
-            if (activeList.length === 0) {
-                empty.style.display = 'block';
-                document.getElementById('empty-title').textContent = currentView === 'messages' ? 'No Messages Yet' : 'No Scheduled Consultations';
-                document.getElementById('empty-text').textContent = currentView === 'messages'
-                    ? 'When visitors complete your contact form, their inquiry messages will be logged here.'
-                    : 'When clients book a meeting slot, their booked call schedules will be logged here.';
-            } else {
-                if (currentView === 'messages') {
-                    renderMessagesGrid(allMessages);
+                if (activeList.length === 0) {
+                    empty.style.display = 'block';
+                    document.getElementById('empty-title').textContent = currentView === 'messages' ? 'No Messages Yet' : 'No Scheduled Consultations';
+                    document.getElementById('empty-text').textContent = currentView === 'messages'
+                        ? 'When visitors complete your contact form, their inquiry messages will be logged here.'
+                        : 'When clients book a meeting slot, their booked call schedules will be logged here.';
                 } else {
-                    renderBookingsGrid(allBookings);
-                }
-                grid.style.display = 'grid';
+                    if (currentView === 'messages') {
+                        renderMessagesGrid(allMessages);
+                    } else {
+                        renderBookingsGrid(allBookings);
+                    }
+                    grid.style.display = 'grid';
 
-                // GSAP enter animation
-                if (typeof gsap !== 'undefined') {
-                    gsap.fromTo('.msg-card',
-                        { opacity: 0, y: 20 },
-                        { opacity: 1, y: 0, duration: 0.5, stagger: 0.08, ease: 'power3.out' }
-                    );
+                    if (typeof gsap !== 'undefined') {
+                        gsap.fromTo('.msg-card',
+                            { opacity: 0, y: 20 },
+                            { opacity: 1, y: 0, duration: 0.5, stagger: 0.08, ease: 'power3.out' }
+                        );
+                    }
                 }
+            } else if (currentView === 'design') {
+                operationsBar.style.display = 'none';
+                designWrapper.style.display = 'block';
+                updateIframePreview();
+            } else if (currentView === 'content') {
+                operationsBar.style.display = 'none';
+                contentWrapper.style.display = 'block';
+                switchSubTab(contentSubTab);
             }
-        }
-
-        function buildGmailUrl(to, subject, body) {
-            return 'https://mail.google.com/mail/?view=cm'
-                + '&to=' + encodeURIComponent(to)
-                + '&su=' + encodeURIComponent(subject)
-                + '&body=' + encodeURIComponent(body);
         }
 
         function renderMessagesGrid(messages) {
             const grid = document.getElementById('data-grid');
+            if (!grid) return;
+            
             grid.innerHTML = '';
-
+            
             messages.forEach(msg => {
-                const dateStr = formatDate(msg.created_at);
-                const gmailUrl = buildGmailUrl(
-                    msg.email,
-                    `Re: Your Message to Aditya Soni`,
-                    `Hi ${msg.name},\n\nThank you for reaching out! I received your message:\n\n"${msg.message}"\n\nHere's my reply:\n\n`
-                );
                 const card = document.createElement('div');
-                card.className = `msg-card data-card-msg-${msg.id}`;
+                card.className = 'msg-card';
+                
+                const gmailUrl = buildGmailUrl(msg.email, `Re: Portfolio Inquiry`, `Hi ${msg.name},\n\nThank you for reaching out via my portfolio. regarding your message:\n\n"${msg.message}"\n\n...`);
+                
                 card.innerHTML = `
                     <div class="msg-header">
                         <div class="msg-user-info">
                             <span class="msg-name">${escapeHTML(msg.name)}</span>
-                            <a href="${gmailUrl}" class="msg-email" target="_blank" rel="noopener">${escapeHTML(msg.email)}</a>
+                            <a href="mailto:${escapeHTML(msg.email)}" class="msg-email">${escapeHTML(msg.email)}</a>
                         </div>
-                        <span class="msg-date">${dateStr}</span>
+                        <span class="msg-date">${formatDate(msg.created_at)}</span>
                     </div>
                     <div class="msg-content">${escapeHTML(msg.message)}</div>
                     <div class="msg-footer">
-                        <button class="btn btn-outline btn-delete" onclick="promptDelete('message', ${msg.id})">Delete Row</button>
-                        <a href="${gmailUrl}" target="_blank" rel="noopener"><button class="btn btn-primary btn-reply">↗ Reply in Gmail</button></a>
+                        <button class="btn-delete" onclick="promptDelete('message', ${msg.id})">Delete</button>
+                        <a href="${gmailUrl}" target="_blank" class="btn btn-primary btn-reply" style="display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">Reply</a>
                     </div>
                 `;
                 grid.appendChild(card);
@@ -902,65 +1358,475 @@
 
         function renderBookingsGrid(bookings) {
             const grid = document.getElementById('data-grid');
+            if (!grid) return;
+            
             grid.innerHTML = '';
-
-            bookings.forEach(book => {
-                const gmailUrl = buildGmailUrl(
-                    book.email,
-                    `Your Consultation with Aditya Soni — Confirmed ✅`,
-                    `Hi ${book.name},\n\nYour consultation session is confirmed! Here are the details:\n\n📅 Date: ${book.booking_date}\n⏰ Time: ${book.booking_time}\n📋 Topic: ${book.topic}\n\nI look forward to speaking with you. Please let me know if you need to reschedule or have any questions beforehand.\n\nBest regards,\nAditya Soni\n`
-                );
+            
+            bookings.forEach(booking => {
                 const card = document.createElement('div');
-                card.className = `msg-card data-card-booking-${book.id}`;
+                card.className = 'msg-card';
+                
+                const gmailUrl = buildGmailUrl(booking.email, `Re: Call Booking`, `Hi ${booking.name},\n\nRegarding the consultation slot you booked for ${booking.booking_date} at ${booking.booking_time} on the topic of "${booking.topic}":\n\n...`);
+                
                 card.innerHTML = `
                     <div class="msg-header">
                         <div class="msg-user-info">
-                            <span class="msg-name" style="color:var(--accent2);">${escapeHTML(book.name)}</span>
-                            <a href="${gmailUrl}" class="msg-email" style="color:var(--accent2);" target="_blank" rel="noopener">${escapeHTML(book.email)}</a>
+                            <span class="msg-name">${escapeHTML(booking.name)}</span>
+                            <a href="mailto:${escapeHTML(booking.email)}" class="msg-email">${escapeHTML(booking.email)}</a>
                         </div>
-                        <span class="msg-date">Booked: ${formatDate(book.created_at)}</span>
+                        <span class="msg-date">${formatDate(booking.created_at)}</span>
                     </div>
                     <div class="msg-booking-details">
-                        <div class="booking-badge">
-                            📅 Date: ${escapeHTML(book.booking_date)}
-                        </div>
-                        <div class="booking-badge time-badge">
-                            ⏰ Time: ${escapeHTML(book.booking_time)}
-                        </div>
+                        <span class="booking-badge">📅 ${escapeHTML(booking.booking_date)}</span>
+                        <span class="booking-badge time-badge">⏰ ${escapeHTML(booking.booking_time)}</span>
                     </div>
-                    <div class="msg-content" style="border-top:1px solid rgba(255,255,255,0.02); padding-top:1rem;">
-                        <span style="color:var(--text-muted); font-size:0.8rem; text-transform:uppercase; display:block; margin-bottom:0.4rem; font-family:var(--font-display);">Consultation Topic:</span>
-                        ${escapeHTML(book.topic)}
-                    </div>
+                    <div class="msg-content"><strong>Topic:</strong> ${escapeHTML(booking.topic)}</div>
                     <div class="msg-footer">
-                        <button class="btn btn-outline btn-delete" onclick="promptDelete('booking', ${book.id})">Cancel Call</button>
-                        <a href="${gmailUrl}" target="_blank" rel="noopener"><button class="btn btn-primary btn-reply-alt">↗ Confirm in Gmail</button></a>
+                        <button class="btn-delete" onclick="promptDelete('booking', ${booking.id})">Delete</button>
+                        <a href="${gmailUrl}" target="_blank" class="btn btn-primary btn-reply" style="display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">Reply</a>
                     </div>
                 `;
                 grid.appendChild(card);
             });
         }
 
-        // Custom Delete Prompt modal
-        function promptDelete(type, id) {
-            deleteType = type;
-            itemToDeleteId = id;
+        function populateVisualSettingsInputs() {
+            if (!activeSettings) return;
+            
+            const setVal = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.value = val || '';
+            };
 
-            document.getElementById('confirm-item-type').textContent = type === 'message' ? 'message submission' : 'booked call schedule';
-            document.getElementById('confirm-msg-id').textContent = id;
+            setVal('setting-theme-preset', activeSettings.theme_preset);
+            setVal('setting-primary-color', activeSettings.primary_color);
+            setVal('setting-primary-color-text', activeSettings.primary_color);
+            setVal('setting-secondary-color', activeSettings.secondary_color);
+            setVal('setting-secondary-color-text', activeSettings.secondary_color);
+            setVal('setting-accent-color', activeSettings.accent_color);
+            setVal('setting-accent-color-text', activeSettings.accent_color);
+            setVal('setting-bg-color', activeSettings.background_color);
+            setVal('setting-bg-color-text', activeSettings.background_color);
+            setVal('setting-surface-color', activeSettings.surface_color);
+            setVal('setting-surface-color-text', activeSettings.surface_color);
+            setVal('setting-font-display', activeSettings.font_display);
+            setVal('setting-font-body', activeSettings.font_body);
+            setVal('setting-layout-order', activeSettings.layout_sections_order);
 
-            const modal = document.getElementById('confirm-modal');
-            const box = document.getElementById('confirm-modal-box');
+            setVal('setting-brand-name', activeSettings.brand_name);
+            setVal('setting-logo-text', activeSettings.logo_text);
+            setVal('setting-footer-text', activeSettings.footer_text);
+            setVal('setting-seo-title', activeSettings.seo_title);
+            setVal('setting-seo-description', activeSettings.seo_description);
+            setVal('setting-analytics-id', activeSettings.analytics_id);
+
+            setVal('setting-hero-badge', activeSettings.hero_badge);
+            setVal('setting-hero-title', activeSettings.hero_title);
+            setVal('setting-hero-subtitle', activeSettings.hero_subtitle);
+            setVal('setting-hero-description', activeSettings.hero_description);
+
+            setVal('setting-about-lead', activeSettings.about_lead);
+            setVal('setting-about-body', activeSettings.about_body);
+
+            setVal('setting-goal-1-title', activeSettings.goal_1_title);
+            setVal('setting-goal-1-desc', activeSettings.goal_1_desc);
+            setVal('setting-goal-1-status', activeSettings.goal_1_status);
+            setVal('setting-goal-2-title', activeSettings.goal_2_title);
+            setVal('setting-goal-2-desc', activeSettings.goal_2_desc);
+            setVal('setting-goal-2-status', activeSettings.goal_2_status);
+            setVal('setting-goal-3-title', activeSettings.goal_3_title);
+            setVal('setting-goal-3-desc', activeSettings.goal_3_desc);
+            setVal('setting-goal-3-status', activeSettings.goal_3_status);
+
+            setVal('setting-skills-web-dev', activeSettings.skills_web_dev);
+            setVal('setting-skills-security', activeSettings.skills_security);
+            setVal('setting-skills-languages', activeSettings.skills_languages);
+            setVal('setting-contact-title', activeSettings.contact_title);
+            setVal('setting-contact-subtitle', activeSettings.contact_subtitle);
+            setVal('setting-contact-email', activeSettings.contact_email);
+            setVal('setting-contact-location', activeSettings.contact_location);
+            setVal('setting-contact-status', activeSettings.contact_status);
+            setVal('setting-social-github', activeSettings.social_github);
+            setVal('setting-social-linkedin', activeSettings.social_linkedin);
+            setVal('setting-social-twitter', activeSettings.social_twitter);
+
+            setVal('setting-custom-css', activeSettings.custom_css);
+            setVal('setting-custom-javascript', activeSettings.custom_javascript);
+
+            const animCheck = document.getElementById('setting-animations');
+            if (animCheck) animCheck.checked = activeSettings.animations_enabled !== 0;
+        }
+
+        function updateColorFromText(type, val) {
+            if (val && val.startsWith('#') && val.length === 7) {
+                const picker = document.getElementById(`setting-${type}-color`);
+                if (picker) {
+                    picker.value = val;
+                    updateLivePreview();
+                }
+            }
+        }
+
+        function applyPreset(val) {
+            const presets = {
+                dark: {
+                    primary: '#f43f5e',
+                    secondary: '#8b5cf6',
+                    accent: '#f59e0b',
+                    bg: '#050811',
+                    surface: '#0c1122',
+                    fontDisplay: 'Oswald',
+                    fontBody: 'Inter'
+                },
+                light: {
+                    primary: '#d91414',
+                    secondary: '#000000',
+                    accent: '#d91414',
+                    bg: '#faf9f6',
+                    surface: '#ffffff',
+                    fontDisplay: 'Oswald',
+                    fontBody: 'DM Sans'
+                },
+                emerald: {
+                    primary: '#10b981',
+                    secondary: '#06b6d4',
+                    accent: '#f59e0b',
+                    bg: '#022c22',
+                    surface: '#064e3b',
+                    fontDisplay: 'Syne',
+                    fontBody: 'Space Grotesk'
+                },
+                sunset: {
+                    primary: '#f97316',
+                    secondary: '#e11d48',
+                    accent: '#fbbf24',
+                    bg: '#1c0d02',
+                    surface: '#2d1504',
+                    fontDisplay: 'Outfit',
+                    fontBody: 'DM Sans'
+                }
+            };
+
+            const preset = presets[val];
+            if (!preset) return;
+
+            document.getElementById('setting-primary-color').value = preset.primary;
+            document.getElementById('setting-primary-color-text').value = preset.primary;
+            document.getElementById('setting-secondary-color').value = preset.secondary;
+            document.getElementById('setting-secondary-color-text').value = preset.secondary;
+            document.getElementById('setting-accent-color').value = preset.accent;
+            document.getElementById('setting-accent-color-text').value = preset.accent;
+            document.getElementById('setting-bg-color').value = preset.bg;
+            document.getElementById('setting-bg-color-text').value = preset.bg;
+            document.getElementById('setting-surface-color').value = preset.surface;
+            document.getElementById('setting-surface-color-text').value = preset.surface;
+            document.getElementById('setting-font-display').value = preset.fontDisplay;
+            document.getElementById('setting-font-body').value = preset.fontBody;
+
+            updateLivePreview();
+        }
+
+        function updateLivePreview() {
+            document.getElementById('setting-primary-color-text').value = document.getElementById('setting-primary-color').value;
+            document.getElementById('setting-secondary-color-text').value = document.getElementById('setting-secondary-color').value;
+            document.getElementById('setting-accent-color-text').value = document.getElementById('setting-accent-color').value;
+            document.getElementById('setting-bg-color-text').value = document.getElementById('setting-bg-color').value;
+            document.getElementById('setting-surface-color-text').value = document.getElementById('setting-surface-color').value;
+
+            updateIframePreview();
+        }
+
+        function updateIframePreview() {
+            const iframe = document.getElementById('preview-iframe');
+            if (!iframe || !iframe.contentWindow) return;
+
+            const settings = getVisualSettingsFromForm();
+            iframe.contentWindow.postMessage({ type: 'LIVE_THEME_UPDATE', settings: settings }, '*');
+        }
+
+        function getVisualSettingsFromForm() {
+            return {
+                theme_preset: document.getElementById('setting-theme-preset').value,
+                primary_color: document.getElementById('setting-primary-color').value,
+                secondary_color: document.getElementById('setting-secondary-color').value,
+                accent_color: document.getElementById('setting-accent-color').value,
+                background_color: document.getElementById('setting-bg-color').value,
+                surface_color: document.getElementById('setting-surface-color').value,
+                font_display: document.getElementById('setting-font-display').value,
+                font_body: document.getElementById('setting-font-body').value,
+                animations_enabled: document.getElementById('setting-animations').checked ? 1 : 0,
+                layout_sections_order: document.getElementById('setting-layout-order').value,
+                
+                brand_name: document.getElementById('setting-brand-name').value,
+                logo_text: document.getElementById('setting-logo-text').value,
+                footer_text: document.getElementById('setting-footer-text').value,
+                seo_title: document.getElementById('setting-seo-title').value,
+                seo_description: document.getElementById('setting-seo-description').value,
+                analytics_id: document.getElementById('setting-analytics-id').value,
+
+                hero_badge: document.getElementById('setting-hero-badge').value,
+                hero_title: document.getElementById('setting-hero-title').value,
+                hero_subtitle: document.getElementById('setting-hero-subtitle').value,
+                hero_description: document.getElementById('setting-hero-description').value,
+
+                about_lead: document.getElementById('setting-about-lead').value,
+                about_body: document.getElementById('setting-about-body').value,
+
+                goal_1_title: document.getElementById('setting-goal-1-title').value,
+                goal_1_desc: document.getElementById('setting-goal-1-desc').value,
+                goal_1_status: document.getElementById('setting-goal-1-status').value,
+                goal_2_title: document.getElementById('setting-goal-2-title').value,
+                goal_2_desc: document.getElementById('setting-goal-2-desc').value,
+                goal_2_status: document.getElementById('setting-goal-2-status').value,
+                goal_3_title: document.getElementById('setting-goal-3-title').value,
+                goal_3_desc: document.getElementById('setting-goal-3-desc').value,
+                goal_3_status: document.getElementById('setting-goal-3-status').value,
+
+                skills_web_dev: document.getElementById('setting-skills-web-dev').value,
+                skills_security: document.getElementById('setting-skills-security').value,
+                skills_languages: document.getElementById('setting-skills-languages').value,
+                contact_title: document.getElementById('setting-contact-title').value,
+                contact_subtitle: document.getElementById('setting-contact-subtitle').value,
+                contact_email: document.getElementById('setting-contact-email').value,
+                contact_location: document.getElementById('setting-contact-location').value,
+                contact_status: document.getElementById('setting-contact-status').value,
+                social_github: document.getElementById('setting-social-github').value,
+                social_linkedin: document.getElementById('setting-social-linkedin').value,
+                social_twitter: document.getElementById('setting-social-twitter').value,
+
+                custom_css: document.getElementById('setting-custom-css').value,
+                custom_javascript: document.getElementById('setting-custom-javascript').value
+            };
+        }
+
+        function publishVisualSettings() {
+            const settings = getVisualSettingsFromForm();
+            logToTerminal("UPDATE portfolio_settings SET theme_preset='" + settings.theme_preset + "', primary_color='" + settings.primary_color + "'...", "info");
+
+            fetch(window.location.origin + '/api/settings/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(settings)
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                return res.json();
+            })
+            .then(data => {
+                logToTerminal("SQL Update succeeded: configuration committed to database.", "success");
+                
+                const iframe = document.getElementById('preview-iframe');
+                if (iframe) iframe.src = iframe.src;
+                
+                alert("✓ Portfolio styling and layout settings published successfully.");
+            })
+            .catch(err => {
+                logToTerminal("Database save settings failed: " + err.message, "error");
+                alert("Error saving configurations: " + err.message);
+            });
+        }
+
+        function resetVisualForm() {
+            populateVisualSettingsInputs();
+            updateLivePreview();
+            logToTerminal("Customizer fields reset to active database parameters.", "info");
+        }
+
+        function setDeviceView(device) {
+            const wrapper = document.getElementById('iframe-device-wrapper');
+            if (!wrapper) return;
+
+            document.getElementById('btn-view-desktop').classList.remove('active');
+            document.getElementById('btn-view-tablet').classList.remove('active');
+            document.getElementById('btn-view-mobile').classList.remove('active');
+
+            if (device === 'desktop') {
+                wrapper.style.width = '100%';
+                wrapper.style.height = '620px';
+                document.getElementById('btn-view-desktop').classList.add('active');
+            } else if (device === 'tablet') {
+                wrapper.style.width = '768px';
+                wrapper.style.height = '620px';
+                document.getElementById('btn-view-tablet').classList.add('active');
+            } else if (device === 'mobile') {
+                wrapper.style.width = '375px';
+                wrapper.style.height = '620px';
+                document.getElementById('btn-view-mobile').classList.add('active');
+            }
+            logToTerminal(`Viewport view frame adjusted to: ${device}`, "info");
+        }
+
+        function switchSubTab(tab) {
+            contentSubTab = tab;
+            
+            document.getElementById('btn-subtab-projects').classList.remove('active');
+            document.getElementById('btn-subtab-education').classList.remove('active');
+            document.getElementById('btn-subtab-experience').classList.remove('active');
+
+            const activeBtn = document.getElementById(`btn-subtab-${tab}`);
+            if (activeBtn) activeBtn.classList.add('active');
+
+            const title = document.getElementById('content-tab-title');
+            const desc = document.getElementById('content-tab-desc');
+
+            if (tab === 'projects') {
+                title.textContent = "Projects Manager";
+                desc.textContent = "Create, edit, or remove project cards showcased on the homepage.";
+            } else if (tab === 'education') {
+                title.textContent = "Education Timeline";
+                desc.textContent = "Modify academic milestones and degrees displayed on the timeline.";
+            } else if (tab === 'experience') {
+                title.textContent = "Right Now Focus";
+                desc.textContent = "Add, edit, or remove current semester focus and learning items.";
+            }
+
+            renderContentList();
+        }
+
+        function renderContentList() {
+            const listContainer = document.getElementById('content-items-list');
+            if (!listContainer) return;
+            listContainer.innerHTML = '';
+
+            let items = [];
+            if (contentSubTab === 'projects') items = activeProjects;
+            else if (contentSubTab === 'education') items = activeEducation;
+            else if (contentSubTab === 'experience') items = activeExperience;
+
+            if (items.length === 0) {
+                listContainer.innerHTML = `
+                    <div style="text-align:center; padding:3rem; border:2px dashed var(--text); color:var(--text-muted); font-family:var(--font-mono); font-size:0.8rem;">
+                        No items found in this database table. Click '+ Add New Item' to create one.
+                    </div>
+                `;
+                return;
+            }
+
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'msg-card';
+                card.style.padding = '1.5rem';
+                card.style.boxShadow = '3px 3px 0px var(--text)';
+                
+                let titleText = '';
+                let subtitleText = '';
+                let extraDetails = '';
+                
+                if (contentSubTab === 'projects') {
+                    titleText = item.title;
+                    subtitleText = item.tags ? `Tags: ${item.tags}` : 'No tags';
+                    extraDetails = `
+                        <div class="booking-badge time-badge" style="font-size:0.75rem; padding:0.2rem 0.5rem; margin-top:0.5rem; font-family:var(--font-mono);">
+                            GitHub: ${item.github_link || 'None'} | Live: ${item.live_link || 'None'}
+                        </div>
+                    `;
+                } else if (contentSubTab === 'education') {
+                    titleText = item.degree;
+                    subtitleText = `${item.institution} // ${item.timeline}`;
+                } else if (contentSubTab === 'experience') {
+                    titleText = item.role;
+                    subtitleText = `${item.company} // ${item.timeline}`;
+                }
+
+                const visibleBadge = item.is_visible !== 0 
+                    ? '<span class="terminal-success" style="font-size:0.7rem; font-family:var(--font-mono); font-weight:bold;">● VISIBLE</span>' 
+                    : '<span style="color:#ff6b6b; font-size:0.7rem; font-family:var(--font-mono); font-weight:bold;">● HIDDEN</span>';
+
+                card.innerHTML = `
+                    <div class="msg-header" style="margin-bottom:0.8rem; padding-bottom:0.6rem; border-bottom:1px solid rgba(17,17,17,0.06);">
+                        <div class="msg-user-info">
+                            <span class="msg-name" style="font-size:1.1rem; color:var(--text);">${escapeHTML(titleText)}</span>
+                            <span style="font-size:0.8rem; color:var(--text-muted); font-family:var(--font-mono);">${escapeHTML(subtitleText)}</span>
+                        </div>
+                        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:0.25rem;">
+                            ${visibleBadge}
+                            <span style="font-size:0.7rem; font-family:var(--font-mono); color:var(--text-dim);">Order: ${item.sort_order}</span>
+                        </div>
+                    </div>
+                    <div class="msg-content" style="font-size:0.9rem; line-height:1.5; margin-bottom:1.2rem; white-space:normal; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">
+                        ${escapeHTML(item.description)}
+                    </div>
+                    ${extraDetails}
+                    <div class="msg-footer" style="margin-top:1rem; display:flex; justify-content:flex-end; gap:0.6rem;">
+                        <button class="btn btn-outline btn-delete" onclick="promptDelete('${contentSubTab}-item', ${item.id})" style="padding:0.4rem 1rem; font-size:0.7rem;">Delete</button>
+                        <button class="btn btn-primary btn-reply" onclick="openCrudModal(${item.id})" style="padding:0.4rem 1rem; font-size:0.7rem; box-shadow:2px 2px 0px var(--text); background:var(--accent2); color:#fff; border-color:var(--text);">Edit Info</button>
+                    </div>
+                `;
+                listContainer.appendChild(card);
+            });
+        }
+
+        function openCrudModal(itemId = null) {
+            const modal = document.getElementById('crud-modal');
+            const box = document.getElementById('crud-modal-box');
+            const form = document.getElementById('crud-modal-form');
+            const titleEl = document.getElementById('crud-modal-title');
+            
+            form.reset();
+            document.getElementById('crud-id').value = '';
+            
+            const subTitleWrapper = document.getElementById('crud-field-subtitle-wrapper');
+            const timelineWrapper = document.getElementById('crud-field-timeline-wrapper');
+            const tagsWrapper = document.getElementById('crud-field-tags-wrapper');
+            const linksWrapper = document.getElementById('crud-field-links-wrapper');
+            
+            const labelTitle = document.getElementById('crud-label-title');
+            const labelSubtitle = document.getElementById('crud-label-subtitle');
+
+            if (contentSubTab === 'projects') {
+                titleEl.textContent = itemId ? "Edit Project Details" : "Add New Project";
+                labelTitle.textContent = "Project Title";
+                labelSubtitle.textContent = "Tags (comma-separated list)";
+                subTitleWrapper.style.display = 'none';
+                timelineWrapper.style.display = 'none';
+                tagsWrapper.style.display = 'block';
+                linksWrapper.style.display = 'flex';
+            } else if (contentSubTab === 'education') {
+                titleEl.textContent = itemId ? "Edit Academic Degree" : "Add Education Milestone";
+                labelTitle.textContent = "Degree / Course Name";
+                labelSubtitle.textContent = "Institution / School Board";
+                subTitleWrapper.style.display = 'block';
+                timelineWrapper.style.display = 'block';
+                tagsWrapper.style.display = 'none';
+                linksWrapper.style.display = 'none';
+            } else if (contentSubTab === 'experience') {
+                titleEl.textContent = itemId ? "Edit Focus Detail" : "Add New Focus Item";
+                labelTitle.textContent = "Topic / Focus Title";
+                labelSubtitle.textContent = "Institution / Company";
+                subTitleWrapper.style.display = 'block';
+                timelineWrapper.style.display = 'block';
+                tagsWrapper.style.display = 'none';
+                linksWrapper.style.display = 'none';
+            }
+
+            if (itemId !== null) {
+                let item = null;
+                if (contentSubTab === 'projects') item = activeProjects.find(p => p.id === itemId);
+                else if (contentSubTab === 'education') item = activeEducation.find(e => e.id === itemId);
+                else if (contentSubTab === 'experience') item = activeExperience.find(x => x.id === itemId);
+                
+                if (item) {
+                    document.getElementById('crud-id').value = item.id;
+                    document.getElementById('crud-title').value = contentSubTab === 'projects' ? item.title : (contentSubTab === 'education' ? item.degree : item.role);
+                    document.getElementById('crud-subtitle').value = contentSubTab === 'projects' ? '' : (contentSubTab === 'education' ? item.institution : item.company);
+                    document.getElementById('crud-timeline').value = item.timeline || '';
+                    document.getElementById('crud-tags').value = item.tags || '';
+                    document.getElementById('crud-github').value = item.github_link || '';
+                    document.getElementById('crud-live').value = item.live_link || '';
+                    document.getElementById('crud-description').value = item.description || '';
+                    document.getElementById('crud-order').value = item.sort_order || 0;
+                    document.getElementById('crud-visible').checked = item.is_visible !== 0;
+                }
+            }
 
             modal.style.display = 'flex';
 
-            // GSAP Modal Open Animation
             if (typeof gsap !== 'undefined') {
                 gsap.killTweensOf([modal, box]);
                 gsap.fromTo(modal, { opacity: 0 }, { opacity: 1, duration: 0.3 });
                 gsap.fromTo(box,
-                    { scale: 0.85, y: 30, rotationX: -10 },
-                    { scale: 1, y: 0, rotationX: 0, duration: 0.45, ease: 'back.out(1.5)' }
+                    { scale: 0.85, y: 30 },
+                    { scale: 1, y: 0, duration: 0.4, ease: 'back.out(1.2)' }
                 );
             } else {
                 modal.style.opacity = '1';
@@ -968,129 +1834,149 @@
             }
         }
 
-        function closeConfirmModal() {
-            const modal = document.getElementById('confirm-modal');
-            const box = document.getElementById('confirm-modal-box');
+        function closeCrudModal() {
+            const modal = document.getElementById('crud-modal');
+            const box = document.getElementById('crud-modal-box');
 
             if (typeof gsap !== 'undefined') {
                 gsap.killTweensOf([modal, box]);
-                gsap.to(box, { scale: 0.82, y: 25, opacity: 0, duration: 0.25, ease: 'power2.in' });
+                gsap.to(box, { scale: 0.85, y: 25, opacity: 0, duration: 0.25 });
                 gsap.to(modal, {
                     opacity: 0,
                     duration: 0.25,
                     onComplete: () => {
                         modal.style.display = 'none';
-                        gsap.set(box, { opacity: 1 }); // reset opacity properties
+                        gsap.set(box, { opacity: 1 });
                     }
                 });
             } else {
                 modal.style.display = 'none';
             }
-            itemToDeleteId = -1;
         }
 
-        function executeConfirmDelete() {
-            if (itemToDeleteId === -1) return;
-            const id = itemToDeleteId;
-            const type = deleteType;
-            closeConfirmModal();
+        function submitCrudForm(event) {
+            event.preventDefault();
 
-            const endpoint = type === 'message' ? `/api/messages?id=${id}` : `/api/bookings?id=${id}`;
-            logToTerminal(`DELETE FROM ${type === 'message' ? 'contacts' : 'bookings'} WHERE id = ${id};`, 'info');
+            const id = document.getElementById('crud-id').value;
+            const title = document.getElementById('crud-title').value;
+            const subtitle = document.getElementById('crud-subtitle').value;
+            const timeline = document.getElementById('crud-timeline').value;
+            const tags = document.getElementById('crud-tags').value;
+            const github = document.getElementById('crud-github').value;
+            const live = document.getElementById('crud-live').value;
+            const description = document.getElementById('crud-description').value;
+            const sort_order = parseInt(document.getElementById('crud-order').value) || 0;
+            const is_visible = document.getElementById('crud-visible').checked ? 1 : 0;
+
+            let bodyData = {
+                id: id,
+                description: description,
+                sort_order: sort_order,
+                is_visible: is_visible
+            };
+
+            if (contentSubTab === 'projects') {
+                bodyData.title = title;
+                bodyData.tags = tags;
+                bodyData.github_link = github;
+                bodyData.live_link = live;
+                bodyData.image_url = '';
+            } else if (contentSubTab === 'education') {
+                bodyData.degree = title;
+                bodyData.institution = subtitle;
+                bodyData.timeline = timeline;
+            } else if (contentSubTab === 'experience') {
+                bodyData.role = title;
+                bodyData.company = subtitle;
+                bodyData.timeline = timeline;
+            }
+
+            const endpoint = `/api/${contentSubTab}-crud`;
+            logToTerminal(`POST ${endpoint} payload: ID=${id || 'new'} title="${title}"...`, "info");
 
             fetch(window.location.origin + endpoint, {
-                method: 'DELETE'
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bodyData)
             })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Database server returned HTTP ' + response.status);
-                    }
-                    return response.json();
-                })
-                .then(result => {
-                    logToTerminal(`SQL Delete succeeded: Row ${id} removed from ${type === 'message' ? 'contacts' : 'bookings'} table.`, 'success');
-
-                    // Card dissolution animation
-                    const cardSelector = type === 'message' ? `.data-card-msg-${id}` : `.data-card-booking-${id}`;
-                    const card = document.querySelector(cardSelector);
-
-                    if (card && typeof gsap !== 'undefined') {
-                        gsap.to(card, {
-                            opacity: 0,
-                            scale: 0.9,
-                            y: -20,
-                            duration: 0.4,
-                            ease: 'power2.in',
-                            onComplete: () => {
-                                // Update statistics and reload table
-                                if (type === 'message') {
-                                    allMessages = allMessages.filter(m => m.id !== id);
-                                } else {
-                                    allBookings = allBookings.filter(b => b.id !== id);
-                                }
-
-                                document.getElementById('stat-messages').textContent = allMessages.length;
-                                document.getElementById('stat-bookings').textContent = allBookings.length;
-                                renderActiveView();
-                            }
-                        });
-                    } else {
-                        if (type === 'message') {
-                            allMessages = allMessages.filter(m => m.id !== id);
-                        } else {
-                            allBookings = allBookings.filter(b => b.id !== id);
-                        }
-                        document.getElementById('stat-messages').textContent = allMessages.length;
-                        document.getElementById('stat-bookings').textContent = allBookings.length;
-                        renderActiveView();
-                    }
-                })
-                .catch(error => {
-                    logToTerminal(`Database delete failed: ${error.message}`, 'error');
-                    alert(`Error deleting database entry: ${error.message}`);
-                });
+            .then(res => {
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                return res.json();
+            })
+            .then(data => {
+                logToTerminal("SQL Transaction succeeded: item details committed.", "success");
+                closeCrudModal();
+                fetchSettingsData();
+            })
+            .catch(err => {
+                logToTerminal("Database save timeline item failed: " + err.message, "error");
+                alert("Error saving item: " + err.message);
+            });
         }
 
-        function filterData() {
-            const query = document.getElementById('search-input').value.toLowerCase().trim();
-            const grid = document.getElementById('data-grid');
-            const empty = document.getElementById('empty-state');
-            const filterStatus = document.getElementById('filter-status');
+        function exportBackupJson() {
+            const dataToExport = {
+                settings: activeSettings,
+                projects: activeProjects,
+                education: activeEducation,
+                experience: activeExperience
+            };
 
-            const activeList = currentView === 'messages' ? allMessages : allBookings;
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataToExport, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `portfolio_backup_${new Date().toISOString().slice(0, 10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            
+            logToTerminal("Config backup generated: JSON settings layout file exported.", "success");
+        }
 
-            if (!query) {
-                renderActiveView();
-                return;
-            }
+        function importBackupJson(event) {
+            const file = event.target.files[0];
+            if (!file) return;
 
-            let filtered = [];
-            if (currentView === 'messages') {
-                filtered = activeList.filter(msg =>
-                    msg.name.toLowerCase().includes(query) ||
-                    msg.email.toLowerCase().includes(query) ||
-                    msg.message.toLowerCase().includes(query)
-                );
-                renderMessagesGrid(filtered);
-            } else {
-                filtered = activeList.filter(book =>
-                    book.name.toLowerCase().includes(query) ||
-                    book.email.toLowerCase().includes(query) ||
-                    book.topic.toLowerCase().includes(query) ||
-                    book.booking_date.toLowerCase().includes(query)
-                );
-                renderBookingsGrid(filtered);
-            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    if (!importedData.settings) {
+                        throw new Error("Invalid backup format: missing 'settings' object.");
+                    }
+                    
+                    logToTerminal("Importing settings from JSON backup...", "info");
+                    
+                    fetch(window.location.origin + '/api/settings/save', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(importedData.settings)
+                    })
+                    .then(res => {
+                        if (!res.ok) throw new Error("Settings save failed");
+                        
+                        logToTerminal("Settings backup successfully loaded.", "success");
+                        alert("✓ Portfolio backup imported successfully! Settings updated.");
+                        fetchSettingsData();
+                    })
+                    .catch(err => {
+                        logToTerminal("Import settings failed: " + err.message, "error");
+                        alert("Error importing settings: " + err.message);
+                    });
 
-            grid.style.display = filtered.length > 0 ? 'grid' : 'none';
-            empty.style.display = filtered.length === 0 ? 'block' : 'none';
+                } catch (err) {
+                    logToTerminal("Import backup failed: " + err.message, "error");
+                    alert("Failed to parse backup JSON file: " + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
 
-            if (filtered.length === 0) {
-                document.getElementById('empty-title').textContent = 'No Match Found';
-                document.getElementById('empty-text').textContent = `Your query "${escapeHTML(query)}" did not match any active rows in the database.`;
-            }
-
-            filterStatus.textContent = `Showing ${filtered.length} of ${activeList.length} ${currentView}`;
+        function buildGmailUrl(to, subject, body) {
+            return 'https://mail.google.com/mail/?view=cm'
+                + '&to=' + encodeURIComponent(to)
+                + '&su=' + encodeURIComponent(subject)
+                + '&body=' + encodeURIComponent(body);
         }
 
         function showErrorState(message) {
@@ -1128,6 +2014,81 @@
             } catch (e) {
                 return dateStr;
             }
+        }
+
+        function promptDelete(type, id) {
+            deleteType = type;
+            itemToDeleteId = id;
+            document.getElementById('confirm-item-type').textContent = type.replace('-item', '');
+            document.getElementById('confirm-msg-id').textContent = id;
+            
+            const modal = document.getElementById('confirm-modal');
+            const box = document.getElementById('confirm-modal-box');
+            modal.style.display = 'flex';
+            
+            if (typeof gsap !== 'undefined') {
+                gsap.killTweensOf([modal, box]);
+                gsap.fromTo(modal, { opacity: 0 }, { opacity: 1, duration: 0.2 });
+                gsap.fromTo(box, { scale: 0.85, y: 15 }, { scale: 1, y: 0, duration: 0.3, ease: 'back.out(1.2)' });
+            } else {
+                modal.style.opacity = '1';
+                box.style.transform = 'scale(1) translateY(0)';
+            }
+        }
+
+        function closeConfirmModal() {
+            const modal = document.getElementById('confirm-modal');
+            const box = document.getElementById('confirm-modal-box');
+            
+            if (typeof gsap !== 'undefined') {
+                gsap.killTweensOf([modal, box]);
+                gsap.to(box, { scale: 0.85, y: 15, opacity: 0, duration: 0.2 });
+                gsap.to(modal, {
+                    opacity: 0,
+                    duration: 0.2,
+                    onComplete: () => {
+                        modal.style.display = 'none';
+                        gsap.set(box, { opacity: 1 });
+                    }
+                });
+            } else {
+                modal.style.display = 'none';
+            }
+        }
+
+        function executeConfirmDelete() {
+            if (itemToDeleteId === -1) return;
+            
+            let endpoint = '';
+            if (deleteType === 'message') {
+                endpoint = `/api/messages?id=${itemToDeleteId}`;
+            } else if (deleteType === 'booking') {
+                endpoint = `/api/bookings?id=${itemToDeleteId}`;
+            } else {
+                // CRUD delete, e.g. projects-item, education-item, experience-item
+                const table = deleteType.replace('-item', '');
+                endpoint = `/api/${table}-crud?id=${itemToDeleteId}`;
+            }
+            
+            logToTerminal(`DELETE FROM database WHERE id = ${itemToDeleteId};`, 'info');
+            
+            fetch(window.location.origin + endpoint, {
+                method: 'DELETE'
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                return res.json();
+            })
+            .then(data => {
+                logToTerminal(`SQL Delete succeeded: removed ID ${itemToDeleteId}.`, 'success');
+                closeConfirmModal();
+                refreshData();
+            })
+            .catch(err => {
+                logToTerminal(`Database delete failed: ${err.message}`, 'error');
+                alert("Error deleting item: " + err.message);
+                closeConfirmModal();
+            });
         }
 
         function escapeHTML(str) {

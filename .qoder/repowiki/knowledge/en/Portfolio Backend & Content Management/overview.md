@@ -1,0 +1,1 @@
+A self-contained Java HTTP server providing static file serving, contact/booking forms, and a database-driven admin panel for dynamic portfolio content management.
